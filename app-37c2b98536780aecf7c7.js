@@ -21013,7 +21013,7 @@
 	        return promise.then(function (res) {
 	            //If only one tei found and in selectedOrgUnit, go straight to dashboard
 	            if (res && res.data && res.data.rows && res.data.rows.length === 1) {
-	                var gridData = TEIGridService.format($scope.selectedOrgUnit.id, res.data, false, null, null);
+	                var gridData = TEIGridService.format($scope.selectedOrgUnit.id, res.data, false, $scope.base.optionSets, null);
 	
 	                //Open TEI if unique and in same search scope and in selected org unit
 	                if (gridData.rows.own.length === 1 && res.callingScope === res.resultScope && searchGroup.uniqueGroup) {
@@ -21112,7 +21112,7 @@
 	                var loadData = function loadData() {
 	                    $scope.tooManySearchResults = res.status === "TOOMANYMATCHES";
 	                    if (res.status !== "NOMATCH" && res.status !== "TOOMANYMATCHES") {
-	                        $scope.gridData = TEIGridService.format(orgUnit.id, res.data, false, null, null);
+	                        $scope.gridData = TEIGridService.format(orgUnit.id, res.data, false, internalService.base.optionSets, null);
 	                    }
 	                    $scope.notInSameScope = res.callingScope != res.resultScope;
 	                    $scope.pager = res.data && res.data.metaData ? res.data.metaData.pager : null;
@@ -37936,4 +37936,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-8b08c72fab4aa2d0c031.js.map
+//# sourceMappingURL=app-37c2b98536780aecf7c7.js.map
