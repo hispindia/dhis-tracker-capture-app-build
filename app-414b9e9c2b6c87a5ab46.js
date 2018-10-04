@@ -7813,6 +7813,40 @@
 	            }
 	            return def.promise;
 	        },
+	        getAll: function getAll() {
+	            var roles = SessionStorageService.get('USER_PROFILE');
+	            var userRoles = roles && roles.userCredentials && roles.userCredentials.userRoles ? roles.userCredentials.userRoles : [];
+	            var def = $q.defer();
+	
+	            this.getAllAccesses().then(function (accesses) {
+	                TCStorageService.currentStore.open().done(function () {
+	                    TCStorageService.currentStore.getAll('programs').done(function (prs) {
+	                        var programs = [];
+	                        angular.forEach(prs, function (pr) {
+	                            if (accesses.programsById[pr.id] && accesses.programsById[pr.id].data.read) {
+	                                pr.access = accesses.programsById[pr.id];
+	                                var accessiblePrs = [];
+	                                angular.forEach(pr.programStages, function (prs) {
+	                                    if (accesses.programStagesById[prs.id] && accesses.programStagesById[prs.id].data.read) {
+	                                        prs.access = accesses.programStagesById[prs.id];
+	                                        accessiblePrs.push(prs);
+	                                    }
+	                                });
+	                                pr.programStages = accessiblePrs;
+	                                programs.push(pr);
+	                            }
+	                        });
+	                        programs = orderByFilter(programs, '-displayName').reverse();
+	
+	                        $rootScope.$apply(function () {
+	                            def.resolve({ programs: programs });
+	                        });
+	                    });
+	                });
+	            });
+	            return def.promise;
+	        },
+	
 	        getProgramsByOu: function getProgramsByOu(ou, loadSelectedProgram, selectedProgram) {
 	            var roles = SessionStorageService.get('USER_PROFILE');
 	            var userRoles = roles && roles.userCredentials && roles.userCredentials.userRoles ? roles.userCredentials.userRoles : [];
@@ -18955,6 +18989,11 @@
 	    $rootScope.showAddRelationshipDiv = false;
 	    $scope.relatedProgramRelationship = false;
 	    var ENTITYNAME = "TRACKED_ENTITY_INSTANCE";
+	    var _allPrograms = [];
+	
+	    ProgramFactory.getAll().then(function (result) {
+	        _allPrograms = result.programs;
+	    });
 	
 	    //listen for the selected entity       
 	    $scope.$on('dashboardWidgets', function (event, args) {
@@ -18987,7 +19026,7 @@
 	        RelationshipFactory.getAll().then(function (relTypes) {
 	            //Supports only TEI-TEI of same type. Filter away fromConstraint from other programs
 	            $scope.relationshipTypes = relTypes.filter(function (relType) {
-	                return relType.fromConstraint && relType.fromConstraint.relationshipEntity === ENTITYNAME && relType.toConstraint.relationshipEntity === ENTITYNAME && (!relType.fromConstraint.program || relType.fromConstraint.program.id === $scope.selectedProgram.id);
+	                return relType.fromConstraint && relType.fromConstraint.relationshipEntity === ENTITYNAME && relType.toConstraint.relationshipEntity === ENTITYNAME && relType.fromConstraint.trackedEntityType && relType.fromConstraint.trackedEntityType.id === $scope.trackedEntityType.id && (!relType.fromConstraint.program || relType.fromConstraint.program.id === $scope.selectedProgram.id);
 	            });
 	
 	            angular.forEach($scope.relationshipTypes, function (rel) {
@@ -19035,6 +19074,9 @@
 	                    },
 	                    relatedProgramRelationship: function relatedProgramRelationship() {
 	                        return $scope.relatedProgramRelationship;
+	                    },
+	                    allPrograms: function allPrograms() {
+	                        return _allPrograms;
 	                    }
 	                }
 	            });
@@ -19139,7 +19181,7 @@
 	/* global trackerCapture, angular */
 	
 	var trackerCapture = angular.module('trackerCapture');
-	trackerCapture.controller('TEIAddController', ["$scope", "$rootScope", "$translate", "$modalInstance", "$location", "DateUtils", "CurrentSelection", "OperatorFactory", "AttributesFactory", "EntityQueryFactory", "OrgUnitFactory", "ProgramFactory", "MetaDataFactory", "TEIService", "TEIGridService", "NotificationService", "Paginator", "relationshipTypes", "selectedProgram", "relatedProgramRelationship", "selections", "selectedAttribute", "existingAssociateUid", "addingRelationship", "selectedTei", "AccessUtils", "TEService", function ($scope, $rootScope, $translate, $modalInstance, $location, DateUtils, CurrentSelection, OperatorFactory, AttributesFactory, EntityQueryFactory, OrgUnitFactory, ProgramFactory, MetaDataFactory, TEIService, TEIGridService, NotificationService, Paginator, relationshipTypes, selectedProgram, relatedProgramRelationship, selections, selectedAttribute, existingAssociateUid, addingRelationship, selectedTei, AccessUtils, TEService) {
+	trackerCapture.controller('TEIAddController', ["$scope", "$rootScope", "$translate", "$modalInstance", "$location", "DateUtils", "CurrentSelection", "OperatorFactory", "AttributesFactory", "EntityQueryFactory", "OrgUnitFactory", "ProgramFactory", "MetaDataFactory", "TEIService", "TEIGridService", "NotificationService", "Paginator", "relationshipTypes", "selectedProgram", "relatedProgramRelationship", "selections", "selectedAttribute", "existingAssociateUid", "addingRelationship", "selectedTei", "AccessUtils", "TEService", "allPrograms", function ($scope, $rootScope, $translate, $modalInstance, $location, DateUtils, CurrentSelection, OperatorFactory, AttributesFactory, EntityQueryFactory, OrgUnitFactory, ProgramFactory, MetaDataFactory, TEIService, TEIGridService, NotificationService, Paginator, relationshipTypes, selectedProgram, relatedProgramRelationship, selections, selectedAttribute, existingAssociateUid, addingRelationship, selectedTei, AccessUtils, TEService, allPrograms) {
 	    var selection = CurrentSelection.get();
 	
 	    $scope.base = {};
@@ -19207,6 +19249,10 @@
 	                $scope.base.selectedProgramForRelative = program;
 	                $scope.onSelectedProgram(program);
 	            } else {
+	
+	                $scope.relatedAvailablePrograms = $scope.programs.filter(function (p) {
+	                    return p.trackedEntityType && p.trackedEntityType.id === relatedConstraint.trackedEntityType.id;
+	                });
 	                $scope.relatedPredefinedProgram = false;
 	                $scope.base.selectedProgramForRelative = null;
 	                $scope.onSelectedProgram($scope.base.selectedProgramForRelative);
@@ -19270,7 +19316,8 @@
 	
 	    if ($scope.addingRelationship) {
 	        $scope.teiAddLabel = $translate.instant('add_relationship');
-	        $scope.programs = AccessUtils.toWritable(selections.prs);
+	        //Get all programs
+	        $scope.programs = AccessUtils.toWritable(allPrograms);
 	        CurrentSelection.setRelationshipOwner($scope.mainTei);
 	    } else {
 	        $scope.teiAddLabel = $scope.selectedAttribute && $scope.selectedAttribute.displayName ? $scope.selectedAttribute.displayName : $translate.instant('tracker_associate');
@@ -37936,4 +37983,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-08caf1b49e77f69f8cc4.js.map
+//# sourceMappingURL=app-414b9e9c2b6c87a5ab46.js.map
