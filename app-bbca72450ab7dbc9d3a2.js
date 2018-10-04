@@ -19316,7 +19316,6 @@
 	
 	    if ($scope.addingRelationship) {
 	        $scope.teiAddLabel = $translate.instant('add_relationship');
-	        //Get all programs
 	        $scope.programs = AccessUtils.toWritable(allPrograms);
 	        CurrentSelection.setRelationshipOwner($scope.mainTei);
 	    } else {
@@ -37983,4 +37982,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-414b9e9c2b6c87a5ab46.js.map
+//# sourceMappingURL=app-bbca72450ab7dbc9d3a2.js.map
