@@ -12260,7 +12260,7 @@
 	        if (pr) {
 	            $scope.selectedProgram = pr;
 	        }
-	        getDashboardLayout();
+	        $location.path('/dashboard').search({ program: pr.id, ou: $scope.selectedOrgUnit.id, tei: $scope.selectedTei.trackedEntityInstance });
 	    };
 	
 	    $scope.broadCastSelections = function (tei) {
@@ -19728,7 +19728,6 @@
 	    $scope.editingDisabled = false;
 	
 	    var selections = CurrentSelection.get();
-	    $scope.programs = selections.prs;
 	    $scope.selectedOrgUnit = selections.orgUnit;
 	
 	    $scope.attributesById = CurrentSelection.getAttributesById();
@@ -19780,15 +19779,6 @@
 	            });
 	        }
 	    };
-	
-	    if (angular.isObject($scope.programs) && $scope.programs.length === 1) {
-	        $scope.base.selectedProgramForRelative = $scope.programs[0];
-	        AttributesFactory.getByProgram($scope.base.selectedProgramForRelative).then(function (atts) {
-	            $scope.attributes = TEIGridService.generateGridColumns(atts, null, false).columns;
-	            assignInheritance();
-	            getRules();
-	        });
-	    }
 	
 	    //watch for selection of program
 	    $scope.$watch('base.selectedProgramForRelative', function () {
@@ -19931,7 +19921,7 @@
 	            $scope.selectedTei.attributes.push(newAttributeInArray);
 	        });
 	
-	        if ($scope.selectedProgram && $scope.selectedProgram.id) {
+	        if ($scope.base.selectedProgramForRelative && $scope.base.selectedProgramForRelative.id) {
 	            TrackerRulesExecutionService.executeRules($scope.allProgramRules, 'registration', null, null, null, $scope.selectedTei, $scope.selectedEnrollment, null, flag);
 	        }
 	    };
@@ -37982,4 +37972,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-bbca72450ab7dbc9d3a2.js.map
+//# sourceMappingURL=app-e9e10744bddfec556333.js.map
