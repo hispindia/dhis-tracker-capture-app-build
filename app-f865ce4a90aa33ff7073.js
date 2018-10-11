@@ -2536,7 +2536,7 @@
 	                var brokenExecution = false;
 	                angular.forEach(dhisFunctions, function(dhisFunction){
 	                    //Select the function call, with any number of parameters inside single quotations, or number parameters witout quotations
-	                    var regularExFunctionCall = new RegExp(dhisFunction.name + "\\( *(([\\d/\\*\\+\\-%\.]+)|( *'[^']*'))*( *, *(([\\d/\\*\\+\\-%\.]+)|'[^']*'))* *\\)",'g');
+	                    var regularExFunctionCall = new RegExp(dhisFunction.name + "\\( *(([\\d/\\*\\+\\-%\. ]+)|( *'[^']*'))*( *, *(([\\d/\\*\\+\\-%\. ]+)|'[^']*'))* *\\)",'g');
 	                    var callsToThisFunction = expression.match(regularExFunctionCall);
 	                    angular.forEach(callsToThisFunction, function(callToThisFunction){
 	                        //Remove the function name and paranthesis:
@@ -3984,7 +3984,7 @@
 	    return {
 	        getChildren: function(uid){
 	            if( orgUnit !== uid ){
-	                orgUnitPromise = $http.get( DHIS2URL + '/organisationUnits/'+ uid + '.json?fields=id,path,level,children[id,displayName,level,children[id]]&paging=false' ).then(function(response){
+	                orgUnitPromise = $http.get( DHIS2URL + '/organisationUnits/'+ uid + '.json?fields=id,path,programs[id],level,children[id,displayName,programs[id],level,children[id]]&paging=false' ).then(function(response){
 	                    orgUnit = uid;
 	                    return response.data;
 	                });
@@ -3993,7 +3993,7 @@
 	        },
 	        get: function(uid){
 	            if( orgUnit !== uid ){
-	                orgUnitPromise = $http.get( DHIS2URL + '/organisationUnits/'+ uid + '.json?fields=id,displayName,level,path' ).then(function(response){
+	                orgUnitPromise = $http.get( DHIS2URL + '/organisationUnits/'+ uid + '.json?fields=id,displayName,programs[id],level,path' ).then(function(response){
 	                    orgUnit = uid;
 	                    return response.data;
 	                });
@@ -4033,7 +4033,7 @@
 	                def.resolve( ous );
 	            }
 	            else{
-	                var url = DHIS2URL + '/me.json?fields=organisationUnits[id,displayName,level,path,children[id,displayName,level,children[id]]],teiSearchOrganisationUnits[id,displayName,level,path,children[id,displayName,level,children[id]]]&paging=false';
+	                var url = DHIS2URL + '/me.json?fields=organisationUnits[id,displayName,programs[id],level,path,children[id,displayName,programs[id],level,children[id]]],teiSearchOrganisationUnits[id,displayName,programs[id],level,path,children[id,displayName,programs[id],level,children[id]]]&paging=false';
 	                $http.get( url ).then(function(response){
 	                    response.data.organisationUnits = response.data.teiSearchOrganisationUnits && response.data.teiSearchOrganisationUnits.length > 0 ? response.data.teiSearchOrganisationUnits : response.data.organisationUnits;
 	                    delete response.data.teiSearchOrganisationUnits;
@@ -7480,7 +7480,7 @@
 	    var store = new dhis2.storage.Store({
 	        name: "dhis2tc",
 	        adapters: [dhis2.storage.IndexedDBAdapter, dhis2.storage.DomSessionStorageAdapter, dhis2.storage.InMemoryAdapter],
-	        objectStores: ['programs', 'trackedEntityTypes', 'attributes', 'relationshipTypes', 'optionSets', 'programIndicators', 'ouLevels', 'programRuleVariables', 'programRules', 'constants', 'dataElements', 'programAccess', 'programStageAccess', 'trackedEntityTypeAccess', 'optionGroups']
+	        objectStores: ['programs', 'trackedEntityTypes', 'attributes', 'relationshipTypes', 'optionSets', 'programIndicators', 'ouLevels', 'programRuleVariables', 'programRules', 'constants', 'dataElements', 'programAccess', 'programStageAccess', 'trackedEntityTypeAccess', 'optionGroups', 'organisationUnits']
 	    });
 	    return {
 	        currentStore: store
@@ -9806,7 +9806,7 @@
 	            }
 	            return { partial: partial, all: allColumns };
 	        },
-	        getEditingStatus: function getEditingStatus(dhis2Event, stage, orgUnit, tei, enrollment, program) {
+	        getEditingStatus: function getEditingStatus(dhis2Event, stage, orgUnit, tei, enrollment, program, searchOrgUnits) {
 	            return dhis2Event.orgUnit !== orgUnit.id || stage.blockEntryForm && dhis2Event.status === 'COMPLETED' || tei.inactive || enrollment.status !== 'ACTIVE';
 	        },
 	        isExpired: function isExpired(program, event) {
@@ -10505,6 +10505,41 @@
 	            }
 	        });
 	        return writable;
+	    };
+	}]).service('TCOrgUnitService', ["$q", "$rootScope", "TCStorageService", "OrgUnitFactory", function ($q, $rootScope, TCStorageService, OrgUnitFactory) {
+	    this.get = function (uid) {
+	        var def = $q.defer();
+	        TCStorageService.currentStore.open().done(function () {
+	            TCStorageService.currentStore.get('organisationUnits', uid).done(function (orgUnit) {
+	                $rootScope.$apply(function () {
+	                    def.resolve(orgUnit);
+	                });
+	            });
+	        });
+	        return def.promise;
+	    };
+	
+	    this.getSearchOrgUnitTree = function () {
+	        return OrgUnitFactory.getSearchTreeRoot().then(function (res) {
+	            var allSearchOrgUnits = res.organisationUnits;
+	            var filtered = allSearchOrgUnits.filter(function (orgUnit) {
+	                return !isPathInOrgUnitList(orgUnit.path, allSearchOrgUnits);
+	            });
+	            return filtered;
+	        });
+	    };
+	    var getOrgUnitIdsFromPath = this.getOrgUnitIdsFromPath = function (orgUnitPath) {
+	        var formattedPath = orgUnitPath.replace(/^\/|\/$/g, '');
+	        return formattedPath.split('/');
+	    };
+	    var isPathInOrgUnitList = this.isPathInOrgUnitList = function (path, orgUnits) {
+	        var idsFromPath = getOrgUnitIdsFromPath(path);
+	        var lastId = idsFromPath[idsFromPath.length - 1];
+	        return idsFromPath.some(function (idFromPath) {
+	            return orgUnits.some(function (orgUnit) {
+	                return orgUnit.id === idFromPath && orgUnit.id !== lastId;
+	            });
+	        });
 	    };
 	}]);
 
@@ -14101,7 +14136,7 @@
 	/* global angular, trackerCapture */
 	
 	var trackerCapture = angular.module('trackerCapture');
-	trackerCapture.controller('DataEntryController', ["$rootScope", "$scope", "$modal", "$filter", "$log", "$timeout", "$translate", "$window", "$q", "$parse", "$location", "CommonUtils", "DateUtils", "EventUtils", "orderByFilter", "SessionStorageService", "EnrollmentService", "DHIS2EventFactory", "ModalService", "NotificationService", "CurrentSelection", "TrackerRulesExecutionService", "CustomFormService", "PeriodService", "OptionSetService", "AttributesFactory", "TrackerRulesFactory", "EventCreationService", "AuthorityService", "AccessUtils", function ($rootScope, $scope, $modal, $filter, $log, $timeout, $translate, $window, $q, $parse, $location, CommonUtils, DateUtils, EventUtils, orderByFilter, SessionStorageService, EnrollmentService, DHIS2EventFactory, ModalService, NotificationService, CurrentSelection, TrackerRulesExecutionService, CustomFormService, PeriodService, OptionSetService, AttributesFactory, TrackerRulesFactory, EventCreationService, AuthorityService, AccessUtils) {
+	trackerCapture.controller('DataEntryController', ["$rootScope", "$scope", "$modal", "$filter", "$log", "$timeout", "$translate", "$window", "$q", "$parse", "$location", "CommonUtils", "DateUtils", "EventUtils", "orderByFilter", "SessionStorageService", "EnrollmentService", "DHIS2EventFactory", "ModalService", "NotificationService", "CurrentSelection", "TrackerRulesExecutionService", "CustomFormService", "PeriodService", "OptionSetService", "AttributesFactory", "TrackerRulesFactory", "EventCreationService", "AuthorityService", "AccessUtils", "TCOrgUnitService", function ($rootScope, $scope, $modal, $filter, $log, $timeout, $translate, $window, $q, $parse, $location, CommonUtils, DateUtils, EventUtils, orderByFilter, SessionStorageService, EnrollmentService, DHIS2EventFactory, ModalService, NotificationService, CurrentSelection, TrackerRulesExecutionService, CustomFormService, PeriodService, OptionSetService, AttributesFactory, TrackerRulesFactory, EventCreationService, AuthorityService, AccessUtils, TCOrgUnitService) {
 	
 	    //Unique instance id for the controller:
 	    $scope.instanceId = Math.floor(Math.random() * 1000000000);
@@ -14189,6 +14224,10 @@
 	    $scope.eventCreationActions = EventCreationService.eventCreationActions;
 	
 	    var userProfile = SessionStorageService.get('USER_PROFILE');
+	    var userSearchOrgUnits = [];
+	    if (userProfile) {
+	        userSearchOrgUnits = userProfile.teiSearchOrganisationUnits && userProfile.teiSearchOrganisationUnits.length > 0 ? userProfile.teiSearchOrganisationUnits : userProfile.organisationUnits || [];
+	    }
 	    var storedBy = userProfile && userProfile.userCredentials && userProfile.userCredentials.username ? userProfile.userCredentials.username : '';
 	
 	    var today = DateUtils.getToday();
@@ -14934,7 +14973,7 @@
 	                            dhis2Event.sortingDate = dhis2Event.eventDate;
 	                        }
 	
-	                        dhis2Event.editingNotAllowed = EventUtils.getEditingStatus(dhis2Event, eventStage, $scope.selectedOrgUnit, $scope.selectedTei, $scope.selectedEnrollment, $scope.selectedProgram);
+	                        dhis2Event.editingNotAllowed = EventUtils.getEditingStatus(dhis2Event, eventStage, $scope.selectedOrgUnit, $scope.selectedTei, $scope.selectedEnrollment, $scope.selectedProgram, userSearchOrgUnits);
 	
 	                        dhis2Event.statusColor = EventUtils.getEventStatusColor(dhis2Event);
 	                        dhis2Event = EventUtils.processEvent(dhis2Event, eventStage, $scope.optionSets, $scope.prStDes);
@@ -15302,34 +15341,36 @@
 	                //clicked on the same stage, do toggling
 	                $scope.deSelectCurrentEvent(resetStage);
 	            } else {
-	                $scope.currentElement = {};
-	                $scope.currentEvent = event;
+	                TCOrgUnitService.get(event.orgUnit).then(function (orgUnit) {
+	                    event.orgUnitPath = orgUnit.path;
+	                    $scope.currentElement = {};
+	                    $scope.currentEvent = event;
 	
-	                var index = -1;
-	                for (var i = 0; i < $scope.eventsByStage[event.programStage].length && index === -1; i++) {
-	                    if ($scope.eventsByStage[event.programStage][i].event === event.event) {
-	                        index = i;
+	                    var index = -1;
+	                    for (var i = 0; i < $scope.eventsByStage[event.programStage].length && index === -1; i++) {
+	                        if ($scope.eventsByStage[event.programStage][i].event === event.event) {
+	                            index = i;
+	                        }
 	                    }
-	                }
-	                if (index !== -1) {
-	                    $scope.currentEvent = $scope.eventsByStage[event.programStage][index];
-	                }
-	
-	                $scope.showDataEntryDiv = true;
-	                $scope.showEventCreationDiv = false;
-	
-	                if ($scope.currentEvent.notes) {
-	                    angular.forEach($scope.currentEvent.notes, function (note) {
-	                        note.displayDate = DateUtils.formatFromApiToUser(note.storedDate);
-	                        note.storedDate = DateUtils.formatToHrsMins(note.storedDate);
-	                    });
-	
-	                    if ($scope.currentEvent.notes.length > 0) {
-	                        $scope.currentEvent.notes = orderByFilter($scope.currentEvent.notes, '-storedDate');
+	                    if (index !== -1) {
+	                        $scope.currentEvent = $scope.eventsByStage[event.programStage][index];
 	                    }
-	                }
 	
-	                $scope.getDataEntryForm();
+	                    $scope.showDataEntryDiv = true;
+	                    $scope.showEventCreationDiv = false;
+	
+	                    if ($scope.currentEvent.notes) {
+	                        angular.forEach($scope.currentEvent.notes, function (note) {
+	                            note.displayDate = DateUtils.formatFromApiToUser(note.storedDate);
+	                            note.storedDate = DateUtils.formatToHrsMins(note.storedDate);
+	                        });
+	
+	                        if ($scope.currentEvent.notes.length > 0) {
+	                            $scope.currentEvent.notes = orderByFilter($scope.currentEvent.notes, '-storedDate');
+	                        }
+	                    }
+	                    $scope.getDataEntryForm();
+	                });
 	            }
 	        }
 	    };
@@ -15388,7 +15429,7 @@
 	
 	        var stage = $scope.stagesById[event.programStage];
 	        if (stage && stage.id) {
-	            event.editingNotAllowed = EventUtils.getEditingStatus(event, stage, $scope.selectedOrgUnit, $scope.selectedTei, $scope.selectedEnrollment, $scope.selectedProgram);
+	            event.editingNotAllowed = EventUtils.getEditingStatus(event, stage, $scope.selectedOrgUnit, $scope.selectedTei, $scope.selectedEnrollment, $scope.selectedProgram, userSearchOrgUnits);
 	        }
 	
 	        $scope.eventEditFormModalInstance = modalInstance = $modal.open({
@@ -15502,7 +15543,7 @@
 	            }
 	        }
 	
-	        $scope.currentEvent.editingNotAllowed = EventUtils.getEditingStatus($scope.currentEvent, $scope.currentStage, $scope.selectedOrgUnit, $scope.selectedTei, $scope.selectedEnrollment, $scope.selectedProgram);
+	        $scope.currentEvent.editingNotAllowed = EventUtils.getEditingStatus($scope.currentEvent, $scope.currentStage, $scope.selectedOrgUnit, $scope.selectedTei, $scope.selectedEnrollment, $scope.selectedProgram, userSearchOrgUnits);
 	
 	        $scope.currentEventOriginal = angular.copy($scope.currentEvent);
 	
@@ -15688,6 +15729,8 @@
 	            program: eventToSave.program,
 	            programStage: eventToSave.programStage,
 	            orgUnit: eventToSave.dataValues && eventToSave.dataValues.length > 0 ? eventToSave.orgUnit : $scope.selectedOrgUnit.id,
+	            orgUnitName: eventToSave.dataValues && eventToSave.dataValues.length > 0 ? eventToSave.orgUnitName : $scope.selectedOrgUnit.displayName,
+	            orgUnitPath: eventToSave.dataValues && eventToSave.dataValues.length > 0 ? eventToSave.orgUnitPath : $scope.selectedOrgUnit.path,
 	            eventDate: DateUtils.formatFromUserToApi(eventToSave.eventDate),
 	            trackedEntityInstance: eventToSave.trackedEntityInstance
 	        };
@@ -15706,7 +15749,9 @@
 	            $scope.currentEvent.orgUnit = e.orgUnit;
 	            $scope.currentEvent.statusColor = eventToSave.statusColor;
 	            $scope.currentEvent.status = eventToSave.status;
-	            $scope.currentEvent.orgUnitName = $scope.selectedOrgUnit.displayName;
+	            $scope.currentEvent.orgUnitName = e.orgUnitName;
+	            $scope.currentEvent.orgUnitPath = e.orgUnitPath;
+	            $scope.currentEvent.editingNotAllowed = EventUtils.getEditingStatus($scope.currentEvent, $scope.currentStage, $scope.selectedOrgUnit, $scope.selectedTei, $scope.selectedEnrollment, $scope.selectedProgram);
 	
 	            sortEventsByStage('UPDATE');
 	
@@ -16126,7 +16171,7 @@
 	                }
 	
 	                setStatusColor();
-	                $scope.currentEvent.editingNotAllowed = EventUtils.getEditingStatus($scope.currentEvent, $scope.currentStage, $scope.selectedOrgUnit, $scope.selectedTei, $scope.selectedEnrollment, $scope.selectedProgram);
+	                $scope.currentEvent.editingNotAllowed = EventUtils.getEditingStatus($scope.currentEvent, $scope.currentStage, $scope.selectedOrgUnit, $scope.selectedTei, $scope.selectedEnrollment, $scope.selectedProgram, userSearchOrgUnits);
 	
 	                for (var i = 0; i < $scope.allEventsSorted.length; i++) {
 	                    if ($scope.allEventsSorted[i].event === $scope.currentEvent.event) {
@@ -16204,7 +16249,7 @@
 	            }
 	
 	            setStatusColor();
-	            $scope.currentEvent.editingNotAllowed = EventUtils.getEditingStatus($scope.currentEvent, $scope.currentStage, $scope.selectedOrgUnit, $scope.selectedTei, $scope.selectedEnrollment, $scope.selectedProgram);
+	            $scope.currentEvent.editingNotAllowed = EventUtils.getEditingStatus($scope.currentEvent, $scope.currentStage, $scope.selectedOrgUnit, $scope.selectedTei, $scope.selectedEnrollment, $scope.selectedProgram, userSearchOrgUnits);
 	        });
 	    };
 	
@@ -16226,6 +16271,34 @@
 	            return true;
 	        }
 	        return false;
+	    };
+	
+	    var getOrgUnitIdsFromPath = function getOrgUnitIdsFromPath(orgUnitPath) {
+	        var formattedPath = orgUnitPath.replace(/^\/|\/$/g, '');
+	        return formattedPath.split('/');
+	    };
+	
+	    var isInSearchOrgUnits = function isInSearchOrgUnits(orgUnitPath, searchOrgUnits) {
+	        if ($scope.userAuthority.ALL) return true;
+	        if (!orgUnitPath) return false;
+	        return TCOrgUnitService.isPathInOrgUnitList(orgUnitPath, searchOrgUnits);
+	    };
+	
+	    $scope.reportDateEditable = function () {
+	        //Check if user has data write to current program stage
+	        if (!$scope.currentStage || !$scope.currentStage.access.data.write) return false;
+	        //Check if organisation unit is closed
+	        if ($scope.selectedOrgUnit.closedStatus) return false;
+	        //Check if event is the selected org unit or event is scheduled and org unit exists in users search org units
+	        if ($scope.currentEvent.orgUnit !== $scope.selectedOrgUnit.id && !($scope.currentEvent.status === 'SCHEDULE' && isInSearchOrgUnits($scope.currentEvent.orgUnitPath, userSearchOrgUnits))) return false;
+	        // Check if currentProgramStage blocks entry form when status is completed
+	        if ($scope.currentStage && $scope.currentStage.blockEntryForm && $scope.currentEvent.status === 'COMPLETED') return false;
+	        //Check if tei is inactive
+	        if ($scope.selectedTei.inactive) return false;
+	        //Check if event is expired and user can edit expired stuff
+	        if ($scope.currentEvent.expired && !$scope.userAuthority.canEditExpiredStuff) return false;
+	
+	        return true;
 	    };
 	
 	    $scope.eventEditable = function (isButton) {
@@ -17465,7 +17538,7 @@
 	/* global trackerCapture, angular */
 	
 	var trackerCapture = angular.module('trackerCapture');
-	trackerCapture.controller('EventCreationController', ["$scope", "$modalInstance", "$timeout", "$translate", "$filter", "removeFuturePeriodFilter", "DateUtils", "DHIS2EventFactory", "OrgUnitFactory", "NotificationService", "EventCreationService", "eventsByStage", "stage", "stages", "writableStages", "allStages", "tei", "program", "orgUnit", "enrollment", "eventCreationAction", "autoCreate", "EventUtils", "events", "selectedCategories", "PeriodService", "ModalService", "CurrentSelection", "TEIService", function ($scope, $modalInstance, $timeout, $translate, $filter, removeFuturePeriodFilter, DateUtils, DHIS2EventFactory, OrgUnitFactory, NotificationService, EventCreationService, eventsByStage, stage, stages, writableStages, allStages, tei, program, orgUnit, enrollment, eventCreationAction, autoCreate, EventUtils, events, selectedCategories, PeriodService, ModalService, CurrentSelection, TEIService) {
+	trackerCapture.controller('EventCreationController', ["$scope", "$modalInstance", "$timeout", "$translate", "$filter", "removeFuturePeriodFilter", "DateUtils", "DHIS2EventFactory", "OrgUnitFactory", "NotificationService", "EventCreationService", "eventsByStage", "stage", "stages", "writableStages", "allStages", "tei", "program", "orgUnit", "enrollment", "eventCreationAction", "autoCreate", "EventUtils", "events", "selectedCategories", "PeriodService", "ModalService", "CurrentSelection", "TEIService", "TCOrgUnitService", function ($scope, $modalInstance, $timeout, $translate, $filter, removeFuturePeriodFilter, DateUtils, DHIS2EventFactory, OrgUnitFactory, NotificationService, EventCreationService, eventsByStage, stage, stages, writableStages, allStages, tei, program, orgUnit, enrollment, eventCreationAction, autoCreate, EventUtils, events, selectedCategories, PeriodService, ModalService, CurrentSelection, TEIService, TCOrgUnitService) {
 	    $scope.selectedOrgUnit = orgUnit;
 	    $scope.selectedEnrollment = enrollment;
 	    $scope.stages = stages;
@@ -17699,76 +17772,21 @@
 	        dummyEvent.orgUnitName = orgUnit.displayName;
 	    };
 	
-	    if (angular.isDefined(orgUnit) && angular.isDefined(orgUnit.id) && $scope.isReferralEvent) {
-	        $scope.orgUnitsLoading = true;
-	        $timeout(function () {
-	            OrgUnitFactory.get(orgUnit.id).then(function (data) {
-	                orgUnit = data;
-	                var url = generateFieldsUrl();
-	                OrgUnitFactory.getOrgUnits(orgUnit.id, url).then(function (data) {
-	                    if (data && data.organisationUnits && data.organisationUnits.length > 0) {
-	                        $scope.orgWithParents = data.organisationUnits[0];
-	                        var org = data.organisationUnits[0];
-	                        var orgUnitsById = {};
-	                        orgUnitsById[org.id] = org;
-	                        while (org.parent) {
-	                            org.parent.childrenLoaded = true;
-	                            orgUnitsById[org.parent.id] = org.parent;
-	                            org.parent.show = true;
-	                            for (var i = 0; i < org.parent.children.length; i++) {
-	                                angular.forEach(org.parent.children[i].children, function (child) {
-	                                    if (!orgUnitsById[child.id]) {
-	                                        orgUnitsById[child.id] = child;
-	                                    }
-	                                });
-	                                if (org.parent.children[i].id === org.id) {
-	                                    org.parent.children[i] = org;
-	                                    i = org.parent.children.length;
-	                                } else {
-	                                    orgUnitsById[org.parent.children[i].id] = org.parent.children[i];
-	                                }
-	                            }
-	                            org = org.parent;
-	                        }
-	                        $scope.orgUnits = [org];
-	                    }
-	                    $scope.orgUnitsLoading = false;
-	                });
-	            });
-	        }, 350);
+	    if ($scope.isReferralEvent) {
+	        TCOrgUnitService.getSearchOrgUnitTree().then(function (searchOrgUnitTree) {
+	            $scope.searchOrgUnitTree = searchOrgUnitTree;
+	        });
 	    }
 	
-	    function generateFieldsUrl() {
-	        var fieldUrl = "fields=id,displayName,organisationUnitGroups[shortName],programs[id]";
-	        var parentStartDefault = ",parent[id,displayName,programs[id],children[id,displayName,programs[id],organisationUnitGroups[shortName],children[id,displayName,programs[id],organisationUnitGroups[shortName]]]";
-	        var parentEndDefault = "]";
-	        if (orgUnit.level && orgUnit.level > 1) {
-	            var parentStart = parentStartDefault;
-	            var parentEnd = parentEndDefault;
-	            for (var i = 0; i < orgUnit.level - 2; i++) {
-	                parentStart += parentStartDefault;
-	                parentEnd += parentStartDefault;
-	            }
-	            fieldUrl += parentStart;
-	            fieldUrl += parentEnd;
-	        }
-	        return fieldUrl;
-	    }
-	
-	    $scope.expandCollapse = function (orgUnit) {
-	        orgUnit.show = !orgUnit.show;
-	        if (!orgUnit.childrenLoaded) {
-	            OrgUnitFactory.getOrgUnits(orgUnit.id, "fields=id,path,programs[id],children[id,displayName,programs[id],level,children[id]]&paging=false").then(function (data) {
-	
-	                orgUnit.children = data.organisationUnits[0].children;
-	                orgUnit.childrenLoaded = true;
+	    $scope.expandCollapseOrgUnitTree = function (orgUnit) {
+	        if (!orgUnit.children || orgUnit.children.length === 0) return;
+	        if (orgUnit.children[0].displayName) {
+	            orgUnit.show = !orgUnit.show;
+	        } else {
+	            OrgUnitFactory.getChildren(orgUnit.id).then(function (ou) {
+	                orgUnit.children = ou.children;
+	                orgUnit.show = !orgUnit.show;
 	            });
-	
-	            /*OrgUnitFactory.getChildren(orgUnit.id).then(function(data){
-	                orgUnit.children = data.children;
-	                orgUnit.childrenLoaded = true;
-	                
-	            });*/
 	        }
 	    };
 	    //end referral logic
@@ -17819,18 +17837,6 @@
 	            TEIService.changeTeiProgramOwner($scope.tei.trackedEntityInstance, $scope.selectedProgram.id, dummyEvent.orgUnit).then(function (response) {
 	                $scope.save();
 	            });
-	            /*RegistrationService.registerOrUpdate($scope.tei, $scope.optionSets, $scope.attributesById).then(function (regResponse) {
-	                var enrollment = currSelections.selectedEnrollment;
-	                enrollment.orgUnit = dummyEvent.orgUnit;
-	                return EnrollmentService.update(enrollment).then(function(){
-	                    var frontPageData = CurrentSelection.getFrontPageData();
-	                    if(frontPageData && frontPageData.viewData && frontPageData.viewData.trackedEntityList){
-	                        frontPageData.viewData.trackedEntityList.refresh = true;
-	                        CurrentSelection.setFrontPageData(frontPageData);
-	                    }
-	                    $scope.save();
-	                });
-	            });*/
 	        });
 	    };
 	
@@ -20932,7 +20938,7 @@
 	
 	var trackerCapture = angular.module('trackerCapture');
 	
-	trackerCapture.controller('SearchController', ["$rootScope", "$scope", "$modal", "$location", "$filter", "$translate", "$timeout", "$q", "Paginator", "MetaDataFactory", "DateUtils", "OrgUnitFactory", "ProgramFactory", "AttributesFactory", "EntityQueryFactory", "CurrentSelection", "TEService", "SearchGroupService", "OperatorFactory", "TEIGridService", "AccessUtils", function ($rootScope, $scope, $modal, $location, $filter, $translate, $timeout, $q, Paginator, MetaDataFactory, DateUtils, OrgUnitFactory, ProgramFactory, AttributesFactory, EntityQueryFactory, CurrentSelection, TEService, SearchGroupService, OperatorFactory, TEIGridService, AccessUtils) {
+	trackerCapture.controller('SearchController', ["$rootScope", "$scope", "$modal", "$location", "$filter", "$translate", "$timeout", "$q", "Paginator", "MetaDataFactory", "DateUtils", "OrgUnitFactory", "ProgramFactory", "AttributesFactory", "EntityQueryFactory", "CurrentSelection", "TEService", "SearchGroupService", "OperatorFactory", "TEIGridService", "AccessUtils", "TCOrgUnitService", function ($rootScope, $scope, $modal, $location, $filter, $translate, $timeout, $q, Paginator, MetaDataFactory, DateUtils, OrgUnitFactory, ProgramFactory, AttributesFactory, EntityQueryFactory, CurrentSelection, TEService, SearchGroupService, OperatorFactory, TEIGridService, AccessUtils, TCOrgUnitService) {
 	    var searchScopes = SearchGroupService.getSearchScopes();
 	    var currentSearchScope = searchScopes.TRACKEDENTITYTYPE;
 	    $scope.trackedEntityTypes = {};
@@ -20941,8 +20947,12 @@
 	    $scope.defaultOperators = OperatorFactory.defaultOperators;
 	    $scope.selectedProgramTET;
 	
-	    $scope.auditDescription = $scope.$watch('base.selectedProgram', function () {
+	    $scope.$watch('base.selectedProgram', function () {
 	        loadTrackedEntityTypes().then(loadForProgram);
+	    });
+	
+	    TCOrgUnitService.getSearchOrgUnitTree().then(function (searchOrgUnitTree) {
+	        $scope.searchOrgUnitTree = searchOrgUnitTree;
 	    });
 	
 	    var loadForProgram = function loadForProgram() {
@@ -21235,18 +21245,14 @@
 	        });
 	    };
 	    $scope.expandCollapseOrgUnitTree = function (orgUnit) {
-	        if (orgUnit.hasChildren) {
-	            //Get children for the selected orgUnit
-	            OrgUnitFactory.getChildren(orgUnit.id).then(function (ou) {
-	                orgUnit.show = !orgUnit.show;
-	                orgUnit.hasChildren = false;
-	                orgUnit.children = ou.children;
-	                angular.forEach(orgUnit.children, function (ou) {
-	                    ou.hasChildren = ou.children && ou.children.length > 0 ? true : false;
-	                });
-	            });
-	        } else {
+	        if (!orgUnit.children || orgUnit.children.length === 0) return;
+	        if (orgUnit.children[0].displayName) {
 	            orgUnit.show = !orgUnit.show;
+	        } else {
+	            OrgUnitFactory.getChildren(orgUnit.id).then(function (ou) {
+	                orgUnit.children = ou.children;
+	                orgUnit.show = !orgUnit.show;
+	            });
 	        }
 	    };
 	
@@ -37972,4 +37978,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-e9e10744bddfec556333.js.map
+//# sourceMappingURL=app-f865ce4a90aa33ff7073.js.map
