@@ -13628,6 +13628,13 @@
 	        return false;
 	    };
 	
+	    $scope.saveAttributedDisabledButton = function () {
+	        if ($scope.selectedTei && $scope.selectedTei.programOwnersById && $scope.selectedProgram && $scope.selectedTei.programOwnersById[$scope.selectedProgram.id] != $scope.selectedOrgUnit.id) return true;
+	        if ($scope.selectedOrgUnit.closedStatus) return true;
+	        if (!$scope.hasTeiWrite()) return true;
+	        return false;
+	    };
+	
 	    $scope.dataElementEditable = function (prStDe) {
 	        if ($scope.eventEditable()) {
 	            if ($scope.assignedFields && $scope.assignedFields[$scope.currentEvent.event] && $scope.assignedFields[$scope.currentEvent.event][prStDe.dataElement.id]) {
@@ -38001,4 +38008,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-aded10d50ba73bfbee7b.js.map
+//# sourceMappingURL=app-f6ff3b8b833b93a6c8c7.js.map
