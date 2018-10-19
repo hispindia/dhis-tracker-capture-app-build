@@ -13735,9 +13735,9 @@
 	        $window.open('../api/trackedEntityInstances/' + tei.trackedEntityInstance + '/' + attributeId + '/image', '_blank', '');
 	    };
 	
-	    $scope.setDateOnFocus = function (currentValue, date) {
+	    $scope.setDateOnFocus = function (currentValue) {
 	        if (!currentValue) {
-	            $scope.currentEvent.eventDate = date;
+	            $scope.currentEvent.eventDate = DateUtils.getToday();
 	        }
 	    };
 	
@@ -17459,6 +17459,12 @@
 	    $scope.calcTableWidth = function () {
 	        var width = angular.element(document.getElementById('tabelContainer'))[0].clientWidth;
 	        return width;
+	    };
+	
+	    $scope.setDateOnFocus = function (currentValue) {
+	        if (!currentValue) {
+	            $scope.currentEvent.eventDate = DateUtils.getToday();
+	        }
 	    };
 	}]).controller('EventOptionsInTableController', ["$scope", "$translate", function ($scope, $translate) {
 	
@@ -38159,4 +38165,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-0f26d8028e5f5ebfbf1b.js.map
+//# sourceMappingURL=app-b4d5d88449899e3de753.js.map
