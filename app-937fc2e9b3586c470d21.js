@@ -4999,7 +4999,8 @@
 	            customOnClick: '&dhClick',
 	            currentElement: '=dhCurrentElement',
 	            event: '=dhEvent',
-	            id: '=dhId'
+	            id: '=dhId',
+	            field: '=dhField'
 	        },
 	        controller: [
 	            '$scope',
@@ -5014,10 +5015,15 @@
 	
 	                $scope.valueClicked = function (buttonValue){
 	
+	                    if($scope.field) {
+	                        $scope.field.$setDirty();
+	                    }
+	
 	                    $scope.clickedButton = buttonValue;
 	
 	                    var originalValue = $scope.value;
 	                    var tempValue = buttonValue;
+	
 	                    if($scope.value === buttonValue){
 	                        tempValue = "";
 	                    }
@@ -38169,4 +38175,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-e3c6f700fab827e3b67a.js.map
+//# sourceMappingURL=app-937fc2e9b3586c470d21.js.map
