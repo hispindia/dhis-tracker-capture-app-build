@@ -7508,9 +7508,11 @@
 	
 	    defaultLayout['DEFAULT'] = { widgets: w, program: 'DEFAULT' };
 	
+	    var programStageLayout = {};
+	
 	    var getDefaultLayout = function getDefaultLayout(customLayout) {
 	        var dashboardLayout = { customLayout: customLayout, defaultLayout: defaultLayout };
-	        var promise = $http.get(DHIS2URL + '/systemSettings/keyTrackerDashboardDefaultLayout').then(function (response) {
+	        var promise = $http.get(DHIS2URL + '/dataStore/tracker-capture/keyTrackerDashboardDefaultLayout').then(function (response) {
 	            angular.extend(dashboardLayout.defaultLayout, response.data);
 	            return dashboardLayout;
 	        }, function () {
@@ -7524,26 +7526,59 @@
 	
 	    return {
 	        saveLayout: function saveLayout(dashboardLayout, saveAsDefault) {
-	            var url = saveAsDefault ? DHIS2URL + '/systemSettings/keyTrackerDashboardDefaultLayout' : DHIS2URL + '/userSettings/keyTrackerDashboardLayout';
-	            var promise = $http({
-	                method: "post",
-	                url: url,
-	                data: dashboardLayout,
-	                headers: { 'Content-Type': 'text/plain;charset=utf-8' }
-	            }).then(function (response) {
-	                return response.data;
-	            }, function (error) {
-	                var errorMsgHdr, errorMsgBody;
-	                errorMsgHdr = $translate.instant("error");
-	                if (saveAsDefault) {
-	                    errorMsgBody = $translate.instant("dashboard_layout_not_saved_as_default");
-	                } else {
-	                    errorMsgBody = $translate.instant("dashboard_layout_not_saved");
-	                }
-	                NotificationService.showNotifcationDialog(errorMsgHdr, errorMsgBody);
-	                return null;
-	            });
-	            return promise;
+	            if (saveAsDefault) {
+	                var url = DHIS2URL + '/dataStore/tracker-capture/keyTrackerDashboardDefaultLayout';
+	                var promise = $http({
+	                    method: "put",
+	                    url: url,
+	                    data: dashboardLayout,
+	                    headers: { 'Content-Type': 'application/json' }
+	                }).then(function (response) {
+	                    return response.data;
+	                }, function (error) {
+	                    var promise = $http({
+	                        method: "post",
+	                        url: url,
+	                        data: dashboardLayout,
+	                        headers: { 'Content-Type': 'application/json' }
+	                    }).then(function (response) {
+	                        return response.data;
+	                    }, function (error) {
+	                        var errorMsgHdr, errorMsgBody;
+	                        errorMsgHdr = $translate.instant("error");
+	                        if (saveAsDefault) {
+	                            errorMsgBody = $translate.instant("dashboard_layout_not_saved_as_default");
+	                        } else {
+	                            errorMsgBody = $translate.instant("dashboard_layout_not_saved");
+	                        }
+	                        NotificationService.showNotifcationDialog(errorMsgHdr, errorMsgBody);
+	                        return null;
+	                    });
+	                    return promise;
+	                });
+	                return promise;
+	            } else {
+	                var url = DHIS2URL + '/userSettings/keyTrackerDashboardLayout';
+	                var promise = $http({
+	                    method: "post",
+	                    url: url,
+	                    data: dashboardLayout,
+	                    headers: { 'Content-Type': 'application/json' }
+	                }).then(function (response) {
+	                    return response.data;
+	                }, function (error) {
+	                    var errorMsgHdr, errorMsgBody;
+	                    errorMsgHdr = $translate.instant("error");
+	                    if (saveAsDefault) {
+	                        errorMsgBody = $translate.instant("dashboard_layout_not_saved_as_default");
+	                    } else {
+	                        errorMsgBody = $translate.instant("dashboard_layout_not_saved");
+	                    }
+	                    NotificationService.showNotifcationDialog(errorMsgHdr, errorMsgBody);
+	                    return null;
+	                });
+	                return promise;
+	            }
 	        },
 	        get: function get() {
 	            var promise = $http.get(DHIS2URL + '/userSettings/keyTrackerDashboardLayout').then(function (response) {
@@ -7554,7 +7589,7 @@
 	            return promise;
 	        },
 	        getLockedList: function getLockedList() {
-	            var promise = $http.get(DHIS2URL + '/systemSettings/keyDefaultLayoutLocked').then(function (response) {
+	            var promise = $http.get(DHIS2URL + '/dataStore/tracker-capture/keyDefaultLayoutLocked').then(function (response) {
 	                return response.data;
 	            }, function () {
 	                return null;
@@ -7562,18 +7597,34 @@
 	            return promise;
 	        },
 	        saveLockedList: function saveLockedList(list) {
-	            var url = DHIS2URL + '/systemSettings/keyDefaultLayoutLocked';
+	            var url = DHIS2URL + '/dataStore/tracker-capture/keyDefaultLayoutLocked';
 	            var promise = $http({
-	                method: "post",
+	                method: "put",
 	                url: url,
 	                data: list,
-	                headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+	                headers: { 'Content-Type': 'application/json' }
 	            }).then(function (response) {
 	                return response.data;
 	            }, function (error) {
-	                return null;
+	                var promise = $http({
+	                    method: "post",
+	                    url: url,
+	                    data: list,
+	                    headers: { 'Content-Type': 'application/json' }
+	                }).then(function (response) {
+	                    return response.data;
+	                }, function (error) {
+	                    return null;
+	                });
+	                return promise;
 	            });
 	            return promise;
+	        },
+	        getProgramStageLayout: function getProgramStageLayout() {
+	            return programStageLayout;
+	        },
+	        setProgramStageLayout: function setProgramStageLayout(layoutToSet) {
+	            programStageLayout = layoutToSet;
 	        }
 	    };
 	}]).service('DasboardWidgetService', function () {
@@ -12066,6 +12117,7 @@
 	        DashboardLayoutService.getLockedList().then(function (r) {
 	            if (!r || r === '') {
 	                $scope.lockedList = {};
+	                DashboardLayoutService.saveLockedList($scope.lockedList);
 	            } else {
 	                $scope.lockedList = r;
 	            }
@@ -12195,7 +12247,7 @@
 	            widgets.push(w);
 	        });
 	
-	        return { widgets: widgets, topBarSettings: $scope.topBarConfig.settings, program: $scope.selectedProgram && $scope.selectedProgram.id ? $scope.selectedProgram.id : 'DEFAULT' };
+	        return { widgets: widgets, topBarSettings: $scope.topBarConfig.settings, program: $scope.selectedProgram && $scope.selectedProgram.id ? $scope.selectedProgram.id : 'DEFAULT', programStageTimeLineLayout: DashboardLayoutService.getProgramStageLayout() };
 	    }
 	
 	    function saveDashboardLayout() {
@@ -14183,7 +14235,7 @@
 	/* global angular, trackerCapture */
 	
 	var trackerCapture = angular.module('trackerCapture');
-	trackerCapture.controller('DataEntryController', ["$rootScope", "$scope", "$modal", "$filter", "$log", "$timeout", "$translate", "$window", "$q", "$parse", "$location", "CommonUtils", "DateUtils", "EventUtils", "orderByFilter", "SessionStorageService", "EnrollmentService", "DHIS2EventFactory", "ModalService", "NotificationService", "CurrentSelection", "TrackerRulesExecutionService", "CustomFormService", "PeriodService", "OptionSetService", "AttributesFactory", "TrackerRulesFactory", "EventCreationService", "AuthorityService", "AccessUtils", "TCOrgUnitService", function ($rootScope, $scope, $modal, $filter, $log, $timeout, $translate, $window, $q, $parse, $location, CommonUtils, DateUtils, EventUtils, orderByFilter, SessionStorageService, EnrollmentService, DHIS2EventFactory, ModalService, NotificationService, CurrentSelection, TrackerRulesExecutionService, CustomFormService, PeriodService, OptionSetService, AttributesFactory, TrackerRulesFactory, EventCreationService, AuthorityService, AccessUtils, TCOrgUnitService) {
+	trackerCapture.controller('DataEntryController', ["$rootScope", "$scope", "$modal", "$filter", "$log", "$timeout", "$translate", "$window", "$q", "$parse", "$location", "CommonUtils", "DateUtils", "DashboardLayoutService", "EventUtils", "orderByFilter", "SessionStorageService", "EnrollmentService", "DHIS2EventFactory", "ModalService", "NotificationService", "CurrentSelection", "TrackerRulesExecutionService", "CustomFormService", "PeriodService", "OptionSetService", "AttributesFactory", "TrackerRulesFactory", "EventCreationService", "AuthorityService", "AccessUtils", "TCOrgUnitService", function ($rootScope, $scope, $modal, $filter, $log, $timeout, $translate, $window, $q, $parse, $location, CommonUtils, DateUtils, DashboardLayoutService, EventUtils, orderByFilter, SessionStorageService, EnrollmentService, DHIS2EventFactory, ModalService, NotificationService, CurrentSelection, TrackerRulesExecutionService, CustomFormService, PeriodService, OptionSetService, AttributesFactory, TrackerRulesFactory, EventCreationService, AuthorityService, AccessUtils, TCOrgUnitService) {
 	
 	    //Unique instance id for the controller:
 	    $scope.instanceId = Math.floor(Math.random() * 1000000000);
@@ -14242,6 +14294,24 @@
 	
 	    $scope.attributesById = CurrentSelection.getAttributesById();
 	    $scope.optionGroupsById = CurrentSelection.getOptionGroupsById();
+	
+	    DashboardLayoutService.get().then(function (response) {
+	        $scope.dashBoardLayout = response;
+	        if ($scope.dashBoardLayout.customLayout[$scope.selectedProgramId].programStageTimeLineLayout) {
+	            DashboardLayoutService.setProgramStageLayout($scope.dashBoardLayout.customLayout[$scope.selectedProgramId].programStageTimeLineLayout);
+	        } else if ($scope.dashBoardLayout.defaultLayout[$scope.selectedProgramId].programStageTimeLineLayout) {
+	            DashboardLayoutService.setProgramStageLayout($scope.dashBoardLayout.defaultLayout[$scope.selectedProgramId].programStageTimeLineLayout);
+	        }
+	    });
+	
+	    DashboardLayoutService.getLockedList().then(function (response) {
+	        if (!response || response === '') {
+	            $scope.lockedList = {};
+	            DashboardLayoutService.saveLockedList($scope.lockedList);
+	        } else {
+	            $scope.lockedList = response;
+	        }
+	    });
 	
 	    $scope.userAuthority = AuthorityService.getUserAuthorities(SessionStorageService.get('USER_PROFILE'));
 	    if (!$scope.attributesById) {
@@ -14377,14 +14447,67 @@
 	        $scope.printEmptyForm = false;
 	    };
 	
-	    $scope.toggleCompForm = function () {
-	        if ($scope.currentStage.timelineDataEntryMode !== $scope.timelineDataEntryModes.COMPAREALLDATAENTRYFORM) {
+	    $scope.toggleForm = function (type) {
+	        if (type === 'DEFAULT') {
+	            $scope.currentStage.timelineDataEntryMode = $scope.timelineDataEntryModes.DATAENTRYFORM;
+	        } else if (type === 'COMPPRE') {
+	            $scope.currentStage.timelineDataEntryMode = $scope.timelineDataEntryModes.COMPAREPREVIOUSDATAENTRYFORM;
+	        } else if (type === 'COMPALL') {
 	            $scope.currentStage.timelineDataEntryMode = $scope.timelineDataEntryModes.COMPAREALLDATAENTRYFORM;
+	        } else if (type === 'GRID') {
+	            $scope.currentStage.timelineDataEntryMode = $scope.timelineDataEntryModes.TABLEDATAENTRYFORM;
+	            $scope.tableEditMode = $scope.tableEditModes.table;
+	        } else if (type === 'POP') {
+	            $scope.currentStage.timelineDataEntryMode = $scope.timelineDataEntryModes.TABLEDATAENTRYFORM;
+	            $scope.tableEditMode = $scope.tableEditModes.form;
 	        } else {
+	            //Fall back to DEFAULT form.
 	            $scope.currentStage.timelineDataEntryMode = $scope.timelineDataEntryModes.DATAENTRYFORM;
 	        }
+	
+	        var layout = angular.copy($scope.dashBoardLayout);
+	
+	        if (!layout.customLayout[$scope.selectedProgramId]) {
+	            layout.customLayout[$scope.selectedProgramId] = getCurrentDashboardLayout();
+	        }
+	
+	        if (!layout.customLayout[$scope.selectedProgramId].programStageTimeLineLayout) {
+	            layout.customLayout[$scope.selectedProgramId].programStageTimeLineLayout = {};
+	        }
+	
+	        layout.customLayout[$scope.selectedProgramId].programStageTimeLineLayout[$scope.currentStage.id] = { timelineDataEntryMode: $scope.currentStage.timelineDataEntryMode, tableEditMode: $scope.tableEditMode || $scope.tableEditMode === 0 ? $scope.tableEditMode : -1 };
+	
+	        DashboardLayoutService.saveLayout(layout.customLayout, false);
+	        DashboardLayoutService.setProgramStageLayout(layout.customLayout[$scope.selectedProgramId].programStageTimeLineLayout);
+	        $scope.dashBoardLayout.customLayout = layout.customLayout;
+	
 	        $scope.getDataEntryForm();
 	    };
+	
+	    function getCurrentDashboardLayout() {
+	        var widgets = [];
+	        $scope.hasBigger = false;
+	        $scope.hasSmaller = false;
+	        angular.forEach($rootScope.dashboardWidgets, function (widget) {
+	            var w = angular.copy(widget);
+	            if ($scope.orderChanged) {
+	                if ($scope.widgetsOrder.biggerWidgets.indexOf(w.title) !== -1) {
+	                    $scope.hasBigger = $scope.hasBigger || w.show;
+	                    w.parent = 'biggerWidget';
+	                    w.order = $scope.widgetsOrder.biggerWidgets.indexOf(w.title);
+	                }
+	
+	                if ($scope.widgetsOrder.smallerWidgets.indexOf(w.title) !== -1) {
+	                    $scope.hasSmaller = $scope.hasSmaller || w.show;
+	                    w.parent = 'smallerWidget';
+	                    w.order = $scope.widgetsOrder.smallerWidgets.indexOf(w.title);
+	                }
+	            }
+	            widgets.push(w);
+	        });
+	
+	        return { widgets: widgets, topBarSettings: $scope.topBarConfig.settings, program: $scope.selectedProgram && $scope.selectedProgram.id ? $scope.selectedProgram.id : 'DEFAULT' };
+	    }
 	
 	    //Adds support for HIDEPROGRAMSTAGE even if no event exists in enrollment
 	    var processRegistrationRuleEffect = function processRegistrationRuleEffect(event, callerId) {
@@ -15446,10 +15569,6 @@
 	    $scope.tableEditModes = { form: 0, table: 1, tableAndForm: 2 };
 	    $scope.tableEditMode = $scope.tableEditModes.table;
 	
-	    $scope.toggleTableEditMode = function () {
-	        $scope.tableEditMode = $scope.tableEditMode === $scope.tableEditModes.tableAndForm ? $scope.tableEditModes.form : $scope.tableEditModes.tableAndForm;
-	    };
-	
 	    $scope.eventRowChanged = false;
 	    $scope.eventRowClicked = function (event) {
 	
@@ -15460,6 +15579,7 @@
 	            $scope.eventRowChanged = false;
 	        }
 	
+	        // This controls if it should be displayed as modal or normal table.
 	        if ($scope.tableEditMode === $scope.tableEditModes.form) {
 	            $scope.openEventEditFormModal(event);
 	        }
@@ -15479,7 +15599,7 @@
 	            event.editingNotAllowed = EventUtils.getEditingStatus(event, stage, $scope.selectedOrgUnit, $scope.selectedTei, $scope.selectedEnrollment, $scope.selectedProgram, userSearchOrgUnits);
 	        }
 	
-	        $scope.eventEditFormModalInstance = modalInstance = $modal.open({
+	        $scope.eventEditFormModalInstance = $modal.open({
 	            templateUrl: 'components/dataentry/modal-default-form.html',
 	            scope: $scope
 	        });
@@ -15554,6 +15674,17 @@
 	        $scope.currentStage = $scope.stagesById[$scope.currentEvent.programStage];
 	        $scope.currentStageEvents = $scope.eventsByStage[$scope.currentEvent.programStage];
 	
+	        if ($scope.dashBoardLayout.customLayout[$scope.selectedProgramId] && $scope.dashBoardLayout.customLayout[$scope.selectedProgramId].programStageTimeLineLayout && $scope.dashBoardLayout.customLayout[$scope.selectedProgramId].programStageTimeLineLayout[$scope.currentStage.id] && !$scope.lockedList[$scope.selectedProgramId]) {
+	            $scope.currentStage.timelineDataEntryMode = $scope.dashBoardLayout.customLayout[$scope.selectedProgramId].programStageTimeLineLayout[$scope.currentStage.id].timelineDataEntryMode;
+	            $scope.currentStage.tableEditMode = $scope.dashBoardLayout.customLayout[$scope.selectedProgramId].programStageTimeLineLayout[$scope.currentStage.id].tableEditMode;
+	        } else if ($scope.dashBoardLayout.defaultLayout[$scope.selectedProgramId] && $scope.dashBoardLayout.defaultLayout[$scope.selectedProgramId].programStageTimeLineLayout && $scope.dashBoardLayout.defaultLayout[$scope.selectedProgramId].programStageTimeLineLayout[$scope.currentStage.id] || $scope.lockedList[$scope.selectedProgramId]) {
+	            $scope.currentStage.timelineDataEntryMode = $scope.dashBoardLayout.defaultLayout[$scope.selectedProgramId].programStageTimeLineLayout[$scope.currentStage.id].timelineDataEntryMode;
+	            $scope.currentStage.tableEditMode = $scope.dashBoardLayout.defaultLayout[$scope.selectedProgramId].programStageTimeLineLayout[$scope.currentStage.id].tableEditMode;
+	        } else {
+	            $scope.currentStage.timelineDataEntryMode = 0;
+	            $scope.currentStage.tableEditMode = 0;
+	        }
+	
 	        angular.forEach($scope.currentStage.programStageSections, function (section) {
 	            section.open = true;
 	        });
@@ -15582,6 +15713,9 @@
 	                        }
 	                    }
 	                    $scope.displayCustomForm = "TABLE";
+	
+	                    $scope.tableEditMode = $scope.currentStage.tableEditMode;
+	
 	                    break;
 	
 	                default:
@@ -38025,4 +38159,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-2494363353f4bd8f56f1.js.map
+//# sourceMappingURL=app-0f26d8028e5f5ebfbf1b.js.map
