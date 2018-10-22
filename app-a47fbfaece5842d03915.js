@@ -3215,6 +3215,8 @@
 	                            if(angular.isUndefined( $rootScope.ruleeffects[ruleEffectKey][action.id] )){
 	                                $rootScope.ruleeffects[ruleEffectKey][action.id] =  {
 	                                    id:action.id,
+	                                    option:action.option,
+	                                    optionGroup:action.optionGroup,
 	                                    location:action.location,
 	                                    action:action.programRuleActionType,
 	                                    dataElement:action.dataElement,
@@ -38175,4 +38177,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-937fc2e9b3586c470d21.js.map
+//# sourceMappingURL=app-a47fbfaece5842d03915.js.map
