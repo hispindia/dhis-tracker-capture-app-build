@@ -14305,9 +14305,9 @@
 	
 	    DashboardLayoutService.get().then(function (response) {
 	        $scope.dashBoardLayout = response;
-	        if ($scope.dashBoardLayout.customLayout[$scope.selectedProgramId].programStageTimeLineLayout) {
+	        if ($scope.dashBoardLayout.customLayout && $scope.dashBoardLayout.customLayout[$scope.selectedProgramId] && $scope.dashBoardLayout.customLayout[$scope.selectedProgramId].programStageTimeLineLayout) {
 	            DashboardLayoutService.setProgramStageLayout($scope.dashBoardLayout.customLayout[$scope.selectedProgramId].programStageTimeLineLayout);
-	        } else if ($scope.dashBoardLayout.defaultLayout[$scope.selectedProgramId].programStageTimeLineLayout) {
+	        } else if ($scope.dashBoardLayout.defaultLayout && $scope.dashBoardLayout.defaultLayout[$scope.selectedProgramId] && $scope.dashBoardLayout.defaultLayout[$scope.selectedProgramId].programStageTimeLineLayout) {
 	            DashboardLayoutService.setProgramStageLayout($scope.dashBoardLayout.defaultLayout[$scope.selectedProgramId].programStageTimeLineLayout);
 	        }
 	    });
@@ -38177,4 +38177,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-a47fbfaece5842d03915.js.map
+//# sourceMappingURL=app-6950fb053483458f4c2a.js.map
