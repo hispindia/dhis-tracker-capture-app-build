@@ -7512,7 +7512,7 @@
 	
 	    var getDefaultLayout = function getDefaultLayout(customLayout) {
 	        var dashboardLayout = { customLayout: customLayout, defaultLayout: defaultLayout };
-	        var promise = $http.get(DHIS2URL + '/systemSettings/keyTrackerDashboardDefaultLayout').then(function (response) {
+	        var promise = $http.get(DHIS2URL + '/dataStore/tracker-capture/keyTrackerDashboardDefaultLayout').then(function (response) {
 	            angular.extend(dashboardLayout.defaultLayout, response.data);
 	            return dashboardLayout;
 	        }, function () {
@@ -38054,4 +38054,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-3f391ffaeaf2a59f5be7.js.map
+//# sourceMappingURL=app-16a0203cf491da537e6c.js.map
