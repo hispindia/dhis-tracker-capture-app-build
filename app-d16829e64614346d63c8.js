@@ -1335,7 +1335,7 @@
 	                        if (att) {
 	                            var attMaxDate = att.allowFutureDate ? '' : 0;
 	                            var isTrackerAssociate = att.valueType === 'TRACKER_ASSOCIATE';
-	                            var requiredInputField = 'attributeIsRequired('+att+')';
+	                            var requiredInputField = 'attributeIsRequired('+att.id+','+att.mandatory+')';
 	                            var disableInputField = 'attributeFieldDisabled(attributesById.'+attId+')';
 	                            var commonInputFieldProperty = ' name="' + fieldName + '"' +
 	                                ' element-id="' + i + '"' +
@@ -38054,4 +38054,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-c543597e641232efbfa8.js.map
+//# sourceMappingURL=app-d16829e64614346d63c8.js.map
