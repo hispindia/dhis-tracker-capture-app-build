@@ -13762,12 +13762,12 @@
 	        return $scope.registrationMode === 'REGISTRATION' && !$scope.selectedProgram && $scope.trackedEntityTypes.selected && !showTetRegistrationButtons();
 	    };
 	
-	    $scope.attributeIsRequired = function (attribute) {
+	    $scope.attributeIsRequired = function (attributeId, attributeMandatory) {
 	        //If has authority Ignore required validation, skip required
 	        if ($scope.userAuthority.ignoreRequiredTrackerValueValidation) {
 	            return false;
 	        }
-	        return attribute.mandatory || $scope.mandatoryFields[attribute.id];
+	        return attributeMandatory || $scope.mandatoryFields[attributeId];
 	    };
 	
 	    var showTetRegistrationButtons = function showTetRegistrationButtons() {
@@ -38177,4 +38177,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-6950fb053483458f4c2a.js.map
+//# sourceMappingURL=app-71fe99ee1b8b1e5a3861.js.map
