@@ -5952,10 +5952,15 @@
 	            
 	            $scope.age = {};
 	            
-	            if( $scope.id && $scope.d2Object && $scope.d2Object[$scope.id] ){
-	                $scope.age.dob = $scope.d2Object[$scope.id];
-	                formatAge();
+	            var setDate = function(){
+	                if( $scope.id && $scope.d2Object && $scope.d2Object[$scope.id] ){
+	                    $scope.age.dob = $scope.d2Object[$scope.id];
+	                    formatAge();
+	                }
 	            }
+	
+	            setDate();
+	
 	            
 	            function formatAge(){
 	                if( $scope.age && $scope.age.dob !== "" ){
@@ -5974,7 +5979,15 @@
 	                    }
 	                }
 	            });
-	            
+	
+	            //In cases where the value is assigned with a program rule we need to set model.radio so that the UI updates.
+	            $scope.$watch('d2Object[id]',function(newValue, oldValue){
+	                if( newValue !== oldValue ){
+	                    $scope.age = {};
+	                    setDate();
+	                }        
+	            });
+	
 	            $scope.saveDOB = function(){                
 	                formatAge();                
 	            };
@@ -38177,4 +38190,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-77c6bdc96f7d02347e46.js.map
+//# sourceMappingURL=app-131ad5130e3cd9322651.js.map
