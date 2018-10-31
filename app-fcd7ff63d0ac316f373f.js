@@ -13680,7 +13680,7 @@
 	    };
 	
 	    $scope.attributeFieldDisabled = function (attribute) {
-	        if ($scope.selectedTei && $scope.selectedTei.programOwnersById && $scope.selectedProgram && $scope.selectedTei.programOwnersById[$scope.selectedProgram.id] != $scope.selectedOrgUnit.id) return true;
+	        if ($scope.selectedTei && $scope.selectedTei.programOwnersById && $scope.selectedProgram && $scope.selectedTei.programOwnersById[$scope.selectedProgram.id] && $scope.selectedTei.programOwnersById[$scope.selectedProgram.id] != $scope.selectedOrgUnit.id) return true;
 	        if ($scope.isDisabled(attribute)) return true;
 	        if ($scope.selectedOrgUnit.closedStatus) return true;
 	        if (!$scope.hasTeiWrite()) return true;
@@ -13917,7 +13917,7 @@
 	    });
 	    $scope.$on('teienrolled', function (event, args) {
 	        $route.updateParams({ program: event.currentScope.selectedProgram.id });
-	        //$route.reload();
+	        $route.reload();
 	    });
 	    $scope.verifyExpiryDate = function (eventDateStr) {
 	        if ($scope.userAuthority.canEditExpiredStuff) return true;
@@ -38067,4 +38067,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-d71c1a353e75923ea61c.js.map
+//# sourceMappingURL=app-fcd7ff63d0ac316f373f.js.map
