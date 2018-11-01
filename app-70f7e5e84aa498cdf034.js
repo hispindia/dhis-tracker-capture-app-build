@@ -20682,7 +20682,6 @@
 	    };
 	
 	    $scope.setProgram = function (selectedProgram, defaultView) {
-	        console.log(DHIS2URL);
 	        previousProgram = $scope.base.selectedProgram;
 	        $scope.base.selectedProgram = $scope.selectedProgram = selectedProgram;
 	        if (!$scope.base.selectedProgram || !$scope.base.selectedProgram.displayFrontPageList) {
@@ -38195,4 +38194,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-bad48f33167fbbec7a80.js.map
+//# sourceMappingURL=app-70f7e5e84aa498cdf034.js.map
