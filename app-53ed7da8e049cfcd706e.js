@@ -11896,6 +11896,7 @@
 	        }
 	    });
 	    $rootScope.hasAccess = false;
+	    $scope.APIURL = DHIS2URL;
 	    //selections
 	    var orgUnitUrl = $location.search().ou;
 	    var fromAudit = $location.search().fromAudit;
@@ -14228,6 +14229,7 @@
 	trackerCapture.controller('DataEntryController', ["$rootScope", "$scope", "$modal", "$filter", "$log", "$timeout", "$translate", "$window", "$q", "$parse", "$location", "CommonUtils", "DateUtils", "EventUtils", "orderByFilter", "SessionStorageService", "EnrollmentService", "DHIS2EventFactory", "ModalService", "NotificationService", "CurrentSelection", "TrackerRulesExecutionService", "CustomFormService", "PeriodService", "OptionSetService", "AttributesFactory", "TrackerRulesFactory", "EventCreationService", "AuthorityService", "AccessUtils", "TCOrgUnitService", function ($rootScope, $scope, $modal, $filter, $log, $timeout, $translate, $window, $q, $parse, $location, CommonUtils, DateUtils, EventUtils, orderByFilter, SessionStorageService, EnrollmentService, DHIS2EventFactory, ModalService, NotificationService, CurrentSelection, TrackerRulesExecutionService, CustomFormService, PeriodService, OptionSetService, AttributesFactory, TrackerRulesFactory, EventCreationService, AuthorityService, AccessUtils, TCOrgUnitService) {
 	
 	    //Unique instance id for the controller:
+	    $scope.APIURL = DHIS2URL;
 	    $scope.instanceId = Math.floor(Math.random() * 1000000000);
 	    $scope.printForm = false;
 	    $scope.printEmptyForm = false;
@@ -15056,6 +15058,7 @@
 	                        dhis2Event.dueDateLabel = eventStage.dueDateLabel ? eventStage.dueDateLabel : $translate.instant('due_date');
 	                        dhis2Event.dueDate = DateUtils.formatFromApiToUser(dhis2Event.dueDate);
 	                        dhis2Event.sortingDate = dhis2Event.dueDate;
+	                        dhis2Event.style = eventStage.style;
 	
 	                        if (dhis2Event.eventDate) {
 	                            dhis2Event.eventDate = DateUtils.formatFromApiToUser(dhis2Event.eventDate);
@@ -20397,6 +20400,7 @@
 	    $scope.trackedEntityTypesById = {};
 	    var previousProgram = null;
 	    $scope.base = {};
+	    $scope.APIURL = DHIS2URL;
 	
 	    var viewsByType = {
 	        registration: {
@@ -20555,6 +20559,7 @@
 	    };
 	
 	    $scope.setProgram = function (selectedProgram, defaultView) {
+	        console.log(DHIS2URL);
 	        previousProgram = $scope.base.selectedProgram;
 	        $scope.base.selectedProgram = $scope.selectedProgram = selectedProgram;
 	        if (!$scope.base.selectedProgram || !$scope.base.selectedProgram.displayFrontPageList) {
@@ -38067,4 +38072,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-fcd7ff63d0ac316f373f.js.map
+//# sourceMappingURL=app-53ed7da8e049cfcd706e.js.map
