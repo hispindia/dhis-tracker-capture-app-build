@@ -39,7 +39,7 @@
                                             {{'enrolling_orgunit' | translate}}
                                         </td>
                                         <td class="absorbing-column">
-                                            <input type="text" class="form-control" ng-attr-value={{selectedEnrollment.orgUnitName}} ng-disabled="true"/>
+                                            <input type="text" class="form-control" value={{selectedEnrollment.orgUnitName}} ng-disabled="true"/>
                                         </td>
                                     </tr>
                                     <tr>
@@ -100,7 +100,7 @@
                                             <d2-map d2-lat-saved="enrollmentLatSaved"
                                                     d2-lng-saved="enrollmentLngSaved"
                                                     d2-object="selectedEnrollment" 
-                                                    d2-disabled="!selectedProgram.access.data.write || selectedEnrollment.status !== 'ACTIVE' || selectedOrgUnit.closedStatus || selectedEnrollment.orgUnit != selectedOrgUnit.id"
+                                                    d2-disabled="!selectedProgram.access.data.write || selectedEnrollment.status !== 'ACTIVE' || selectedOrgUnit.closedStatus"
                                                     d2-function="saveCoordinate(arg1)" 
                                                     d2-coordinate-format="'COORDINATE'"
                                                     d2-function-param-coordinate="LATLNG">

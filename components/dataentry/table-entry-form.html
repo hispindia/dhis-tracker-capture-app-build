@@ -13,7 +13,7 @@
           {{attribute.displayName}}
         </td>
         <td class="col-sm-6">
-          <input type="text" ng-attr-value={{attribute.value}} class="form-control">
+          <input type="text" value={{attribute.value}} class="form-control">
         </td>
       </tr>
       </tbody>
@@ -29,7 +29,7 @@
           {{'enrolling_orgunit'| translate}}
         </td>
         <td class="col-sm-6">
-          <input type="text" ng-attr-value={{selectedEnrollment.orgUnitName}} class="form-control">
+          <input type="text" value={{selectedEnrollment.orgUnitName}} class="form-control">
         </td>
       </tr>
       <tr>
@@ -37,7 +37,7 @@
           {{selectedProgram.enrollmentDateLabel}}
         </td>
         <td class="col-sm-6">
-          <input type="text" ng-attr-value= {{selectedEnrollment.enrollmentDate}} class="form-control">
+          <input type="text" value= {{selectedEnrollment.enrollmentDate}} class="form-control">
         </td>
       </tr>
       <tr>
@@ -45,7 +45,7 @@
           {{selectedProgram.incidentDateLabel}}
         </td>
         <td class="col-sm-6">
-          <input type="text" ng-attr-value={{selectedEnrollment.incidentDate}} class="form-control">
+          <input type="text" value={{selectedEnrollment.incidentDate}} class="form-control">
         </td>
       </tr>
       </tbody>
@@ -143,7 +143,7 @@
                                             ng-disabled="!dataElementEditable(prStDe)"
                                             ng-model="eventRow[prStDe.dataElement.id]"
                                             ng-change="saveDatavalue(prStDe, $eval('eventRowForm' + eventRow.event + '.' + eventRow.event + prStDe.dataElement.id))"
-                                            ng-attr-value=""> {{'no_value' | translate}}<br>
+                                            value=""> {{'no_value' | translate}}<br>
                                     </label><br>
                                     <span ng-repeat="option in optionSets[prStDe.dataElement.optionSet.id].options">
                                         <label>
@@ -157,7 +157,7 @@
                                                 ng-disabled="!dataElementEditable(prStDe)"
                                                 ng-model="eventRow[prStDe.dataElement.id]"
                                                 ng-change="saveDatavalue(prStDe, $eval('eventRowForm' + eventRow.event + '.' + eventRow.event + prStDe.dataElement.id))"
-                                                ng-attr-value={{option.displayName}}> {{option.displayName}}
+                                                value={{option.displayName}}> {{option.displayName}}
                                         </label><br>
                                     </span>
                                 </div>

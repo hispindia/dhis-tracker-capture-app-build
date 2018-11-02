@@ -23,7 +23,7 @@
         <input type="text"
                class="form-control not-for-screen"
                ng-class="{'input-success': eventDateSaved}"
-               ng-attr-value={{currentEvent.eventDate}}>
+               value={{currentEvent.eventDate}}>
         <div ng-messages="outerDataEntryForm.eventDate.$error" ng-if="interacted(outerDataEntryForm.eventDate)" class="required" ng-messages-include="../dhis-web-commons/angular-forms/error-messages.html">
         </div>
     </div>
@@ -49,25 +49,26 @@
         <input type="text"
                class="form-control not-for-screen"
                ng-class="{'input-success': dueDateSaved}"
-               ng-attr-value={{currentEvent.dueDate}}>        
+               value={{currentEvent.dueDate}}>        
         <div ng-messages="outerDataEntryForm.dueDate.$error" ng-if="interacted(outerDataEntryForm.dueDate)" class="required" ng-messages-include="../dhis-web-commons/angular-forms/error-messages.html">                        
         </div>
     </div>    
 </div>
 <!-- event dates/scheduling end -->
+
 <!-- coordinates begin -->
-<div class="row" ng-if="currentStage.featureType && currentStage.featureType !== 'NONE' && (currentEvent.eventDate || registrationMode ==='REGISTRATION')">
+<div class="row" ng-if="currentStage.captureCoordinates && currentEvent.eventDate || currentStage.captureCoordinates && registrationMode === 'REGISTRATION'">    
     <div class="col-sm-12">
-        {{'geometry' | translate}}
-        <d2-geometry
-                d2-object-id="geometry"
-                d2-object="currentEvent"
-                d2-callback-function="saveGeometry()"
+        {{'coordinate' | translate}}
+        <d2-map d2-lat-saved="latitudeSaved"
+                d2-lng-saved="longitudeSaved"
+                d2-object="currentEvent" 
                 d2-disabled="selectedOrgUnit.closedStatus || currentEvent.editingNotAllowed || selectedEnrollment.status !== 'ACTIVE'"
-                d2-geometry-type="currentStage.featureType"
-                >
-        </d2-geometry>
-    </div>   
+                d2-function="saveCoordinate(arg1)" 
+                d2-coordinate-format="'COORDINATE'"
+                d2-function-param-coordinate="LATLNG">
+        </d2-map>
+    </div>    
 </div>
 <!-- coordinates end -->
 

@@ -1208,10 +1208,6 @@ a:active {
     padding:0px;
 }
 
-.no-margin {
-    margin:0px;
-}
-
 /*Necessary to override the .panel-group .panel { overflow: hidden; } in bootstrap.*/
 .panel-group .panel {
     overflow: visible;
@@ -2360,7 +2356,7 @@ button.list-group-item-danger.active:focus {
 }
 
 .select2-drop{
-    z-index: 1000;
+    z-index: 10000;
 }
 
 .tei-list-scroll {
@@ -2379,28 +2375,3 @@ button.list-group-item-danger.active:focus {
     padding-bottom: 0px!important;
     line-height: 44px;
 }
-
-.geometry-polygon-indicator{
-    height: 34px!important;
-    vertical-align: middle;
-    border: 1px solid #ccc;
-    border-radius: 4px 0px 0px 4px;
-    margin-top: 5px;
-    text-align: center;
-    line-height: 34px;
-    background-color: white;
-}
-
-.icon-program{
-   width: 16px;
-   height: 16px;
-   border-radius: 2px;
-}
-
-.icon-program-left{
-    width: 16px;
-    height: 16px;
-    float: left;
-    border-radius: 2px;
-    margin-right: 5px;
- }

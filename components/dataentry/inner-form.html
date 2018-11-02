@@ -6,9 +6,10 @@
                                 d2-model-id="prStDe.dataElement.id"
                                 d2-required="prStDe.compulsory || mandatoryFields[currentEvent.event][prStDe.dataElement.id]"
                                 d2-disabled="!dataElementEditable(prStDe)"
-                                d2-change="saveDatavalue(prStDe,innerForm.foo)"
+                                d2-save-methode="saveDatavalue"
+                                d2-save-methode-parameter1="prStDe"
+                                d2-save-methode-parameter2="innerForm.foo"
                                 d2-max-option-size="maxOptionSize"
-                                d2-option-filter="optionVisibility[currentEvent.event]"
                                 d2-all-options="optionSets[prStDe.dataElement.optionSet.id].options"
                                 d2-use-notification="true"
                                 d2-element="currentElement">
@@ -18,8 +19,7 @@
                 <d2-radio id="prStDe.dataElement.id" 
                     d2-name="foo" 
                     d2-value-saved="currentElement.saved && currentElement.id === prStDe.dataElement.id"
-                    d2-object="currentEvent"
-                    d2-option-filter="optionVisibility[currentEvent.event]"
+                    d2-object="currentEvent" 
                     d2-options="optionSets[prStDe.dataElement.optionSet.id].options"
                     d2-required="prStDe.compulsory || mandatoryFields[currentEvent.event][prStDe.dataElement.id]"
                     d2-disabled="!dataElementEditable(prStDe)"
@@ -28,7 +28,7 @@
             </div>
         </div>
         <div class="not-for-screen">
-            <input type="text" class="form-control" ng-attr-value={{currentEvent[prStDe.dataElement.id]}}>
+            <input type="text" class="form-control" value={{currentEvent[prStDe.dataElement.id]}}>
         </div>
     </div>
     <div ng-if="!prStDe.dataElement.optionSetValue" ng-switch="prStDe.dataElement.valueType">
@@ -46,7 +46,7 @@
                        name="foo"/>
             </div>
             <div class="not-for-screen">
-                <input type="text" class="form-control" ng-attr-value={{currentEvent[prStDe.dataElement.id]}}>
+                <input type="text" class="form-control" value={{currentEvent[prStDe.dataElement.id]}}>
             </div>
         </div>
         <div ng-switch-when="PERCENTAGE">
@@ -63,7 +63,7 @@
                        name="foo"/>
             </div>
             <div class="not-for-screen">
-                <input type="text" class="form-control" ng-attr-value={{currentEvent[prStDe.dataElement.id]}}>
+                <input type="text" class="form-control" value={{currentEvent[prStDe.dataElement.id]}}>
             </div>
         </div>
         <div ng-switch-when="INTEGER">
@@ -80,7 +80,7 @@
                        name="foo"/>
             </div>
             <div class="not-for-screen">
-                <input type="text" class="form-control" ng-attr-value={{currentEvent[prStDe.dataElement.id]}}>
+                <input type="text" class="form-control" value={{currentEvent[prStDe.dataElement.id]}}>
             </div>
         </div>
         <div ng-switch-when="INTEGER_POSITIVE">
@@ -97,7 +97,7 @@
                        name="foo"/>
             </div>
             <div class="not-for-screen">
-                <input type="text" class="form-control" ng-attr-value={{currentEvent[prStDe.dataElement.id]}}>
+                <input type="text" class="form-control" value={{currentEvent[prStDe.dataElement.id]}}>
             </div>
         </div>
         <div ng-switch-when="INTEGER_NEGATIVE">
@@ -114,7 +114,7 @@
                        name="foo"/>
             </div>
             <div class="not-for-screen">
-                <input type="text" class="form-control" ng-attr-value={{currentEvent[prStDe.dataElement.id]}}>
+                <input type="text" class="form-control" value={{currentEvent[prStDe.dataElement.id]}}>
             </div>
         </div>
         <div ng-switch-when="INTEGER_ZERO_OR_POSITIVE">
@@ -131,7 +131,7 @@
                        name="foo"/>
             </div>
             <div class="not-for-screen">
-                <input type="text" class="form-control" ng-attr-value={{currentEvent[prStDe.dataElement.id]}}>
+                <input type="text" class="form-control" value={{currentEvent[prStDe.dataElement.id]}}>
             </div>
         </div>
         <div ng-switch-when="AGE">
@@ -155,7 +155,7 @@
                        name="foo"/>
             </div>
             <div class="not-for-screen">
-                <input type="text" class="form-control" ng-attr-value={{currentEvent[prStDe.dataElement.id]}}>
+                <input type="text" class="form-control" value={{currentEvent[prStDe.dataElement.id]}}>
             </div>
         </div>
         <div ng-switch-when="LONG_TEXT">
@@ -186,7 +186,7 @@
                        name="foo"/>
             </div>
             <div class="not-for-screen">
-                <input type="text" class="form-control" ng-attr-value={{currentEvent[prStDe.dataElement.id]}}>
+                <input type="text" class="form-control" value={{currentEvent[prStDe.dataElement.id]}}>
             </div>
         </div>
         <div ng-switch-when="USERNAME">
@@ -204,7 +204,7 @@
                 </d2-users-input>
             </div>
             <div class="not-for-screen">
-                <input type="text" class="form-control" ng-attr-value={{currentEvent[de.id]}}>
+                <input type="text" class="form-control" value={{currentEvent[de.id]}}>
             </div>
         </div>
         <div ng-switch-when="BOOLEAN">
@@ -222,8 +222,8 @@
                 </d2-radio-button>
             </div>
             <div class="not-for-screen">
-                <label class="radio-inline"><input type="radio" ng-attr-value="true" ng-model="currentEvent[prStDe.dataElement.id]">{{'yes' | translate}}</label>
-                <label class="radio-inline"><input type="radio" ng-attr-value="false" ng-model="currentEvent[prStDe.dataElement.id]">{{'no' | translate}}</label>
+                <label class="radio-inline"><input type="radio" value="true" ng-model="currentEvent[prStDe.dataElement.id]">{{'yes' | translate}}</label>
+                <label class="radio-inline"><input type="radio" value="false" ng-model="currentEvent[prStDe.dataElement.id]">{{'no' | translate}}</label>
             </div>
         </div>
         <div ng-switch-when="DATE">
@@ -242,7 +242,7 @@
                        name="foo"/>
             </div>
             <div class="not-for-screen">
-                <input type="text" class="form-control" ng-attr-value={{currentEvent[prStDe.dataElement.id]}}>
+                <input type="text" class="form-control" value={{currentEvent[prStDe.dataElement.id]}}>
             </div>
         </div>
         <div ng-switch-when="TIME">
@@ -321,7 +321,7 @@
                 </div>
             </div>
             <div class="not-for-screen">
-                <input type="text" class="form-control" ng-attr-value={{currentEvent[prStDe.dataElement.id]}}>
+                <input type="text" class="form-control" value={{currentEvent[prStDe.dataElement.id]}}>
             </div>
         </div>
         <div ng-switch-when="IMAGE">
@@ -341,7 +341,7 @@
                 </d2-image>
             </div>
             <div class="not-for-screen">
-                <input type="text" class="form-control" ng-attr-value={{currentEvent[prStDe.dataElement.id]}}>
+                <input type="text" class="form-control" value={{currentEvent[prStDe.dataElement.id]}}>
             </div>
         </div>
         <div ng-switch-when="COORDINATE">

@@ -47,7 +47,7 @@
                     <tr>
                         <td>{{'org_unit' | translate}}</td>
                         <td>
-                            <input type="text" class="form-control" selected-org-unit ng-model="selectedOrgUnit.displayName" ng-attr-value="{{selectedOrgUnit.displayName || 'please_select'| translate}}" ng-disabled="true">                                                                                        
+                            <input type="text" class="form-control" selected-org-unit ng-model="selectedOrgUnit.displayName" value="{{selectedOrgUnit.displayName || 'please_select'| translate}}" ng-disabled="true">                                                                                        
                         </td>
                     </tr>
                     <tr>
@@ -67,9 +67,9 @@
                     <tr>
                         <td>{{'org_unit_scope'| translate}}</td>
                         <td>                 
-                            <label><input type="radio" ng-model="selectedOuMode" name="selected" ng-attr-value="SELECTED"> {{'SELECTED'| translate}}</label><br/>
-                            <label><input type="radio" ng-model="selectedOuMode" name="children" ng-attr-value="CHILDREN"> {{'CHILDREN'| translate}}</label><br/>
-                            <label><input type="radio" ng-model="selectedOuMode" name="descendants" ng-attr-value="DESCENDANTS"> {{'DESCENDANTS'| translate}}</label><br/>                            
+                            <label><input type="radio" ng-model="selectedOuMode" name="selected" value="SELECTED"> {{'SELECTED'| translate}}</label><br/>
+                            <label><input type="radio" ng-model="selectedOuMode" name="children" value="CHILDREN"> {{'CHILDREN'| translate}}</label><br/>
+                            <label><input type="radio" ng-model="selectedOuMode" name="descendants" value="DESCENDANTS"> {{'DESCENDANTS'| translate}}</label><br/>                            
                         </td>
                     </tr>
                     <tr>

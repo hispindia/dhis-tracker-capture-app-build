@@ -20,7 +20,7 @@ var i18n_offline_notification = 'You are offline';
 var i18n_online_notification = 'You are online';
 var i18n_ajax_login_failed = 'Login failed, check your username and password and try again';
 
-var DHIS2URL = '../api';
+var DHIS2URL = '../api/28';
 var optionSetIds = [];
 var trackedEntityAttributeIds = [];
 var batchSize = 50;
@@ -163,7 +163,6 @@ function downloadMetaData()
     promise = promise.then( getOptionSetsForAttributes );
     promise = promise.then( getOptionSetsForDataElements );
     promise = promise.then( getOptionSets );
-    promise = promise.then( getOptionGroups);
     promise = promise.then(getProgramAccess);
     promise.done(function() {
         //Enable ou selection after meta-data has downloaded
@@ -248,14 +247,14 @@ function getRelationships()
         if(res.length > 0){
             return;
         }
-        return dhis2.tracker.getTrackerObjects('relationshipTypes', 'relationshipTypes', DHIS2URL + '/relationshipTypes.json', 'paging=false&fields=id,code,displayName,fromConstraint[*],toConstraint[*]', 'idb', dhis2.tc.store);
+        return dhis2.tracker.getTrackerObjects('relationshipTypes', 'relationshipTypes', DHIS2URL + '/relationshipTypes.json', 'paging=false&fields=id,displayName,aIsToB,bIsToA,displayName', 'idb', dhis2.tc.store);
     });    
 }
 
 function getMetaPrograms()
 {   
     console.log('in programs..'); 
-    return dhis2.tracker.getTrackerObjects('programs', 'programs', DHIS2URL + '/programs.json', 'filter=programType:eq:WITH_REGISTRATION&paging=false&fields=id,version,programTrackedEntityAttributes[trackedEntityAttribute[id,optionSet[id,version]]],programStages[id,programStageDataElements[dataElement[id,optionSet[id,version],style]]]', 'temp', dhis2.tc.store);
+    return dhis2.tracker.getTrackerObjects('programs', 'programs', DHIS2URL + '/programs.json', 'filter=programType:eq:WITH_REGISTRATION&paging=false&fields=id,version,programTrackedEntityAttributes[trackedEntityAttribute[id,optionSet[id,version]]],programStages[id,programStageDataElements[dataElement[id,optionSet[id,version]]]]', 'temp', dhis2.tc.store);
 }
 
 function filterMissingPrograms( programs )
@@ -608,7 +607,7 @@ function getMetaProgramRules( programs )
 function getProgramRules( data )
 {
     var ids = getObjectIds(data);
-    return dhis2.tracker.getBatches(ids, batchSize, data.programs, 'programRules','programRules',DHIS2URL + '/programRules', 'fields=id,displayName,condition,description,program[id],programStage[id],priority,programRuleActions[id,content,location,data,programRuleActionType,programStageSection[id],dataElement[id],trackedEntityAttribute[id],option[id],optionGroup[id],programIndicator[id],programStage[id]]','idb', dhis2.tc.store);
+    return dhis2.tracker.getBatches(ids, batchSize, data.programs, 'programRules','programRules',DHIS2URL + '/programRules', 'fields=id,displayName,condition,description,program[id],programStage[id],priority,programRuleActions[id,content,location,data,programRuleActionType,programStageSection[id],dataElement[id],trackedEntityAttribute[id],programIndicator[id],programStage[id]]','idb', dhis2.tc.store);
 }
 
 function getMetaProgramRuleVariables( programs )
@@ -638,7 +637,7 @@ function setHasAllAccess(){
 
 function getTrackedEntityTypesWithAccess()
 {
-    return dhis2.tracker.getTrackerObjects('trackedEntityTypes', 'trackedEntityTypes', DHIS2URL + '/trackedEntityTypes.json', 'paging=false&fields=id,displayName,maxTeiCountToReturn,minAttributesRequiredToSearch,trackedEntityTypeAttributes[*,trackedEntityAttribute[id,unique]],style,access[data[read,write]]','temp', dhis2.tc.store).then(function(trackedEntityTypes)
+    return dhis2.tracker.getTrackerObjects('trackedEntityTypes', 'trackedEntityTypes', DHIS2URL + '/trackedEntityTypes.json', 'paging=false&fields=id,displayName,maxTeiCountToReturn,minAttributesRequiredToSearch,trackedEntityTypeAttributes[*,trackedEntityAttribute[id,unique]],access[data[read,write]]','temp', dhis2.tc.store).then(function(trackedEntityTypes)
     {
         if(hasAllAccess){
             _.each(_.values(trackedEntityTypes), function(tet){
@@ -669,7 +668,4 @@ function getProgramAccess(){
         });
 
     });
-}
-function getOptionGroups(){
-    return dhis2.tracker.getTrackerObjects('optionGroups','optionGroups', DHIS2URL+'/optionGroups.json', 'paging=false&fields=id,name,shortName,displayName,options[id]','idb',dhis2.tc.store);
 }
