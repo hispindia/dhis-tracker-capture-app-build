@@ -12925,6 +12925,7 @@
 	
 	    $scope.saveAttributedDisabledButton = function () {
 	        if ($scope.selectedOrgUnit && $scope.selectedOrgUnit.id !== $scope.selectedTei.orgUnit && $scope.registrationMode === 'PROFILE') return true;
+	        if ($scope.isDisabled(attribute)) return true;
 	        if ($scope.selectedOrgUnit.closedStatus) return true;
 	        if (!$scope.hasTeiWrite()) return true;
 	        return false;
@@ -13149,7 +13150,7 @@
 	    });
 	    $scope.$on('teienrolled', function (event, args) {
 	        $route.updateParams({ program: event.currentScope.selectedProgram.id });
-	        //$route.reload();
+	        $route.reload();
 	    });
 	    $scope.verifyExpiryDate = function (eventDateStr) {
 	        if ($scope.userAuthority.canEditExpiredStuff) return true;
@@ -37101,4 +37102,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-92d5b7fdb879dd03497c.js.map
+//# sourceMappingURL=app-b22402cec30100fa1669.js.map
