@@ -15680,6 +15680,7 @@
 	                    newEvent.eventDate = DateUtils.formatFromApiToUser(ev.eventDate);
 	                    newEvent.dueDate = DateUtils.formatFromApiToUser(ev.dueDate);
 	                    newEvent.enrollmentStatus = dummyEvent.enrollmentStatus;
+	                    newEvent.createdAtClient = moment().format('YYYY-MM-DDTHH:mm:ss');
 	
 	                    if (dummyEvent.coordinate) {
 	                        newEvent.coordinate = {};
@@ -16686,7 +16687,7 @@
 	    };
 	
 	    $scope.eventEditable = function (isButton) {
-	        if (!$scope.currentStage || !$scope.currentStage.access.data.write) return false;
+	        if (!$scope.currentStage || !$scope.currentStage.access || !$scope.currentStage.access.data.write) return false;
 	        if ($scope.selectedOrgUnit.closedStatus || $scope.selectedEnrollment.status !== 'ACTIVE') return false;
 	        if (isButton) {
 	            if (!$scope.currentEvent || $scope.currentEvent.editingNotAllowed && !$scope.userAuthority.canUncompleteEvent || $scope.currentEvent.expired && !$scope.userAuthority.canEditExpiredStuff) return false;
@@ -17307,7 +17308,7 @@
 	
 	        if (angular.isDefined($scope.eventsByStage[stage.id]) && $scope.eventsByStage[stage.id].length > 0) {
 	            var stageEvents = $scope.eventsByStage[stage.id];
-	            for (i = 0; i < stageEvents.length; i++) {
+	            for (var i = 0; i < stageEvents.length; i++) {
 	                var itiratedEvent = stageEvents[i];
 	                if (itiratedEvent.status !== $scope.EVENTSTATUSSKIPPEDLABEL && itiratedEvent.status !== $scope.EVENTSTATUSCOMPLETELABEL) {
 	                    firstOpen = i;
@@ -17356,7 +17357,7 @@
 	        var firstOpen = -1;
 	
 	        var stageEvents = eventCollection;
-	        for (i = 0; i < stageEvents.length; i++) {
+	        for (var i = 0; i < stageEvents.length; i++) {
 	            var itiratedEvent = stageEvents[i];
 	            if (itiratedEvent.status !== $scope.EVENTSTATUSSKIPPEDLABEL && itiratedEvent.status !== $scope.EVENTSTATUSCOMPLETELABEL) {
 	                firstOpen = i;
@@ -38706,4 +38707,4 @@
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=app-51a9d911047f79924802.js.map
+//# sourceMappingURL=app-0cd9dafa406aaf4682b9.js.map
