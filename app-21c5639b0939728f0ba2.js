@@ -21724,7 +21724,7 @@
 	        var attributeFields = {};
 	        angular.forEach(programAttributes, function (attr) {
 	            attributeFields[attr.id] = attr.displayName;
-	            if (tei && tei[attr.id]) values[attr.id] = { id: attr.id, name: attr.displayName, value: tei[attr.id] };
+	            if (tei && tei[attr.id]) values[attr.id] = { id: attr.id, name: attr.displayName, type: attr.valueType, value: tei[attr.id] };
 	        });
 	        attributesValues = values;
 	        setValues();
@@ -38236,4 +38236,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-5411d588ceee15d67979.js.map
+//# sourceMappingURL=app-21c5639b0939728f0ba2.js.map
