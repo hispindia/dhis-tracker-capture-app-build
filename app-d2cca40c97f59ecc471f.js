@@ -20841,8 +20841,7 @@
 	    // $scope.isValidProgram = false;
 	
 	
-	    // $scope.isValidProgram = false;
-	
+	    $scope.isValidProgram = false;
 	
 	    var viewsByType = {
 	        registration: {
@@ -21115,7 +21114,7 @@
 	                });
 	            }
 	            if ($scope.selectedProgram != undefined) {
-	
+	                $scope.isValidProgram = false;
 	                for (var i = 0; i < $scope.selectedProgram.attributeValues.length; i++) {
 	                    if ($scope.selectedProgram.attributeValues[i].attribute.code === 'pbfProgram' && $scope.selectedProgram.attributeValues[i].value == "true") {
 	                        $scope.isValidProgram = true;
@@ -21123,18 +21122,20 @@
 	                    }
 	                }
 	            }
-	
-	            if ($scope.isValidProgram) {
-	                if ($scope.trackedEntities.length > 0) {
-	                    return false;
+	            if ($scope.selectedProgram != undefined) {
+	                if ($scope.isValidProgram) {
+	                    if ($scope.trackedEntities.length > 0) {
+	                        return false;
+	                    } else {
+	                        return true;
+	                    }
 	                } else {
 	                    return true;
 	                }
-	            } else {
-	                return true;
 	            }
+	        } else if (viewName != 'Register') {
+	            return true;
 	        }
-	        return true;
 	    };
 	}]);
 
@@ -38707,4 +38708,4 @@
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=app-0cd9dafa406aaf4682b9.js.map
+//# sourceMappingURL=app-d2cca40c97f59ecc471f.js.map
