@@ -7913,12 +7913,6 @@
 	                                        prs.access = accesses.programStagesById[prs.id];
 	                                        accessiblePrs.push(prs);
 	                                    }
-	                                    var accessibleDataElements = [];
-	                                    angular.forEach(prs.programStageDataElements, function (de) {
-	                                        if (de.access && de.access.read) {
-	                                            accessibleDataElements.push(de);
-	                                        }
-	                                    });
 	                                });
 	                                pr.programStages = accessiblePrs;
 	                                programs.push(pr);
@@ -38262,4 +38256,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-d022c81c4e79e903b78a.js.map
+//# sourceMappingURL=app-6b94715da8c91e59d66d.js.map
