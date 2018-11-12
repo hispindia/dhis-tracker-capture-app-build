@@ -15227,21 +15227,6 @@
 	        return false;
 	    };
 	
-	    $scope.toggleEventsTableDisplay = function () {
-	        $scope.showEventsAsTables = !$scope.showEventsAsTables;
-	
-	        $scope.setDisplayTypeForStages();
-	
-	        if ($scope.currentStage && $scope.stageCanBeShownAsTable($scope.currentStage)) {
-	            //If the current event was deselected, select the first event in the current Stage before showing data entry:
-	            if (!$scope.currentEvent.event && $scope.eventsByStage[$scope.currentStage.id]) {
-	                $scope.currentEvent = $scope.eventsByStage[$scope.currentStage.id][0];
-	            }
-	
-	            $scope.getDataEntryForm();
-	        }
-	    };
-	
 	    $scope.setDisplayTypeForStages = function () {
 	        angular.forEach($scope.programStages, function (stage) {
 	            $scope.setDisplayTypeForStage(stage);
@@ -38256,4 +38241,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-6b94715da8c91e59d66d.js.map
+//# sourceMappingURL=app-721e9bee7de819468203.js.map
