@@ -7899,12 +7899,6 @@
 	                                        prs.access = accesses.programStagesById[prs.id];
 	                                        accessiblePrs.push(prs);
 	                                    }
-	                                    var accessibleDataElements = [];
-	                                    angular.forEach(prs.programStageDataElements, function (de) {
-	                                        if (de.access && de.access.read) {
-	                                            accessibleDataElements.push(de);
-	                                        }
-	                                    });
 	                                });
 	                                pr.programStages = accessiblePrs;
 	                                programs.push(pr);
@@ -38099,4 +38093,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-930f9699270d46642dcf.js.map
+//# sourceMappingURL=app-f3f04fcaa44caafb5967.js.map
