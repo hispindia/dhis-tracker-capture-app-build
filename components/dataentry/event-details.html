@@ -19,7 +19,7 @@
                ng-disabled="!reportDateEditable()"
                ng-required="true"
                blur-or-change="saveEventDate()"
-               ng-focus="setDateOnFocus(currentEvent.eventDate)"/>
+               ng-focus="setDateOnFocus(currentEvent.eventDate, selectedEnrollment.enrollmentDate)"/>
         <input type="text"
                class="form-control not-for-screen"
                ng-class="{'input-success': eventDateSaved}"
@@ -56,9 +56,9 @@
 </div>
 <!-- event dates/scheduling end -->
 <!-- coordinates begin -->
-<div class="row" ng-if="currentStage.featureType && ['POLYGON','POINT'].includes(currentStage.featureType) && (currentEvent.eventDate || registrationMode ==='REGISTRATION')">
+<div class="row" ng-if="currentStage.featureType && currentStage.featureType !== 'NONE' && (currentEvent.eventDate || registrationMode ==='REGISTRATION')">
     <div class="col-sm-12">
-        {{'event_'+currentStage.featureType.toLowerCase() | translate}}
+        {{'geometry' | translate}}
         <d2-geometry
                 d2-object-id="geometry"
                 d2-object="currentEvent"

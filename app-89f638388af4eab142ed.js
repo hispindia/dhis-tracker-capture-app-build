@@ -7496,8 +7496,8 @@
 	$templateCache.put('./templates/custom-registration-form.html','<d2-custom-registration-form custom-registration-form="customRegistrationForm"></d2-custom-registration-form>');
 	$templateCache.put('./templates/date-time-input.html','<div class="hideInPrint input-group" ng-init="dateTimeInit()">\n        <input type="text"\n               ng-attr-placeholder="{{datetimeDatePlaceholder}}"\n               class="form-control no-right-radius ng-valid-date-validator"\n               ng-class="datetimeUseNotification ? getInputNotifcationClass(datetimeModelId, datetimeModel) : \'\'"\n               d2-date\n               d2-date-validator\n               max-date="datetimeMaxDate"\n               ng-model="dateTime.date"\n               ng-required="datetimeRequired"\n               ng-disabled="datetimeDisabled"\n               blur-or-change="saveDateTime(true, \'foo\')"\n               name="foo">\n        <span class="input-group-btn empty-span"></span>\n        <input type="text"\n               ng-attr-placeholder="{{\'hours_and_minutes\' | translate}}"\n               class="form-control no-left-radius no-right-radius"\n               ng-class="datetimeUseNotification ? getInputNotifcationClass(datetimeModelId, datetimeModel) : \'\'"\n               d2-time-validator\n               d2-time-parser\n               ng-model="dateTime.time"\n               ng-required="datetimeRequired"\n               ng-disabled="datetimeDisabled"\n               ng-change="autoTimeFormat()"\n               ng-blur="saveDateTime(false, \'foo2\')"\n               name="foo2">\n        <span class="input-group-btn hideInPrint">\n            <button class="btn btn-danger hideInPrint trim" type="button" ng-disabled="datetimeDisabled" ng-attr-title="Clear" ng-click="clearDateTime()"> \n                <i class="fa fa-trash-o"></i>                             \n            </button>\n        </span>\n</div>\n\n<div class="not-for-screen">\n    <input type="text" class="form-control" ng-attr-value={{datetimeModel[datetimeModelId]}}>\n</div>\n\n<div ng-messages="datetimeField.foo2.$error" ng-if="interacted(datetimeField.foo2, datetimeOuterform)" class="required">\n    <span ng-message="timeValidator">{{\'time_error\' | translate}}</span>\n</div>');
 	$templateCache.put('./templates/error-messages.html','<span ng-message="required">{{\'required\' | translate}}</span>\n<span ng-message="number">{{\'value_must_be_number\' | translate}}</span>\n<span ng-message="percentValue">{{\'value_must_be_valid_percentValue\' | translate}}</span>\n<span ng-message="posInt">{{\'value_must_be_posInt\' | translate}}</span>\n<span ng-message="negInt">{{\'value_must_be_negInt\' | translate}}</span>\n<span ng-message="zeroPositiveInt">{{\'value_must_be_zeroPositiveInt\' | translate}}</span>\n<span ng-message="integer">{{\'value_must_be_int\' | translate}}</span>\n<span ng-message="dateValidator">{{\'date_required\' | translate}} ({{dhis2CalendarFormat.keyDateFormat}})</span>\n<span ng-message="futureDateValidator">{{\'future_date_not_allowed\' | translate}}</span>\n<span ng-message="timeValidator">{{\'wrong_time_format\' | translate}}</span>\n<span ng-message="optionValidator">{{\'option_required\' | translate}}</span>\n<span ng-message="latitudeValidator">{{\'latitude_required\' | translate}}</span>\n<span ng-message="longitudeValidator">{{\'longitude_required\' | translate}}</span>\n<span ng-message="customCoordinateValidator">{{\'latitude_longitude_required\' | translate}}</span>\n<span ng-message="uniqunessValidator">{{\'value_not_unique\' | translate}}</span>\n<span ng-message="email">{{\'value_must_be_email\' | translate}}</span>\n<span ng-message="urlValidator">{{\'url_error\' | translate}}</span>\n');
-	$templateCache.put('./templates/geometry-input-point.html','<div ng-form="geometryForm">\n    <div class="input-group">\n        <input type="number" \n               ng-model="geometry.coordinate.latitude" \n               ng-attr-placeholder="{{\'latitude\'| translate}}"\n               ng-class="{\'input-success\': d2LatSaved}"\n               name="latitude" \n               d2-coordinate-validator\n               ng-required="d2Required"\n               ng-disabled="d2Disabled"\n               ng-blur="updateLatLng(geometryForm)"\n               class="form-control no-right-radius"/>\n        <span class="input-group-btn empty-span"></span>\n        <input type="number" \n               ng-model="geometry.coordinate.longitude" \n               ng-attr-placeholder="{{\'longitude\'| translate}}"\n               ng-class="{\'input-success\': d2LngSaved}"\n               name="longitude" \n               d2-coordinate-validator\n               ng-required="d2Required"\n               ng-disabled="d2Disabled"\n               ng-blur="updateLatLng(geometryForm)"\n               class="form-control no-left-radius no-right-radius"/>\n        <span class="input-group-btn hideInPrint">\n            <button class="btn btn-grp trim hideInPrint" \n                    type="button"\n                    ng-disabled="d2Disabled"\n                    ng-attr-title="{{\'get_from_map\'| translate}}"\n                    ng-click="showMap()"> \n                <i class="fa fa-map-marker"></i>                             \n            </button>\n        </span>    \n    </div>\n    <div ng-messages="geometryForm.latitude.$error" ng-if="geometryForm.$submitted || geometryForm.latitude.$dirty" class="required" ng-messages-include="./templates/error-messages.html"></div>\n    <div ng-messages="geometryForm.longitude.$error" ng-if="geometryForm.$submitted || geometryForm.longitude.$dirty" class="required" ng-messages-include="./templates/error-messages.html"></div>\n</div>');
-	$templateCache.put('./templates/geometry-input-polygon.html','<div>\n    <div class="input-group">\n        <div class="geometry-polygon-indicator">{{polygonIndicator}}<span ng-show="hasPolygon" style="margin-left:2px;color:green" class="fa fa-check"></span></div>\n        <span class="input-group-btn hideInPrint">\n            <button class="btn btn-grp trim hideInPrint" \n                    type="button"\n                    ng-disabled="d2Disabled"\n                    ng-attr-title="{{\'get_from_map\'| translate}}"\n                    ng-click="showMap()"> \n                <i class="fa fa-map-marker"></i>                             \n            </button>\n        </span>    \n    </div>\n</div>');
+	$templateCache.put('./templates/geometry-input-point.html','<div ng-form="geometryForm">\n    <div class="input-group">\n        <input type="number" \n               ng-model="geometry.coordinate.latitude" \n               ng-attr-placeholder="{{\'latitude\'| translate}}"\n               ng-class="{\'input-success\': d2LatSaved}"\n               name="latitude" \n               d2-coordinate-validator\n               ng-required="d2Required"\n               ng-disabled="d2Disabled"\n               ng-blur="updateLatLng(geometryForm)"\n               class="form-control no-right-radius"/>\n        <span class="input-group-btn empty-span"></span>\n        <input type="number" \n               ng-model="geometry.coordinate.longitude" \n               ng-attr-placeholder="{{\'longitude\'| translate}}"\n               ng-class="{\'input-success\': d2LngSaved}"\n               name="longitude" \n               d2-coordinate-validator\n               ng-required="d2Required"\n               ng-disabled="d2Disabled"\n               ng-blur="updateLatLng(geometryForm)"\n               class="form-control no-left-radius no-right-radius"/>\n        <span class="input-group-btn hideInPrint">\n            <button class="btn btn-grp trim hideInPrint" \n                    type="button"\n                    ng-disabled="{{d2Disabled}}"\n                    ng-attr-title="{{\'get_from_map\'| translate}}"\n                    ng-click="showMap()"> \n                <i class="fa fa-map-marker"></i>                             \n            </button>\n        </span>    \n    </div>\n    <div ng-messages="geometryForm.latitude.$error" ng-if="geometryForm.$submitted || geometryForm.latitude.$dirty" class="required" ng-messages-include="./templates/error-messages.html"></div>\n    <div ng-messages="geometryForm.longitude.$error" ng-if="geometryForm.$submitted || geometryForm.longitude.$dirty" class="required" ng-messages-include="./templates/error-messages.html"></div>\n</div>');
+	$templateCache.put('./templates/geometry-input-polygon.html','<div>\n    <div class="input-group">\n        <div class="geometry-polygon-indicator">{{polygonIndicator}}<span ng-show="hasPolygon" style="margin-left:2px;color:green" class="fa fa-check"></span></div>\n        <span class="input-group-btn hideInPrint">\n            <button class="btn btn-grp trim hideInPrint" \n                    type="button"\n                    ng-disabled="{{d2Disabled}}"\n                    ng-attr-title="{{\'get_from_map\'| translate}}"\n                    ng-click="showMap()"> \n                <i class="fa fa-map-marker"></i>                             \n            </button>\n        </span>    \n    </div>\n</div>');
 	$templateCache.put('./templates/geometry-input.html','<div ng-include="currentGeometryTypeDefinition.template"></div>');
 	$templateCache.put('./templates/img-input.html','<div style="margin-top: 5px; margin-bottom: 5px;">\n    <accordion>\n        <accordion-group is-open="d2DisplayOpen">\n            <accordion-heading>\n                <span ng-if="!d2Event[d2DataElementId]"> {{\'please_select_an_image\'| translate}} <i class="pull-right" ng-class="{\'fa fa-chevron-up vertical-center\': d2DisplayOpen, \'fa fa-chevron-down vertical-center\': !d2DisplayOpen}"></i></span>\n                <span ng-if="d2Event[d2DataElementId]"> {{d2FileNames[d2Event.event][d2DataElementId].length > 20 ? d2FileNames[d2Event.event][d2DataElementId].substring(0,20).concat(\'...\') : d2FileNames[d2Event.event][d2DataElementId]}} <i class="pull-right" ng-class="{\'fa fa-chevron-up vertical-center\': d2DisplayOpen, \'fa fa-chevron-down vertical-center\': !d2DisplayOpen}"></i></span>\n            </accordion-heading>\n            <div class="preview clearfix" ng-if="d2Event[d2DataElementId]">\n                <div class="previewData clearfix" ng-init="fetch()">\n                    <img ng-if="!d2HideImage" class="img" ng-src={{path}} style="max-width:100%;"></img>\n                </div>\t\n            </div>\n            <div ng-if="!d2Event[d2DataElementId]">\n                <div class="form-group inputDnD">\n                    <input type="file"\n                           name="foo"\n                           ng-disabled="d2Disabled"\n                           input-field-id={{d2DataElementId}}\n                           d2-file-input-ps="d2Ps"\n                           d2-file-input="d2Event"\n                           d2-file-input-current-name="d2CurrentImageName"\n                           d2-file-input-name="d2FileNames"\n                           accept="image/*"\n                           class="form-control-file text-primary font-weight-bold"\n                           id="inputFile"\n                           data-title="{{\'drop_image\'| translate}}">\n                </div>\n            </div>\n            <div class="input-group" ng-show="d2CanEdit" style="margin-top: 5px;">\n                <div class="form-control">\n                    <a href ng-click="d2IsAttribute ? d2DownloadMethode(d2Tei, d2DataElementId) : d2DownloadMethode(d2Event.event, d2DataElementId)" ng-attr-title="{{d2FileNames[d2Event.event][d2DataElementId]}}">{{d2FileNames[d2Event.event][d2DataElementId].length > 20 ? d2FileNames[d2Event.event][d2DataElementId].substring(0,20).concat(\'...\') : d2FileNames[d2Event.event][d2DataElementId]}}</a>\n                </div>\n                <span class="input-group-btn">\n                    <span class="btn btn-grp btn-file" ng-click="delete()" ng-disabled="d2Disabled" ng-if="d2Event[d2DataElementId]" style="border-top-left-radius: 0px; border-bottom-left-radius: 0px;">\n                        <span ng-attr-title="{{\'delete\' | translate}}"\n                              d2-file-input-name="d2FileNames[d2Event.event][d2DataElementId]"\n                              d2-file-input-delete="d2Event[d2DataElementId]">\n                            <i class="fa fa-trash"></i>\n                        </span>\n                    </span>\n                    <span class="btn btn-grp btn-file" ng-if="!d2Event[d2DataElementId]" style="border-top-left-radius: 0px; border-bottom-left-radius: 0px;">\n                        <span ng-attr-title="{{\'upload\' | translate}}">\n                            <i class="fa fa-upload"></i>\n                            <input type="file"\n                                    ng-required="d2Required"\n                                    ng-disabled="d2Disabled"\n                                    name="foo"\n                                    input-field-id={{d2DataElementId}}\n                                    d2-file-input-ps="d2Ps"\n                                    d2-file-input="d2Event"\n                                    d2-file-input-current-name="d2CurrentImageName"\n                                    d2-file-input-name="d2FileNames"\n                                    accept="image/*">\n                        </span>\n                    </span>\n                </span>\n                <span class="input-group-btn">\n                    <button type="button" class="btn btn-default" ng-disabled="!d2Event[d2DataElementId]" ng-click="fetch()" style="border-radius: 4px; margin-left: 10px;">\n                        <i class="fa fa-refresh" aria-hidden="true"></i>\n                    </button>\n                </span>\n            </div>               \n        </accordion-group> \n    </accordion>\n</div>');
 	$templateCache.put('./templates/map.html','<div class="modal-header">\n    <h2>\n        {{\'point_and_click_for_coordinate\'| translate}}        \n    </h2>\n    <div class="align-center">\n        <span id=\'polygon-label\'></span>\n    </div>\n</div>\n<div class="modal-body map-area">\n    <span ng-switch="selectedTileKey">        \n        <span ng-switch-when="openstreetmap">\n            <leaflet id="openstreetmap" lf-center="center" defaults="mapDefaults" markers="marker" tiles="tilesDictionary[selectedTileKey]"></leaflet>\n        </span>\n        <span ng-switch-when="googlemap">\n            <leaflet id="googlemap" lf-center="center" defaults="mapDefaults" markers="marker" layers="tilesDictionary[selectedTileKey].layers"></leaflet>\n        </span>\n    </span>\n</div>\n<div class="modal-footer">\n    \n    <div class="pull-left">\n        <ul class="nav nav-pills">\n            <li ng-class="{true: \'active\'} [selectedTileKey === key]" ng-repeat="key in tilesDictionaryKeys">\n                <a href ng-click="setTile(key)">{{key | translate}}</a>\n            </li>\n        </ul>\n    </div>\n    \n    <button class="btn btn-primary" data-ng-click="captureCoordinate()">{{\'capture\'| translate}}</button>\n    <button class="btn btn-default" data-ng-click="close()">{{\'cancel\'| translate}}</button>        \n</div>');
@@ -8050,12 +8050,6 @@
 	                return promise;
 	            });
 	            return promise;
-	        },
-	        getProgramStageLayout: function getProgramStageLayout() {
-	            return programStageLayout;
-	        },
-	        setProgramStageLayout: function setProgramStageLayout(layoutToSet) {
-	            programStageLayout = layoutToSet;
 	        }
 	    };
 	}]).service('DasboardWidgetService', function () {
@@ -12541,7 +12535,6 @@
 	        DashboardLayoutService.getLockedList().then(function (r) {
 	            if (!r || r === '') {
 	                $scope.lockedList = {};
-	                DashboardLayoutService.saveLockedList($scope.lockedList);
 	            } else {
 	                $scope.lockedList = r;
 	            }
@@ -12671,7 +12664,7 @@
 	            widgets.push(w);
 	        });
 	
-	        return { widgets: widgets, topBarSettings: $scope.topBarConfig.settings, program: $scope.selectedProgram && $scope.selectedProgram.id ? $scope.selectedProgram.id : 'DEFAULT', programStageTimeLineLayout: DashboardLayoutService.getProgramStageLayout() };
+	        return { widgets: widgets, topBarSettings: $scope.topBarConfig.settings, program: $scope.selectedProgram && $scope.selectedProgram.id ? $scope.selectedProgram.id : 'DEFAULT' };
 	    }
 	
 	    function saveDashboardLayout() {
@@ -13441,8 +13434,8 @@
 	                        enrollment.enrollmentDate = $scope.selectedEnrollment.enrollmentDate;
 	                        enrollment.incidentDate = $scope.selectedEnrollment.incidentDate === '' ? $scope.selectedEnrollment.enrollmentDate : $scope.selectedEnrollment.incidentDate;
 	
-	                        if ($scope.selectedEnrollment.geometry) {
-	                            enrollment.geometry = $scope.selectedEnrollment.geometry;
+	                        if ($scope.selectedEnrollment.coordinate) {
+	                            enrollment.coordinate = $scope.selectedEnrollment.coordinate;
 	                        }
 	
 	                        EnrollmentService.enroll(enrollment).then(function (enrollmentResponse) {
@@ -13514,7 +13507,7 @@
 	            $scope.selectedTei.orgUnit = $scope.tei.orgUnit = $scope.selectedOrgUnit.id;
 	            $scope.selectedTei.attributes = $scope.tei.attributes = [];
 	        }
-	        $scope.tei.geometry = $scope.selectedTei.geometry;
+	
 	        //get tei attributes and their values
 	        //but there could be a case where attributes are non-mandatory and
 	        //registration form comes empty, in this case enforce at least one value
@@ -14159,9 +14152,9 @@
 	        $window.open('../api/trackedEntityInstances/' + tei.trackedEntityInstance + '/' + attributeId + '/image', '_blank', '');
 	    };
 	
-	    $scope.setDateOnFocus = function (currentValue) {
+	    $scope.setDateOnFocus = function (currentValue, date) {
 	        if (!currentValue) {
-	            $scope.currentEvent.eventDate = DateUtils.getToday();
+	            $scope.currentEvent.eventDate = date;
 	        }
 	    };
 	
@@ -14223,7 +14216,7 @@
 	        return notificationClass;
 	    };
 	
-	    var setEnrollmentState = function setEnrollmentState() {
+	    var setReportDateState = function setReportDateState() {
 	        if ($scope.selectedProgram) {
 	            $scope.enrollmentDateState.editable = true;
 	            $scope.enrollmentDateState.maxDate = $scope.selectedProgram.selectEnrollmentDatesInFuture ? '' : "0";
@@ -14236,7 +14229,6 @@
 	            }
 	
 	            $scope.incidentDateState.editable = true;
-	            $scope.enrollmentGeometryState.editable = true;
 	            $scope.incidentDateState.maxDate = $scope.selectedProgram.selectIncidentDatesInFuture ? '' : "0";
 	            //Check if enrollmentDate and incidentDate is editable
 	            var autoGeneratedStages = $scope.selectedProgram.allProgramStagesMetadataRead.filter(function (ps) {
@@ -14254,11 +14246,9 @@
 	        if ($scope.selectedEnrollment && $scope.selectedTei && $scope.selectedProgram) {
 	            if ($scope.selectedTei.programOwnersById && $scope.selectedTei.programOwnersById[$scope.selectedProgram.id] != $scope.selectedOrgUnit.id) {
 	                $scope.incidentDateState.editable = $scope.enrollmentDateState.editable = false;
-	                $scope.enrollmentGeometryState.editable = false;
 	            }
 	            $scope.incidentDateState.date = $scope.selectedEnrollment.incidentDate;
 	            $scope.enrollmentDateState.date = $scope.selectedEnrollment.enrollmentDate;
-	            $scope.enrollmentGeometryState.geometry = $scope.selectedEnrollment.geometry;
 	        }
 	    };
 	    //listen for the selected items
@@ -14295,7 +14285,6 @@
 	
 	        $scope.enrollmentDateState = getDefaultReportDateState();
 	        $scope.incidentDateState = getDefaultReportDateState();
-	        $scope.enrollmentGeometryState = { editable: false, geometry: null };
 	        angular.forEach(selections.enrollments, function (en) {
 	            if (en.status === "ACTIVE" && $scope.selectedProgram && $scope.selectedProgram.id !== en.program) {
 	                $scope.activeEnrollments.push(en);
@@ -14330,7 +14319,8 @@
 	        } else {
 	            $scope.broadCastSelections('dashboardWidgets');
 	        }
-	        setEnrollmentState();
+	
+	        setReportDateState();
 	    });
 	
 	    $scope.$on('dataEntryControllerData', function (event, args) {
@@ -14591,19 +14581,6 @@
 	        updateReportDate('incidentdate');
 	    };
 	
-	    $scope.updateEnrollmentGeometry = function () {
-	        if ($scope.enrollmentForm && $scope.enrollmentForm.geometryForm && $scope.enrollmentForm.geometryForm.$invalid) {
-	            $scope.enrollmentGeometryState.geometry = $scope.selectedEnrollment.geometry;
-	            return NotificationService.showNotifcationDialog($translate.instant('error'), $scope.selectedProgram.featureType.toLowerCase() + ' ' + $translate.instant('invalid'));
-	        }
-	        $scope.selectedEnrollment.geometry = $scope.enrollmentGeometryState.geometry;
-	        EnrollmentService.update($scope.selectedEnrollment).then(function () {
-	            $scope.enrollmentGeometryState.status = 'saved';
-	        }, function () {
-	            $scope.enrollmentGeometryState.status = 'error';
-	        });
-	    };
-	
 	    var updateReportDate = function updateReportDate(type) {
 	        currentReportDate = { type: type, status: 'pending' };
 	        EnrollmentService.update($scope.selectedEnrollment).then(function () {
@@ -14659,7 +14636,7 @@
 	/* global angular, trackerCapture */
 	
 	var trackerCapture = angular.module('trackerCapture');
-	trackerCapture.controller('DataEntryController', ["$rootScope", "$scope", "$modal", "$filter", "$log", "$timeout", "$translate", "$window", "$q", "$parse", "$location", "CommonUtils", "DateUtils", "DashboardLayoutService", "EventUtils", "orderByFilter", "SessionStorageService", "EnrollmentService", "DHIS2EventFactory", "ModalService", "NotificationService", "CurrentSelection", "TrackerRulesExecutionService", "CustomFormService", "PeriodService", "OptionSetService", "AttributesFactory", "TrackerRulesFactory", "EventCreationService", "AuthorityService", "AccessUtils", "TCOrgUnitService", function ($rootScope, $scope, $modal, $filter, $log, $timeout, $translate, $window, $q, $parse, $location, CommonUtils, DateUtils, DashboardLayoutService, EventUtils, orderByFilter, SessionStorageService, EnrollmentService, DHIS2EventFactory, ModalService, NotificationService, CurrentSelection, TrackerRulesExecutionService, CustomFormService, PeriodService, OptionSetService, AttributesFactory, TrackerRulesFactory, EventCreationService, AuthorityService, AccessUtils, TCOrgUnitService) {
+	trackerCapture.controller('DataEntryController', ["$rootScope", "$scope", "$modal", "$filter", "$log", "$timeout", "$translate", "$window", "$q", "$parse", "$location", "CommonUtils", "DateUtils", "EventUtils", "orderByFilter", "SessionStorageService", "EnrollmentService", "DHIS2EventFactory", "ModalService", "NotificationService", "CurrentSelection", "TrackerRulesExecutionService", "CustomFormService", "PeriodService", "OptionSetService", "AttributesFactory", "TrackerRulesFactory", "EventCreationService", "AuthorityService", "AccessUtils", "TCOrgUnitService", function ($rootScope, $scope, $modal, $filter, $log, $timeout, $translate, $window, $q, $parse, $location, CommonUtils, DateUtils, EventUtils, orderByFilter, SessionStorageService, EnrollmentService, DHIS2EventFactory, ModalService, NotificationService, CurrentSelection, TrackerRulesExecutionService, CustomFormService, PeriodService, OptionSetService, AttributesFactory, TrackerRulesFactory, EventCreationService, AuthorityService, AccessUtils, TCOrgUnitService) {
 	
 	    //Unique instance id for the controller:
 	    $scope.APIURL = DHIS2URL;
@@ -14719,24 +14696,6 @@
 	
 	    $scope.attributesById = CurrentSelection.getAttributesById();
 	    $scope.optionGroupsById = CurrentSelection.getOptionGroupsById();
-	
-	    DashboardLayoutService.get().then(function (response) {
-	        $scope.dashBoardLayout = response;
-	        if ($scope.dashBoardLayout.customLayout && $scope.dashBoardLayout.customLayout[$scope.selectedProgramId] && $scope.dashBoardLayout.customLayout[$scope.selectedProgramId].programStageTimeLineLayout) {
-	            DashboardLayoutService.setProgramStageLayout($scope.dashBoardLayout.customLayout[$scope.selectedProgramId].programStageTimeLineLayout);
-	        } else if ($scope.dashBoardLayout.defaultLayout && $scope.dashBoardLayout.defaultLayout[$scope.selectedProgramId] && $scope.dashBoardLayout.defaultLayout[$scope.selectedProgramId].programStageTimeLineLayout) {
-	            DashboardLayoutService.setProgramStageLayout($scope.dashBoardLayout.defaultLayout[$scope.selectedProgramId].programStageTimeLineLayout);
-	        }
-	    });
-	
-	    DashboardLayoutService.getLockedList().then(function (response) {
-	        if (!response || response === '') {
-	            $scope.lockedList = {};
-	            DashboardLayoutService.saveLockedList($scope.lockedList);
-	        } else {
-	            $scope.lockedList = response;
-	        }
-	    });
 	
 	    $scope.userAuthority = AuthorityService.getUserAuthorities(SessionStorageService.get('USER_PROFILE'));
 	    if (!$scope.attributesById) {
@@ -14872,67 +14831,14 @@
 	        $scope.printEmptyForm = false;
 	    };
 	
-	    $scope.toggleForm = function (type) {
-	        if (type === 'DEFAULT') {
-	            $scope.currentStage.timelineDataEntryMode = $scope.timelineDataEntryModes.DATAENTRYFORM;
-	        } else if (type === 'COMPPRE') {
-	            $scope.currentStage.timelineDataEntryMode = $scope.timelineDataEntryModes.COMPAREPREVIOUSDATAENTRYFORM;
-	        } else if (type === 'COMPALL') {
+	    $scope.toggleCompForm = function () {
+	        if ($scope.currentStage.timelineDataEntryMode !== $scope.timelineDataEntryModes.COMPAREALLDATAENTRYFORM) {
 	            $scope.currentStage.timelineDataEntryMode = $scope.timelineDataEntryModes.COMPAREALLDATAENTRYFORM;
-	        } else if (type === 'GRID') {
-	            $scope.currentStage.timelineDataEntryMode = $scope.timelineDataEntryModes.TABLEDATAENTRYFORM;
-	            $scope.tableEditMode = $scope.tableEditModes.table;
-	        } else if (type === 'POP') {
-	            $scope.currentStage.timelineDataEntryMode = $scope.timelineDataEntryModes.TABLEDATAENTRYFORM;
-	            $scope.tableEditMode = $scope.tableEditModes.form;
 	        } else {
-	            //Fall back to DEFAULT form.
 	            $scope.currentStage.timelineDataEntryMode = $scope.timelineDataEntryModes.DATAENTRYFORM;
 	        }
-	
-	        var layout = angular.copy($scope.dashBoardLayout);
-	
-	        if (!layout.customLayout[$scope.selectedProgramId]) {
-	            layout.customLayout[$scope.selectedProgramId] = getCurrentDashboardLayout();
-	        }
-	
-	        if (!layout.customLayout[$scope.selectedProgramId].programStageTimeLineLayout) {
-	            layout.customLayout[$scope.selectedProgramId].programStageTimeLineLayout = {};
-	        }
-	
-	        layout.customLayout[$scope.selectedProgramId].programStageTimeLineLayout[$scope.currentStage.id] = { timelineDataEntryMode: $scope.currentStage.timelineDataEntryMode, tableEditMode: $scope.tableEditMode || $scope.tableEditMode === 0 ? $scope.tableEditMode : -1 };
-	
-	        DashboardLayoutService.saveLayout(layout.customLayout, false);
-	        DashboardLayoutService.setProgramStageLayout(layout.customLayout[$scope.selectedProgramId].programStageTimeLineLayout);
-	        $scope.dashBoardLayout.customLayout = layout.customLayout;
-	
 	        $scope.getDataEntryForm();
 	    };
-	
-	    function getCurrentDashboardLayout() {
-	        var widgets = [];
-	        $scope.hasBigger = false;
-	        $scope.hasSmaller = false;
-	        angular.forEach($rootScope.dashboardWidgets, function (widget) {
-	            var w = angular.copy(widget);
-	            if ($scope.orderChanged) {
-	                if ($scope.widgetsOrder.biggerWidgets.indexOf(w.title) !== -1) {
-	                    $scope.hasBigger = $scope.hasBigger || w.show;
-	                    w.parent = 'biggerWidget';
-	                    w.order = $scope.widgetsOrder.biggerWidgets.indexOf(w.title);
-	                }
-	
-	                if ($scope.widgetsOrder.smallerWidgets.indexOf(w.title) !== -1) {
-	                    $scope.hasSmaller = $scope.hasSmaller || w.show;
-	                    w.parent = 'smallerWidget';
-	                    w.order = $scope.widgetsOrder.smallerWidgets.indexOf(w.title);
-	                }
-	            }
-	            widgets.push(w);
-	        });
-	
-	        return { widgets: widgets, topBarSettings: $scope.topBarConfig.settings, program: $scope.selectedProgram && $scope.selectedProgram.id ? $scope.selectedProgram.id : 'DEFAULT' };
-	    }
 	
 	    //Adds support for HIDEPROGRAMSTAGE even if no event exists in enrollment
 	    var processRegistrationRuleEffect = function processRegistrationRuleEffect(event, callerId) {
@@ -15607,6 +15513,21 @@
 	        return false;
 	    };
 	
+	    $scope.toggleEventsTableDisplay = function () {
+	        $scope.showEventsAsTables = !$scope.showEventsAsTables;
+	
+	        $scope.setDisplayTypeForStages();
+	
+	        if ($scope.currentStage && $scope.stageCanBeShownAsTable($scope.currentStage)) {
+	            //If the current event was deselected, select the first event in the current Stage before showing data entry:
+	            if (!$scope.currentEvent.event && $scope.eventsByStage[$scope.currentStage.id]) {
+	                $scope.currentEvent = $scope.eventsByStage[$scope.currentStage.id][0];
+	            }
+	
+	            $scope.getDataEntryForm();
+	        }
+	    };
+	
 	    $scope.setDisplayTypeForStages = function () {
 	        angular.forEach($scope.programStages, function (stage) {
 	            $scope.setDisplayTypeForStage(stage);
@@ -15987,6 +15908,10 @@
 	    $scope.tableEditModes = { form: 0, table: 1, tableAndForm: 2 };
 	    $scope.tableEditMode = $scope.tableEditModes.table;
 	
+	    $scope.toggleTableEditMode = function () {
+	        $scope.tableEditMode = $scope.tableEditMode === $scope.tableEditModes.tableAndForm ? $scope.tableEditModes.form : $scope.tableEditModes.tableAndForm;
+	    };
+	
 	    $scope.eventRowChanged = false;
 	    $scope.eventRowClicked = function (event) {
 	
@@ -15997,7 +15922,6 @@
 	            $scope.eventRowChanged = false;
 	        }
 	
-	        // This controls if it should be displayed as modal or normal table.
 	        if ($scope.tableEditMode === $scope.tableEditModes.form) {
 	            $scope.openEventEditFormModal(event);
 	        }
@@ -16017,7 +15941,7 @@
 	            event.editingNotAllowed = EventUtils.getEditingStatus(event, stage, $scope.selectedOrgUnit, $scope.selectedTei, $scope.selectedEnrollment, $scope.selectedProgram, userSearchOrgUnits);
 	        }
 	
-	        $scope.eventEditFormModalInstance = $modal.open({
+	        $scope.eventEditFormModalInstance = modalInstance = $modal.open({
 	            templateUrl: 'components/dataentry/modal-default-form.html',
 	            scope: $scope
 	        });
@@ -16092,17 +16016,6 @@
 	        $scope.currentStage = $scope.stagesById[$scope.currentEvent.programStage];
 	        $scope.currentStageEvents = $scope.eventsByStage[$scope.currentEvent.programStage];
 	
-	        if ($scope.dashBoardLayout.customLayout[$scope.selectedProgramId] && $scope.dashBoardLayout.customLayout[$scope.selectedProgramId].programStageTimeLineLayout && $scope.dashBoardLayout.customLayout[$scope.selectedProgramId].programStageTimeLineLayout[$scope.currentStage.id] && !$scope.lockedList[$scope.selectedProgramId]) {
-	            $scope.currentStage.timelineDataEntryMode = $scope.dashBoardLayout.customLayout[$scope.selectedProgramId].programStageTimeLineLayout[$scope.currentStage.id].timelineDataEntryMode;
-	            $scope.currentStage.tableEditMode = $scope.dashBoardLayout.customLayout[$scope.selectedProgramId].programStageTimeLineLayout[$scope.currentStage.id].tableEditMode;
-	        } else if ($scope.dashBoardLayout.defaultLayout[$scope.selectedProgramId] && $scope.dashBoardLayout.defaultLayout[$scope.selectedProgramId].programStageTimeLineLayout && $scope.dashBoardLayout.defaultLayout[$scope.selectedProgramId].programStageTimeLineLayout[$scope.currentStage.id] || $scope.lockedList[$scope.selectedProgramId]) {
-	            $scope.currentStage.timelineDataEntryMode = $scope.dashBoardLayout.defaultLayout[$scope.selectedProgramId].programStageTimeLineLayout[$scope.currentStage.id].timelineDataEntryMode;
-	            $scope.currentStage.tableEditMode = $scope.dashBoardLayout.defaultLayout[$scope.selectedProgramId].programStageTimeLineLayout[$scope.currentStage.id].tableEditMode;
-	        } else {
-	            $scope.currentStage.timelineDataEntryMode = 0;
-	            $scope.currentStage.tableEditMode = 0;
-	        }
-	
 	        angular.forEach($scope.currentStage.programStageSections, function (section) {
 	            section.open = true;
 	        });
@@ -16131,9 +16044,6 @@
 	                        }
 	                    }
 	                    $scope.displayCustomForm = "TABLE";
-	
-	                    $scope.tableEditMode = $scope.currentStage.tableEditMode;
-	
 	                    break;
 	
 	                default:
@@ -17877,12 +17787,6 @@
 	    $scope.calcTableWidth = function () {
 	        var width = angular.element(document.getElementById('tabelContainer'))[0].clientWidth;
 	        return width;
-	    };
-	
-	    $scope.setDateOnFocus = function (currentValue) {
-	        if (!currentValue) {
-	            $scope.currentEvent.eventDate = DateUtils.getToday();
-	        }
 	    };
 	}]).controller('EventOptionsInTableController', ["$scope", "$translate", function ($scope, $translate) {
 	
@@ -20325,7 +20229,7 @@
 	    $scope.setSelectedSearchingOrgUnit = function (orgUnit) {
 	        $scope.selectedSearchingOrgUnit = orgUnit;
 	    };
-	}]).controller('TEIRegistrationController', ["$rootScope", "$scope", "$timeout", "$translate", "AttributesFactory", "MetaDataFactory", "TrackerRulesFactory", "CustomFormService", "TEService", "EnrollmentService", "NotificationService", "CurrentSelection", "DateUtils", "EventUtils", "DHIS2EventFactory", "RegistrationService", "SessionStorageService", "TrackerRulesExecutionService", "TEIGridService", "AttributeUtils", function ($rootScope, $scope, $timeout, $translate, AttributesFactory, MetaDataFactory, TrackerRulesFactory, CustomFormService, TEService, EnrollmentService, NotificationService, CurrentSelection, DateUtils, EventUtils, DHIS2EventFactory, RegistrationService, SessionStorageService, TrackerRulesExecutionService, TEIGridService, AttributeUtils) {
+	}]).controller('TEIRegistrationController', ["$rootScope", "$scope", "$timeout", "$translate", "AttributesFactory", "MetaDataFactory", "TrackerRulesFactory", "CustomFormService", "TEService", "EnrollmentService", "NotificationService", "CurrentSelection", "DateUtils", "EventUtils", "DHIS2EventFactory", "RegistrationService", "SessionStorageService", "TrackerRulesExecutionService", "TEIGridService", function ($rootScope, $scope, $timeout, $translate, AttributesFactory, MetaDataFactory, TrackerRulesFactory, CustomFormService, TEService, EnrollmentService, NotificationService, CurrentSelection, DateUtils, EventUtils, DHIS2EventFactory, RegistrationService, SessionStorageService, TrackerRulesExecutionService, TEIGridService) {
 	    $scope.selectedOrgUnit = SessionStorageService.get('SELECTED_OU');
 	    $scope.enrollment = { enrollmentDate: '', incidentDate: '' };
 	    $scope.attributesById = CurrentSelection.getAttributesById();
@@ -20336,9 +20240,7 @@
 	    $scope.teiOriginal = {};
 	    $scope.tei = {};
 	    $scope.hiddenFields = {};
-	    $scope.assignedFields = {};
 	    $scope.editingDisabled = false;
-	    $scope.model = { autoGeneratedAttFailed: false };
 	
 	    var selections = CurrentSelection.get();
 	    $scope.selectedOrgUnit = selections.orgUnit;
@@ -20389,29 +20291,8 @@
 	        if (angular.isObject($scope.base.selectedProgramForRelative) && $scope.base.selectedProgramForRelative.id) {
 	            TrackerRulesFactory.getRules($scope.base.selectedProgramForRelative.id).then(function (rules) {
 	                $scope.allProgramRules = rules;
-	                $scope.executeRules();
 	            });
 	        }
-	    };
-	
-	    var fetchGeneratedAttributes = function fetchGeneratedAttributes() {
-	        angular.forEach($scope.attributes, function (att) {
-	            if (att.generated && !$scope.selectedTei[att.id]) {
-	                AttributeUtils.generateUniqueValue(att.id, $scope.selectedTei, $scope.selectedProgram, $scope.selectedOrgUnit).then(function (data) {
-	                    if (data && data.status === "ERROR") {
-	                        NotificationService.showNotifcationDialog($translate.instant("error"), data.message);
-	                        $scope.model.autoGeneratedAttFailed = true;
-	                    } else {
-	                        if (att.valueType === "NUMBER") {
-	                            $scope.selectedTei[att.id] = Number(data);
-	                        } else {
-	                            $scope.selectedTei[att.id] = data;
-	                        }
-	                        $scope.model.autoGeneratedAttFailed = false;
-	                    }
-	                });
-	            }
-	        });
 	    };
 	
 	    //watch for selection of program
@@ -20431,26 +20312,9 @@
 	                $scope.customRegistrationForm = CustomFormService.getForTrackedEntity($scope.trackedEntityForm, 'RELATIONSHIP');
 	            }
 	            assignInheritance();
-	            fetchGeneratedAttributes();
 	            getRules();
 	        });
 	    });
-	
-	    $scope.attributeFieldDisabled = function (attribute) {
-	        if ($scope.selectedTei && $scope.selectedTei.programOwnersById && $scope.selectedProgram && $scope.selectedTei.programOwnersById[$scope.selectedProgram.id] != $scope.selectedOrgUnit.id) return true;
-	        if ($scope.isDisabled(attribute)) return true;
-	        if ($scope.selectedOrgUnit.closedStatus) return true;
-	        if (!$scope.hasTeiWrite()) return true;
-	        return false;
-	    };
-	
-	    $scope.isDisabled = function (attribute) {
-	        return attribute.generated || $scope.assignedFields[attribute.id] || $scope.editingDisabled;
-	    };
-	
-	    $scope.hasTeiWrite = function () {
-	        return $scope.trackedEntityTypes && $scope.trackedEntityTypes.selected && $scope.trackedEntityTypes.selected.access.data.write;
-	    };
 	
 	    $scope.trackedEntityTypes = { available: [] };
 	    TEService.getAll().then(function (entities) {
@@ -20573,7 +20437,7 @@
 	        });
 	
 	        if ($scope.base.selectedProgramForRelative && $scope.base.selectedProgramForRelative.id) {
-	            TrackerRulesExecutionService.executeRules($scope.allProgramRules, 'registrationRelationship', null, null, null, $scope.selectedTei, $scope.selectedEnrollment, null, flag);
+	            TrackerRulesExecutionService.executeRules($scope.allProgramRules, 'registration', null, null, null, $scope.selectedTei, $scope.selectedEnrollment, null, flag);
 	        }
 	    };
 	
@@ -20591,10 +20455,9 @@
 	    //listen for rule effect changes
 	    $scope.$on('ruleeffectsupdated', function () {
 	        $scope.warningMessages = [];
-	        var effectResult = TrackerRulesExecutionService.processRuleEffectAttribute('registrationRelationship', $scope.selectedTei, $scope.tei, null, null, null, $scope.attributesById, null, $scope.optionSets, $scope.optionGroupsById);
+	        var effectResult = TrackerRulesExecutionService.processRuleEffectAttribute('registration', $scope.selectedTei, $scope.tei, null, null, null, $scope.attributesById, null, $scope.optionSets, $scope.optionGroupsById);
 	        $scope.selectedTei = effectResult.selectedTei;
 	        $scope.hiddenFields = effectResult.hiddenFields;
-	        $scope.assignedFields = effectResult.assignedFields;
 	        $scope.warningMessages = effectResult.warningMessages;
 	    });
 	
@@ -38317,4 +38180,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-182a209799aca57d400f.js.map
+//# sourceMappingURL=app-89f638388af4eab142ed.js.map
