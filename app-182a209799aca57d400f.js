@@ -8577,7 +8577,7 @@
 	                params: (_params = {
 	                    ouMode: 'ACCESSIBLE',
 	                    program: program,
-	                    orgUnit: orgUnit
+	                    ou: orgUnit
 	                }, _defineProperty(_params, 'ouMode', ouMode), _defineProperty(_params, 'startDate', startDate), _defineProperty(_params, 'endDate', endDate), _defineProperty(_params, 'fields', ':all'), _defineProperty(_params, 'paging', 'false'), _params)
 	            }).then(function (response) {
 	                return convertFromApiToUser(response.data);
@@ -20720,7 +20720,7 @@
 	var trackerCapture = angular.module('trackerCapture');
 	trackerCapture.controller('NotesController', ["$scope", "$translate", "DateUtils", "EnrollmentService", "CurrentSelection", "NotificationService", "SessionStorageService", "orderByFilter", function ($scope, $translate, DateUtils, EnrollmentService, CurrentSelection, NotificationService, SessionStorageService, orderByFilter) {
 	    var userProfile = SessionStorageService.get('USER_PROFILE');
-	    var storedBy = userProfile && userProfile.username ? userProfile.username : '';
+	    var storedBy = userProfile && userProfile.userCredentials && userProfile.userCredentials.username ? userProfile.userCredentials.username : '';
 	
 	    var today = DateUtils.getToday();
 	
@@ -21387,7 +21387,7 @@
 	        };
 	
 	        if ($scope.base.selectedProgram) {
-	            customConfig.queryParameters.program = program;
+	            customConfig.queryParameters.program = $scope.base.selectedProgram.id;
 	            if ($scope.customWorkingListValues.programStatus) {
 	                customConfig.queryParameters.programStatus = $scope.customWorkingListValues.programStatus;
 	            }
@@ -21407,10 +21407,9 @@
 	        $scope.currentTrackedEntityList.loading = true;
 	        customConfig.queryAndSortUrl = customConfig.queryUrl;
 	        if (sortColumn) {
-	            var order = '&order=' + sortColumn.id + ':' + sortColumn.direction;
-	            customConfig.queryAndSortUrl = customConfig.queryAndSortUrl.concat(order);
+	            customConfig.queryParameters.order = sortColumn.id + ':' + sortColumn.direction;
 	        }
-	        TEIService.search(customConfig.orgUnit.id, customConfig.ouMode.name, customConfig.queryAndSortUrl, customConfig.programUrl, customConfig.attributeUrl.url, $scope.pager, true).then(setCurrentTrackedEntityListData);
+	        TEIService.search(customConfig.orgUnit.id, customConfig.ouMode.name, customConfig.queryParameters, $scope.pager, true).then(setCurrentTrackedEntityListData);
 	    };
 	
 	    $scope.expandCollapseOrgUnitTree = function (orgUnit) {
@@ -21686,11 +21685,18 @@
 	            }
 	        }
 	        var promise;
+	        var refetchFn = null;
 	        if (currentSearchScope === searchScopes.PROGRAM) {
 	            var tetSearchGroup = SearchGroupService.findValidTetSearchGroup(searchGroup, $scope.tetSearchConfig, $scope.base.attributesById);
 	            promise = SearchGroupService.programScopeSearch(searchGroup, tetSearchGroup, $scope.base.selectedProgram, $scope.trackedEntityTypes.selected, $scope.selectedOrgUnit);
+	            refetchFn = function refetchFn(pager) {
+	                return SearchGroupService.programScopeSearch(searchGroup, tetSearchGroup, $scope.base.selectedProgram, $scope.trackedEntityTypes.selected, $scope.selectedOrgUnit, pager);
+	            };
 	        } else {
 	            promise = SearchGroupService.tetScopeSearch(searchGroup, $scope.trackedEntityTypes.selected, $scope.selectedOrgUnit);
+	            refetchFn = function refetchFn(pager) {
+	                return SearchGroupService.tetScopeSearch(searchGroup, $scope.trackedEntityTypes.selected, $scope.selectedOrgUnit, pager);
+	            };
 	        }
 	
 	        return promise.then(function (res) {
@@ -21705,7 +21711,7 @@
 	                    return;
 	                }
 	            }
-	            return showResultModal(res, searchGroup).then(function () {
+	            return showResultModal(res, searchGroup, refetchFn).then(function () {
 	                searching = false;
 	            });
 	        });
@@ -21778,7 +21784,7 @@
 	        return false;
 	    };
 	
-	    var showResultModal = function showResultModal(_res, searchGroup) {
+	    var showResultModal = function showResultModal(_res, searchGroup, refetchFn) {
 	        var _internalService = {
 	            translateWithOULevelName: translateWithOULevelName,
 	            translateWithTETName: translateWithTETName,
@@ -21841,7 +21847,7 @@
 	                };
 	
 	                $scope.refetchData = function (pager, sortColumn) {
-	                    refetchDataFn(pager, sortColumn).then(function (newRes) {
+	                    refetchDataFn(pager).then(function (newRes) {
 	                        res = newRes;
 	                        loadData();
 	                    });
@@ -21849,9 +21855,7 @@
 	            }],
 	            resolve: {
 	                refetchDataFn: function refetchDataFn() {
-	                    return function (pager, sortColumn) {
-	                        return SearchGroupService.search(searchGroup, $scope.base.selectedProgram, $scope.trackedEntityTypes.selected, $scope.selectedOrgUnit, pager);
-	                    };
+	                    return refetchFn;
 	                },
 	
 	                orgUnit: function orgUnit() {
@@ -38313,4 +38317,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-2b09118a460b31346b78.js.map
+//# sourceMappingURL=app-182a209799aca57d400f.js.map
