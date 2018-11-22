@@ -11784,7 +11784,7 @@
 	    };
 	
 	    $scope.showManageTeiDropdown = function () {
-	        return $scope.trackedEntityType && $scope.trackedEntityType.access.data.write && $scope.selectedProgram && $scope.selectedProgram.access.data.write;
+	        return $scope.trackedEntityType && $scope.selectedProgram && $scope.selectedProgram.access.data.write;
 	    };
 	}]);
 
@@ -12906,7 +12906,6 @@
 	
 	    $scope.saveAttributedDisabledButton = function () {
 	        if ($scope.selectedOrgUnit && $scope.selectedOrgUnit.id !== $scope.selectedTei.orgUnit && $scope.registrationMode === 'PROFILE') return true;
-	        if ($scope.isDisabled(attribute)) return true;
 	        if ($scope.selectedOrgUnit.closedStatus) return true;
 	        if (!$scope.hasTeiWrite()) return true;
 	        return false;
@@ -37077,4 +37076,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-146e1f3d1fdaa5d8dffe.js.map
+//# sourceMappingURL=app-f23617b373912355def4.js.map
