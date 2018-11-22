@@ -8113,21 +8113,21 @@
 	
 	/* factory for handling events */
 	.factory('DHIS2EventFactory', ["$http", "DHIS2URL", "NotificationService", "$translate", function ($http, DHIS2URL, NotificationService, $translate) {
-	    var requestData = {
-	        url: DHIS2URL + '/events.json',
-	        params: {
-	            ouMode: 'ACCESSIBLE',
-	            trackedEntityInstance: entity,
-	            orgUnit: orgUnit,
-	            program: program,
-	            programStatus: programStatus,
-	            skipPaging: 'true'
-	        }
-	    };
 	    var errorHeader = $translate.instant("error");
 	    return {
 	
 	        getEventsByStatus: function getEventsByStatus(entity, orgUnit, program, programStatus) {
+	            var requestData = {
+	                url: DHIS2URL + '/events.json',
+	                params: {
+	                    ouMode: 'ACCESSIBLE',
+	                    trackedEntityInstance: entity,
+	                    orgUnit: orgUnit,
+	                    program: program,
+	                    programStatus: programStatus,
+	                    skipPaging: 'true'
+	                }
+	            };
 	            var promise = $http.get(requestData.url, { params: requestData.params }).then(function (response) {
 	                return response.data.events;
 	            }, function (response) {
@@ -37077,4 +37077,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-5fca7f2f18e1140b97a7.js.map
+//# sourceMappingURL=app-146e1f3d1fdaa5d8dffe.js.map
