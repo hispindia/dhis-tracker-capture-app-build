@@ -5448,9 +5448,15 @@
 	                $scope.d2CallbackFunction();
 	            }
 	
+	            var geometryHasValue = function(){
+	                return $scope.geometry && $scope.geometry.coordinates && $scope.geometry.coordinates.length > 0;
+	            }
+	
 	            $scope.showMap = function(){
-	                var geo = angular.copy($scope.geometry);
-	                delete geo.coordinate;    
+	                var geoJson = geometryHasValue() ? angular.copy($scope.geometry) : null;
+	                if(geoJson){
+	                    delete geoJson.coordinate;
+	                }
 	                var modalInstance = $modal.open({
 	                    templateUrl: './templates/map.html',
 	                    controller: 'MapController',
@@ -5460,7 +5466,7 @@
 	                            return $scope.currentGeometryTypeDefinition.type;
 	                        },
 	                        geoJson: function () {
-	                            return $scope.geometry;
+	                            return geoJson;
 	                        }
 	                    }
 	                });
@@ -6730,9 +6736,10 @@
 	                CurrentSelection,
 	                DHIS2URL,
 	                NotificationService,
+	                ModalService,
 	                geometryType,
 	                geoJson) {
-	
+	    var inDrawMode = false;
 	    $scope.tilesDictionaryKeys = ['openstreetmap', 'googlemap'];   
 	    $scope.selectedTileKey = 'openstreetmap';           
 	    $scope.tilesDictionary = {
@@ -7123,13 +7130,11 @@
 	                console.log($scope.location);
 	                
 	            });
-	            map.on('draw:deleted', function(e){
-	                var g = 1;
-	                var u = 2;
+	            map.on('draw:toolbaropened', function(e){
+	                inDrawMode = true;
 	            });
-	            map.on('draw:deletestarted', function(e){
-	                var g = 1;
-	                var u = 2;
+	            map.on('draw:toolbarclosed', function(e){
+	                inDrawMode = false;
 	            });
 	        });
 	    }
@@ -7184,14 +7189,33 @@
 	    $scope.close = function () {
 	        $modalInstance.dismiss();
 	    };
-	    
-	    $scope.captureCoordinate = function(){
+	
+	    var internalCaptureCoordinate = function(){
 	        var geoJson = currentGeometryType.getGeoJson();
 	        if(!geoJson){
 	            NotificationService.showNotifcationDialog($translate.instant("warning"), $translate.instant("no_geometry_captured"));
 	        }
 	        $modalInstance.close(geoJson);
+	    }
+	    
+	    $scope.captureCoordinate = function(){
+	        
+	        if(inDrawMode) {
+	            var modalOptions = {
+	                closeButtonText: "Cancel",
+	                actionButtonText: 'OK',
+	                headerText: 'cancel_capturing_polygon',
+	                bodyText: 'you_are_currently_in_draw_mode_all_unfinished_changes_will_be_lost',
+	            };
+	            ModalService.showModal({},modalOptions).then(function(){
+	                internalCaptureCoordinate();
+	            }, function(){});
+	            return;
+	        }
+	        internalCaptureCoordinate();
 	    };
+	
+	
 	    
 	    function setDraggedMarker( args ){
 	        if( args ){
@@ -38187,4 +38211,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-c78d3bcf92b5d3833597.js.map
+//# sourceMappingURL=app-46c4e8bcd0b9e3853547.js.map
