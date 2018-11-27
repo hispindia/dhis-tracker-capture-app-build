@@ -7958,9 +7958,6 @@
 	            angular.extend(dashboardLayout.defaultLayout, response.data);
 	            return dashboardLayout;
 	        }, function () {
-	            if (!dashboardLayout.customLayout) {
-	                NotificationService.showNotifcationDialog($translate.instant("error"), $translate.instant("dashboard_layout_not_fetched"));
-	            }
 	            return dashboardLayout;
 	        });
 	        return promise;
@@ -38350,4 +38347,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-b09c3731f5a432aee080.js.map
+//# sourceMappingURL=app-a11f67ead215cf4055ef.js.map
