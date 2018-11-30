@@ -10216,6 +10216,11 @@
 	                        ev.enrollment = enrollment.enrollment;
 	                        delete ev.event;
 	                        ev = reconstructEvent(ev, stage, CurrentSelection.getOptionSets());
+	
+	                        if (availableEvent.attributeOptionCombo) {
+	                            ev.attributeOptionCombo = availableEvent.attributeOptionCombo;
+	                        }
+	
 	                        dhis2Events.events.push(ev);
 	                    }
 	
@@ -13045,7 +13050,7 @@
 	    $scope.fileNames = CurrentSelection.getFileNames();
 	    $scope.currentFileNames = $scope.fileNames;
 	
-	    $scope.selectedCategories = [];
+	    $scope.selectedCategories = {};
 	
 	    //Placeholder till proper settings for time is implemented. Currently hard coded to 24h format.
 	    $scope.timeFormat = '24h';
@@ -13479,6 +13484,9 @@
 	                                    enrollment.enrollment = en.importSummaries[0].reference;
 	                                    $scope.selectedEnrollment = enrollment;
 	                                    var avilableEvent = $scope.currentEvent && $scope.currentEvent.event ? $scope.currentEvent : null;
+	                                    if ($scope.stringSelectedCategoryOptions) {
+	                                        avilableEvent.attributeOptionCombo = $scope.stringSelectedCategoryOptions;
+	                                    }
 	                                    var dhis2Events = EventUtils.autoGenerateEvents($scope.tei.trackedEntityInstance, $scope.selectedProgram, $scope.selectedOrgUnit, enrollment, avilableEvent);
 	                                    if (dhis2Events.events.length > 0) {
 	                                        DHIS2EventFactory.create(dhis2Events).then(function () {
@@ -14244,27 +14252,18 @@
 	        }
 	    };
 	
-	    $scope.saveAttributeCategoryOptions = function (option) {
+	    $scope.saveAttributeCategoryOptions = function (category) {
 	        var selectedOptions = [],
 	            optionsReady = true;
 	        $scope.changedCat = { id: -1, saved: false };
-	        if ($scope.selectedCategories.length < 1) {
-	            $scope.selectedCategories.push(option.id);
-	        } else {
-	            for (var i = 0; i < $scope.selectedCategories.length; i++) {
 	
-	                if ($scope.selectedCategories[i].selectedOption.id !== $scope.currentEvent.attributeCategoryOptions.split(';')[i]) {
-	                    $scope.changedCat.id = $scope.selectedCategories[i].id;
-	                }
-	                if ($scope.selectedCategories[i].selectedOption && $scope.selectedCategories[i].selectedOption.id) {
-	                    selectedOptions.push($scope.selectedCategories[i].selectedOption.id);
-	                } else {
-	                    optionsReady = false;
-	                }
-	            }
+	        $scope.selectedCategories[category.id] = category.selectedOption.id;
+	
+	        if ($scope.selectedProgram.categoryCombo.categories && $scope.selectedCategories) {
+	            $scope.stringSelectedCategoryOptions = $scope.selectedProgram.categoryCombo.categories.map(function (category) {
+	                return $scope.selectedCategories[category.id];
+	            }).join(";");
 	        }
-	
-	        var acos = selectedOptions.join(';');
 	    };
 	
 	    var showTetRegistrationButtons = function showTetRegistrationButtons() {
@@ -38404,4 +38403,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-9fbcad1ee3d96ffca595.js.map
+//# sourceMappingURL=app-06ba7263adbfae850451.js.map
