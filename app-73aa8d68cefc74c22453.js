@@ -18278,6 +18278,7 @@
 	        //for saving category combo
 	        if ($scope.selectedProgram.categoryCombo && !$scope.selectedProgram.categoryCombo.isDefault) {
 	            if ($scope.selectedOptions.length !== $scope.selectedCategories.length) {
+	                $scope.lockButton = false;
 	                NotificationService.showNotifcationDialog($translate.instant("error"), $translate.instant("fill_all_category_options"));
 	                return;
 	            }
@@ -38208,4 +38209,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-0c5b301a84fb85a4cdb3.js.map
+//# sourceMappingURL=app-73aa8d68cefc74c22453.js.map
