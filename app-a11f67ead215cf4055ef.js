@@ -12483,24 +12483,12 @@
 	                                    loadTrackedEntityType().then(function () {
 	                                        var enrollments = $scope.selectedTei && $scope.selectedTei.enrollments || [];
 	                                        $scope.allEnrollments = angular.copy(enrollments);
-	                                        var selectedEnrollment = null,
-	                                            backupSelectedEnrollment = null;
-	                                        if (enrollments.length === 1) {
-	                                            selectedEnrollment = enrollments[0];
-	                                        } else {
-	                                            if ($scope.selectedProgramId) {
-	                                                angular.forEach(enrollments, function (en) {
-	                                                    if (en.program === $scope.selectedProgramId) {
-	                                                        if (en.status === 'ACTIVE') {
-	                                                            selectedEnrollment = en;
-	                                                        } else {
-	                                                            backupSelectedEnrollment = en;
-	                                                        }
-	                                                    }
-	                                                });
-	                                            }
+	                                        var selectedEnrollment = null;
+	                                        if (enrollments) {
+	                                            selectedEnrollment = enrollments.find(function (e) {
+	                                                return e.program === $scope.selectedProgramId && e.status === 'ACTIVE';
+	                                            });
 	                                        }
-	                                        selectedEnrollment = selectedEnrollment ? selectedEnrollment : backupSelectedEnrollment;
 	
 	                                        ProgramFactory.getProgramsByOu($scope.selectedOrgUnit, false).then(function (response) {
 	                                            $scope.programs = [];
@@ -12522,7 +12510,7 @@
 	                                                        };
 	                                                    });
 	
-	                                                    if ($scope.selectedProgramId && program.id === $scope.selectedProgramId || selectedEnrollment && selectedEnrollment.program === program.id) {
+	                                                    if ($scope.selectedProgramId && program.id === $scope.selectedProgramId) {
 	                                                        $scope.selectedProgram = program;
 	                                                    }
 	                                                }
@@ -38359,4 +38347,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-f4d95c215f901499b036.js.map
+//# sourceMappingURL=app-a11f67ead215cf4055ef.js.map
