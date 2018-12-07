@@ -13008,7 +13008,7 @@
 	/* global trackerCapture, angular */
 	
 	var trackerCapture = angular.module('trackerCapture');
-	trackerCapture.controller('RegistrationController', ["$rootScope", "$q", "$scope", "$location", "$timeout", "$modal", "$translate", "$window", "$parse", "orderByFilter", "AttributesFactory", "DHIS2EventFactory", "TEService", "CustomFormService", "EnrollmentService", "NotificationService", "CurrentSelection", "MetaDataFactory", "EventUtils", "RegistrationService", "DateUtils", "TEIGridService", "TEIService", "TrackerRulesFactory", "TrackerRulesExecutionService", "TCStorageService", "ModalService", "SearchGroupService", "AccessUtils", "AuthorityService", "SessionStorageService", "AttributeUtils", "TCOrgUnitService", function ($rootScope, $q, $scope, $location, $timeout, $modal, $translate, $window, $parse, orderByFilter, AttributesFactory, DHIS2EventFactory, TEService, CustomFormService, EnrollmentService, NotificationService, CurrentSelection, MetaDataFactory, EventUtils, RegistrationService, DateUtils, TEIGridService, TEIService, TrackerRulesFactory, TrackerRulesExecutionService, TCStorageService, ModalService, SearchGroupService, AccessUtils, AuthorityService, SessionStorageService, AttributeUtils, TCOrgUnitService) {
+	trackerCapture.controller('RegistrationController', ["$rootScope", "$q", "$scope", "$location", "$timeout", "$modal", "$translate", "$window", "$parse", "orderByFilter", "AttributesFactory", "DHIS2EventFactory", "TEService", "CustomFormService", "EnrollmentService", "NotificationService", "CurrentSelection", "MetaDataFactory", "EventUtils", "RegistrationService", "DateUtils", "TEIGridService", "TEIService", "TrackerRulesFactory", "TrackerRulesExecutionService", "TCStorageService", "ModalService", "SearchGroupService", "AccessUtils", "AuthorityService", "SessionStorageService", "AttributeUtils", "TCOrgUnitService", "ProgramFactory", function ($rootScope, $q, $scope, $location, $timeout, $modal, $translate, $window, $parse, orderByFilter, AttributesFactory, DHIS2EventFactory, TEService, CustomFormService, EnrollmentService, NotificationService, CurrentSelection, MetaDataFactory, EventUtils, RegistrationService, DateUtils, TEIGridService, TEIService, TrackerRulesFactory, TrackerRulesExecutionService, TCStorageService, ModalService, SearchGroupService, AccessUtils, AuthorityService, SessionStorageService, AttributeUtils, TCOrgUnitService, ProgramFactory) {
 	    var prefilledTet = null;
 	    $scope.today = DateUtils.getToday();
 	    $scope.trackedEntityForm = null;
@@ -13739,44 +13739,64 @@
 	        return status;
 	    };
 	
+	    var allPrograms = null;
+	    var getAllPrograms = function getAllPrograms() {
+	        var def = $q.defer();
+	        if (allPrograms) {
+	            def.resolve(allPrograms);
+	        } else {
+	            ProgramFactory.getAll().then(function (result) {
+	                allPrograms = result.programs;
+	                def.resolve(allPrograms);
+	            });
+	        }
+	
+	        return def.promise;
+	    };
+	
 	    $scope.getTrackerAssociate = function (_selectedAttribute, _existingAssociateUid) {
-	        var modalInstance = $modal.open({
-	            templateUrl: 'components/teiadd/tei-add.html',
-	            controller: 'TEIAddController',
-	            windowClass: 'modal-full-window',
-	            resolve: {
-	                relationshipTypes: function relationshipTypes() {
-	                    return $scope.relationshipTypes;
-	                },
-	                addingRelationship: function addingRelationship() {
-	                    return false;
-	                },
-	                selections: function selections() {
-	                    return CurrentSelection.get();
-	                },
-	                selectedTei: function selectedTei() {
-	                    return $scope.selectedTei;
-	                },
-	                selectedAttribute: function selectedAttribute() {
-	                    return _selectedAttribute;
-	                },
-	                existingAssociateUid: function existingAssociateUid() {
-	                    return _existingAssociateUid;
-	                },
-	                selectedProgram: function selectedProgram() {
-	                    return $scope.selectedProgram;
-	                },
-	                relatedProgramRelationship: function relatedProgramRelationship() {
-	                    return $scope.relatedProgramRelationship;
+	        return getAllPrograms().then(function (allProgramsResult) {
+	            var modalInstance = $modal.open({
+	                templateUrl: 'components/teiadd/tei-add.html',
+	                controller: 'TEIAddController',
+	                windowClass: 'modal-full-window',
+	                resolve: {
+	                    relationshipTypes: function relationshipTypes() {
+	                        return $scope.relationshipTypes;
+	                    },
+	                    addingRelationship: function addingRelationship() {
+	                        return false;
+	                    },
+	                    selections: function selections() {
+	                        return CurrentSelection.get();
+	                    },
+	                    selectedTei: function selectedTei() {
+	                        return $scope.selectedTei;
+	                    },
+	                    selectedAttribute: function selectedAttribute() {
+	                        return _selectedAttribute;
+	                    },
+	                    existingAssociateUid: function existingAssociateUid() {
+	                        return _existingAssociateUid;
+	                    },
+	                    selectedProgram: function selectedProgram() {
+	                        return $scope.selectedProgram;
+	                    },
+	                    relatedProgramRelationship: function relatedProgramRelationship() {
+	                        return $scope.relatedProgramRelationship;
+	                    },
+	                    allPrograms: function allPrograms() {
+	                        return allProgramsResult;
+	                    }
 	                }
-	            }
-	        });
-	        return modalInstance.result.then(function (res) {
-	            if (res && res.id) {
-	                //Send object with tei id and program id
-	                $scope.selectedTei[_selectedAttribute.id] = res.id;
-	            }
-	            return res;
+	            });
+	            return modalInstance.result.then(function (res) {
+	                if (res && res.id) {
+	                    //Send object with tei id and program id
+	                    $scope.selectedTei[_selectedAttribute.id] = res.id;
+	                }
+	                return res;
+	            });
 	        });
 	    };
 	
@@ -19839,19 +19859,16 @@
 	    } else {
 	        $scope.teiAddLabel = $scope.selectedAttribute && $scope.selectedAttribute.displayName ? $scope.selectedAttribute.displayName : $translate.instant('tracker_associate');
 	        $scope.addingTeiAssociate = true;
-	        ProgramFactory.getProgramsByOu($scope.selectedOrgUnit, true, $scope.selectedProgram).then(function (response) {
-	            var programs = response.programs;
-	            if ($scope.selectedAttribute && $scope.selectedAttribute.trackedEntityType && $scope.selectedAttribute.trackedEntityType.id) {
-	                programs = [];
-	                angular.forEach(response.programs, function (pr) {
-	                    if (pr.trackedEntityType && pr.trackedEntityType.id === $scope.selectedAttribute.trackedEntityType.id) {
-	                        programs.push(pr);
-	                    }
-	                });
-	            }
-	            $scope.programs = AccessUtils.toWritable(programs);
-	            $scope.selectedProgram = response.selectedProgram;
-	        });
+	        var programs = allPrograms;
+	        if ($scope.selectedAttribute && $scope.selectedAttribute.trackedEntityType && $scope.selectedAttribute.trackedEntityType.id) {
+	            programs = [];
+	            angular.forEach(allPrograms, function (pr) {
+	                if (pr.trackedEntityType && pr.trackedEntityType.id === $scope.selectedAttribute.trackedEntityType.id) {
+	                    programs.push(pr);
+	                }
+	            });
+	        }
+	        $scope.relatedAvailablePrograms = AccessUtils.toWritable(programs);
 	
 	        if (existingAssociateUid) {
 	            TEIService.get(existingAssociateUid, $scope.optionSets, $scope.attributesById).then(function (data) {
@@ -38189,4 +38206,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-2e0da450bffb986281bf.js.map
+//# sourceMappingURL=app-f6c401741961c29a1f50.js.map
