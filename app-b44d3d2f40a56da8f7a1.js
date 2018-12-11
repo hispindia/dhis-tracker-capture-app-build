@@ -6102,7 +6102,7 @@
 	            $scope.search = function(searchParam){
 	                if(!searchParam){
 	                    currentFilteredOptions = filteredOptions;
-	                } else {
+	                } else {
 	                    currentFilteredOptions = $filter('filter')(filteredOptions, searchParam);
 	                }                
 	                setOptions();
@@ -38206,4 +38206,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-8827527c1eb1a02f966c.js.map
+//# sourceMappingURL=app-b44d3d2f40a56da8f7a1.js.map
