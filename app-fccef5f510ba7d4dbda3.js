@@ -9631,7 +9631,7 @@
 	        var params = getSearchParams(searchGroup, program, trackedEntityType, orgUnit, pager, searchScopes.PROGRAM);
 	        if (params) {
 	            return TEIService.searchCount(params.orgUnit.id, params.ouMode, null, params.programOrTETUrl, params.queryUrl, params.pager, true).then(function (response) {
-	                if (response) {
+	                if (response || response === 0) {
 	                    return response;
 	                } else {
 	                    return tetScopeSearchCount(tetSearchGroup, trackedEntityType, orgUnit, pager);
@@ -15271,17 +15271,6 @@
 	        return 'form-control';
 	    };
 	
-	    var completeEnrollmentAllowed = function completeEnrollmentAllowed(ignoreEventId) {
-	        for (var i = 0; i < $scope.programStages.length; i++) {
-	            for (var e = 0; e < $scope.eventsByStage[$scope.programStages[i].id].length; e++) {
-	                if ($scope.eventsByStage[$scope.programStages[i].id][e].status === 'ACTIVE' && $scope.eventsByStage[$scope.programStages[i].id][e].event !== ignoreEventId) {
-	                    return false;
-	                }
-	            }
-	        }
-	        return true;
-	    };
-	
 	    var completeEnrollment = function completeEnrollment() {
 	        $scope.deleteScheduleAndOverdueEvents().then(function (result) {
 	
@@ -15423,24 +15412,15 @@
 	        }
 	        ModalService.showModal(modalDefaults, modalOptions).then(function (modalResult) {
 	            if (modalResult === modalCompleteIncompleteActions.completeEnrollment) {
-	                if (!completeEnrollmentAllowed(dhis2Event.event)) {
-	                    modalOptions = {
-	                        actionButtonText: 'OK',
-	                        headerText: 'complete_enrollment_failed',
-	                        bodyText: 'complete_active_events_before_completing_enrollment'
-	                    };
-	                    ModalService.showModal({}, modalOptions);
-	                } else {
-	                    modalOptions = {
-	                        closeButtonText: 'cancel',
-	                        actionButtonText: 'complete',
-	                        headerText: 'complete_enrollment',
-	                        bodyText: 'are_you_sure_to_complete_enrollment_delete_schedule'
-	                    };
-	                    ModalService.showModal({}, modalOptions).then(function () {
-	                        $scope.executeCompleteIncompleteEvent(dhis2Event, modalResult);
-	                    });
-	                }
+	                modalOptions = {
+	                    closeButtonText: 'cancel',
+	                    actionButtonText: 'complete',
+	                    headerText: 'complete_enrollment',
+	                    bodyText: 'are_you_sure_to_complete_enrollment_delete_schedule'
+	                };
+	                ModalService.showModal({}, modalOptions).then(function () {
+	                    $scope.executeCompleteIncompleteEvent(dhis2Event, modalResult);
+	                });
 	            } else {
 	                $scope.executeCompleteIncompleteEvent(dhis2Event, modalResult);
 	            }
@@ -17049,6 +17029,7 @@
 	        //for saving category combo
 	        if ($scope.selectedProgram.categoryCombo && !$scope.selectedProgram.categoryCombo.isDefault) {
 	            if ($scope.selectedOptions.length !== $scope.selectedCategories.length) {
+	                $scope.lockButton = false;
 	                NotificationService.showNotifcationDialog($translate.instant("error"), $translate.instant("fill_all_category_options"));
 	                return;
 	            }
@@ -40339,4 +40320,4 @@
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=app-6dc32f8b715d38682854.js.map
+//# sourceMappingURL=app-fccef5f510ba7d4dbda3.js.map
