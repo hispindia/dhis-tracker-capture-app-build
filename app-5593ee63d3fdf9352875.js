@@ -6102,7 +6102,7 @@
 	            $scope.search = function(searchParam){
 	                if(!searchParam){
 	                    currentFilteredOptions = filteredOptions;
-	                } else {
+	                } else {
 	                    currentFilteredOptions = $filter('filter')(filteredOptions, searchParam);
 	                }                
 	                setOptions();
@@ -7525,7 +7525,7 @@
 	$templateCache.put('./templates/geometry-input.html','<div ng-include="currentGeometryTypeDefinition.template"></div>');
 	$templateCache.put('./templates/img-input.html','<div style="margin-top: 5px; margin-bottom: 5px;">\n    <accordion>\n        <accordion-group is-open="d2DisplayOpen">\n            <accordion-heading>\n                <span ng-if="!d2Event[d2DataElementId]"> {{\'please_select_an_image\'| translate}} <i class="pull-right" ng-class="{\'fa fa-chevron-up vertical-center\': d2DisplayOpen, \'fa fa-chevron-down vertical-center\': !d2DisplayOpen}"></i></span>\n                <span ng-if="d2Event[d2DataElementId]"> {{d2FileNames[d2Event.event][d2DataElementId].length > 20 ? d2FileNames[d2Event.event][d2DataElementId].substring(0,20).concat(\'...\') : d2FileNames[d2Event.event][d2DataElementId]}} <i class="pull-right" ng-class="{\'fa fa-chevron-up vertical-center\': d2DisplayOpen, \'fa fa-chevron-down vertical-center\': !d2DisplayOpen}"></i></span>\n            </accordion-heading>\n            <div class="preview clearfix" ng-if="d2Event[d2DataElementId]">\n                <div class="previewData clearfix" ng-init="fetch()">\n                    <img ng-if="!d2HideImage" class="img" ng-src={{path}} style="max-width:100%;"></img>\n                </div>\t\n            </div>\n            <div ng-if="!d2Event[d2DataElementId]">\n                <div class="form-group inputDnD">\n                    <input type="file"\n                           name="foo"\n                           ng-disabled="d2Disabled"\n                           input-field-id={{d2DataElementId}}\n                           d2-file-input-ps="d2Ps"\n                           d2-file-input="d2Event"\n                           d2-file-input-current-name="d2CurrentImageName"\n                           d2-file-input-name="d2FileNames"\n                           accept="image/*"\n                           class="form-control-file text-primary font-weight-bold"\n                           id="inputFile"\n                           data-title="{{\'drop_image\'| translate}}">\n                </div>\n            </div>\n            <div class="input-group" ng-show="d2CanEdit" style="margin-top: 5px;">\n                <div class="form-control">\n                    <a href ng-click="d2IsAttribute ? d2DownloadMethode(d2Tei, d2DataElementId) : d2DownloadMethode(d2Event.event, d2DataElementId)" ng-attr-title="{{d2FileNames[d2Event.event][d2DataElementId]}}">{{d2FileNames[d2Event.event][d2DataElementId].length > 20 ? d2FileNames[d2Event.event][d2DataElementId].substring(0,20).concat(\'...\') : d2FileNames[d2Event.event][d2DataElementId]}}</a>\n                </div>\n                <span class="input-group-btn">\n                    <span class="btn btn-grp btn-file" ng-click="delete()" ng-disabled="d2Disabled" ng-if="d2Event[d2DataElementId]" style="border-top-left-radius: 0px; border-bottom-left-radius: 0px;">\n                        <span ng-attr-title="{{\'delete\' | translate}}"\n                              d2-file-input-name="d2FileNames[d2Event.event][d2DataElementId]"\n                              d2-file-input-delete="d2Event[d2DataElementId]">\n                            <i class="fa fa-trash"></i>\n                        </span>\n                    </span>\n                    <span class="btn btn-grp btn-file" ng-if="!d2Event[d2DataElementId]" style="border-top-left-radius: 0px; border-bottom-left-radius: 0px;">\n                        <span ng-attr-title="{{\'upload\' | translate}}">\n                            <i class="fa fa-upload"></i>\n                            <input type="file"\n                                    ng-required="d2Required"\n                                    ng-disabled="d2Disabled"\n                                    name="foo"\n                                    input-field-id={{d2DataElementId}}\n                                    d2-file-input-ps="d2Ps"\n                                    d2-file-input="d2Event"\n                                    d2-file-input-current-name="d2CurrentImageName"\n                                    d2-file-input-name="d2FileNames"\n                                    accept="image/*">\n                        </span>\n                    </span>\n                </span>\n                <span class="input-group-btn">\n                    <button type="button" class="btn btn-default" ng-disabled="!d2Event[d2DataElementId]" ng-click="fetch()" style="border-radius: 4px; margin-left: 10px;">\n                        <i class="fa fa-refresh" aria-hidden="true"></i>\n                    </button>\n                </span>\n            </div>               \n        </accordion-group> \n    </accordion>\n</div>');
 	$templateCache.put('./templates/map.html','<div class="modal-header">\n    <h2>\n        {{\'point_and_click_for_coordinate\'| translate}}        \n    </h2>\n    <div class="align-center">\n        <span id=\'polygon-label\'></span>\n    </div>\n</div>\n<div class="modal-body map-area">\n    <span ng-switch="selectedTileKey">        \n        <span ng-switch-when="openstreetmap">\n            <leaflet id="openstreetmap" lf-center="center" defaults="mapDefaults" markers="marker" tiles="tilesDictionary[selectedTileKey]"></leaflet>\n        </span>\n        <span ng-switch-when="googlemap">\n            <leaflet id="googlemap" lf-center="center" defaults="mapDefaults" markers="marker" layers="tilesDictionary[selectedTileKey].layers"></leaflet>\n        </span>\n    </span>\n</div>\n<div class="modal-footer">\n    \n    <div class="pull-left">\n        <ul class="nav nav-pills">\n            <li ng-class="{true: \'active\'} [selectedTileKey === key]" ng-repeat="key in tilesDictionaryKeys">\n                <a href ng-click="setTile(key)">{{key | translate}}</a>\n            </li>\n        </ul>\n    </div>\n    \n    <button class="btn btn-primary" data-ng-click="captureCoordinate()">{{\'capture\'| translate}}</button>\n    <button class="btn btn-default" data-ng-click="close()">{{\'cancel\'| translate}}</button>        \n</div>');
-	$templateCache.put('./templates/more-options-list.html','    <!--<ui-select ng-model="d2Model[d2ModelId]"\n               theme="select2"\n               ng-required="d2Required"\n               ng-disabled="d2Disabled"\n               name="foo"\n               on-select="saveOption()"\n               class="ui-select-style">\n        <ui-select-match allow-clear="true" ng-class="d2UseNotification ? getInputNotifcationClass(d2ModelId) : \'\';"  class="form-control-ui-select"  ng-attr-placeholder="{{\'select_or_search\' | translate}}">{{$select.selected.displayName  || $select.selected}}</ui-select-match>\n        <ui-select-choices repeat="option.displayName as option in displayOptions track by option.id" ui-disable-choice="option.id===loadMoreId" refresh="search($select.search)" refresh-delay="500">\n            <span ng-if="option.id!==loadMoreId" ng-bind-html="option.displayName | highlight: $select.search"></span>\n            <div ng-if="option.id===loadMoreId">\n                <button class="btn btn-xs btn-default" \n                        style="width: 100%; margin-top: 5px;" \n                        ng-click="showMore($select, $event);"\n                        ng-disabled="loading">{{\'show_more\' | translate}}</button>                              \n              </div>\n        </ui-select-choices>\n    </ui-select>-->\n\n<div class="optionListContainer">\n    <div ng-click="toggleOptionList()" class="optionListInput" ng-class="{ \'optionListInputOpen\': optionListOpen }">\n        <div class="optionListInputText" >\n            <span ng-if="d2Model[d2ModelId]">{{ d2Model[d2ModelId] }}</span>\n            <span ng-if="!d2Model[d2ModelId]" class="optionListInputTextPlaceholder">{{\'select_or_search\' | translate}}</span>\n        </div>\n        <div class="optionListInputDelete" ng-click="removeSelectedOption($event)"><i class="fa fa-times" ng-if="d2Model && d2Model[d2ModelId]"></i></div>\n        <div class="optionListInputToggle"><i class="fa fa-caret-up" ng-show="optionListOpen"></i><i class="fa fa-caret-down" ng-hide="optionListOpen"></i></div>\n    </div>\n    <div ng-if="optionListOpen" class="optionListPopup">\n        <div class="optionListSearchInputContainer">\n            <input type="text" class="form-control" ng-model="searchText" ng-change="search(searchText)" ng-model-options="{ debounce: 600 }" placeholder="Search..."/>\n        </div>\n        <div vs-repeat class="optionListVsRepeater">\n            <div ng-repeat="option in displayOptions track by option.id" class="optionListItem" ng-click="selectOption(option)" ng-class="{ \'optionListItemSelected\': (option.displayName===d2Model[d2ModelId])}">\n                {{option.displayName}}\n            </div>\n        </div>\n    </div>\n</div>\n');
+	$templateCache.put('./templates/more-options-list.html','<div class="optionListContainer">\n    <div ng-if="d2Disabled"><input class="form-control" ng-model="d2Model[d2ModelId]" disabled></div>\n    <div ng-click="toggleOptionList()" ng-if="!d2Disabled" class="optionListInput" ng-class="{ \'optionListInputOpen\': optionListOpen }">\n        <div class="optionListInputText" >\n            <span ng-if="d2Model[d2ModelId]">{{d2Model[d2ModelId]}}</span>\n            <span ng-if="!d2Model[d2ModelId]" class="optionListInputTextPlaceholder">{{\'select_or_search\' | translate}}</span>\n        </div>\n        <div class="optionListInputDelete" ng-click="removeSelectedOption($event)"><i class="fa fa-times" ng-if="d2Model && d2Model[d2ModelId]"></i></div>\n        <div class="optionListInputToggle"><i class="fa fa-caret-up" ng-show="optionListOpen"></i><i class="fa fa-caret-down" ng-hide="optionListOpen"></i></div>\n    </div>\n    <div ng-if="optionListOpen" class="optionListPopup">\n        <div class="optionListSearchInputContainer">\n            <input type="text" class="form-control" ng-model="searchText" ng-change="search(searchText)" ng-model-options="{ debounce: 600 }" placeholder="Search..."/>\n        </div>\n        <div vs-repeat class="optionListVsRepeater">\n            <div ng-repeat="option in displayOptions track by option.id" class="optionListItem" ng-click="selectOption(option)" ng-class="{ \'optionListItemSelected\': (option.displayName===d2Model[d2ModelId])}">\n                {{option.displayName}}\n            </div>\n        </div>\n    </div>\n</div>\n');
 	$templateCache.put('./templates/orgunit-input.html','<div class="input-group">    \n    <input type="text" name="foo" ng-disabled="true" class="form-control" ng-attr-placeholder="{{\'please_select\' | translate}}" ng-model="d2OrgunitNames[d2Object[id]]" ng-disabled="{{d2Disabled}}" ng-required="{{d2Required}}"> \n    <span class="input-group-btn"> \n        <button class="btn btn-danger hideInPrint trim" type="button" ng-attr-title="{{\'remove\' | translate}}" ng-disabled="d2Disabled" ng-click="removeSelectedOrgUnit(id)" ng-if="d2Object[id]"> \n            <i class="fa fa-trash-o"></i> \n        </button> \n        <button class="btn btn-default hideInPrint trim" type="button" ng-attr-title="{{\'get_from_tree\' | translate}}" ng-disabled="d2Disabled" ng-click="showOrgUnitTree(id)"> \n            <i class="fa fa-plus-square-o"></i> \n        </button> \n    </span> \n</div>');
 	$templateCache.put('./templates/orgunit-tree.html','<div class="modal-header page">\n    <h3>{{\'org_unit\'| translate}}</h3>\n</div>\n<div class="modal-body page">\n    <div class="input-group">    \n        <input type="text" \n            name="orgUnitFilterText" \n            d2-on-enter-blur\n            d2-on-blur-change="filterOrgUnits()"\n            ng-model="orgUnitFilterText" \n            class="form-control" ng-attr-placeholder="{{\'search\' | translate}}"> \n        <span class="input-group-btn"> \n            <button class="btn btn-success hideInPrint trim" type="button" ng-attr-title="{{\'search\' | translate}}" ng-disabled="!orgUnitFilterText" ng-click="filterOrgUnits()"> \n                <i class="fa fa-search"></i> \n            </button> \n            <button class="btn btn-danger hideInPrint trim" type="button" ng-attr-title="{{\'clear\' | translate}}" ng-disabled="!orgUnitFilterText" ng-click="filterOrgUnits(true)"> \n                <i class="fa fa-trash-o"></i>\n            </button> \n        </span> \n    </div>\n    <div class="org-unit-tree" data-stop-propagation="true">\n        <script type="text/ng-template" id="orgUnitTree.html">\n            <span class="org-unit-tree-button" ng-click="expandCollapse(orgUnit)" ng-show="orgUnit.show && orgUnit.children.length > 0"><i class="fa fa-minus-square-o"></i></span>\n            <span class="org-unit-tree-button" ng-click="expandCollapse(orgUnit)" ng-show="(!orgUnit.show && orgUnit.children.length > 0) || (!orgUnit.show && orgUnit.hasChildren)"><i class="fa fa-plus-square-o"></i></span>\n            <span class="org-unit-tree-button" ng-click="setSelectedOrgUnit(orgUnit)" ng-class="{\'selected-org-unit\' : orgUnit.id === model.selectedOrgUnitId}">{{orgUnit.displayName}}</span>\n            <ul class="tree" id="tree" ng-show="orgUnit.show">\n                <li ng-repeat="orgUnit in orgUnit.children | orderBy:[\'level\',\'displayName\']" ng-include="\'orgUnitTree.html\'"></li>\n            </ul>\n        </script>\n        <ul class="tree" id="tree">\n            <li ng-repeat="orgUnit in orgUnitsDataElement | orderBy:[\'level\',\'displayName\']" ng-include="\'orgUnitTree.html\'"></li>\n        </ul>\n    </div>\n</div>\n<div class="modal-footer page">\n    <button class="btn btn-primary" data-ng-click="select()">{{\'select\'| translate}}</button>\n    <button class="btn btn-default" data-ng-click="close()">{{\'close\'| translate}}</button>\n</div>');
 	$templateCache.put('./templates/radio-button.html','<!--\nCopyright (c) 2015, UiO\nAll rights reserved.\n\nRedistribution and use in source and binary forms, with or without\nmodification, are permitted provided that the following conditions are met:\n\n* Redistributions of source code must retain the above copyright notice, this\n  list of conditions and the following disclaimer.\n* Redistributions in binary form must reproduce the above copyright notice,\n  this list of conditions and the following disclaimer in the documentation\n  and/or other materials provided with the distribution.\n\nTHIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"\nAND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE\nIMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE\nARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE\nLIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR\nCONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF\nSUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS\nINTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN\nCONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)\nARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE\nPOSSIBILITY OF SUCH DAMAGE.\n-->\n \n\n<div tabindex="0" ng-if="!disabled" class="custom-radio-group custom-radio-container">\n    <span ng-click="valueClicked(\'true\')" class="cursor-pointer">\n        <span class="fa-stack">                                                                                                        \n            <span class=\'fa fa-stack-1x fa-circle radio-default fa-stack-custom-large\' ng-class=\'radioButtonColor("true")\'></span>        \n            <span class="fa fa-stack-1x fa-circle-thin fa-stack-custom-large"></span>\n            <span class="fa-stack-custom-small" ng-class="radioButtonImage(\'true\')"></span>\n        </span>\n        <span class="custom-radio-text">\n            {{\'Yes\' | translate }}\n        </span>\n    </span>\n    &nbsp;&nbsp;    \n    <span ng-click="valueClicked(\'false\')" class="cursor-pointer">\n        <span class="fa-stack">                                                                                                        \n            <span class=\'fa fa-stack-1x fa-circle fa-stack-custom-large\' ng-class=\'radioButtonColor("false")\'></span>                                                    \n            <span class="fa fa-stack-1x fa-circle-thin fa-stack-custom-large"></span>\n            <span class="fa-stack-custom-small" ng-class="radioButtonImage(\'false\')"></span>\n        </span>\n        <span class="custom-radio-text">\n            {{\'No\' | translate }}\n        </span>        \n    </span>\n    <div ng-if="status === \'error\'" class="custom-radio-error input-error"><span>{{\'save failed\' | translate}}</span></div>\n    \n    \n    <div ng-show="false">\n        <label class="radio-inline">                                                    \n            <input class="radio-display-none" ng-required="required" style=\'margin-top: 1px\' type="radio" ng-model="value" ng-disabled="disabled" name="{{name}}" ng-attr-value="true">                                                    \n        </label>                                                \n        <label class="radio-inline">\n            <input class="radio-display-none" ng-required="required" style=\'margin-top: 1px\' type="radio" ng-model="value" ng-disabled="disabled" name="{{name}}" ng-attr-value="false">\n        </label>\n    </div>\n</div>\n<div ng-if="disabled" class="custom-radio-container">\n    <span class="fa-icon-width" ng-class="getDisabledIcon(value)"></span>\n    <span>{{getDisabledValue(value) | translate}}</span>         \n</div>');
@@ -7956,9 +7956,6 @@
 	            angular.extend(dashboardLayout.defaultLayout, response.data);
 	            return dashboardLayout;
 	        }, function () {
-	            if (!dashboardLayout.customLayout) {
-	                NotificationService.showNotifcationDialog($translate.instant("error"), $translate.instant("dashboard_layout_not_fetched"));
-	            }
 	            return dashboardLayout;
 	        });
 	        return promise;
@@ -10779,7 +10776,7 @@
 	        var params = getSearchParams(searchGroup, program, trackedEntityType, orgUnit, pager, searchScopes.PROGRAM);
 	        if (params) {
 	            return TEIService.searchCount(params.orgUnit.id, params.ouMode, null, params.programOrTETUrl, params.queryUrl, params.pager, true).then(function (response) {
-	                if (response) {
+	                if (response || response === 0) {
 	                    return response;
 	                } else {
 	                    return tetScopeSearchCount(tetSearchGroup, trackedEntityType, orgUnit, pager);
@@ -12322,7 +12319,7 @@
 	
 	'use strict';
 	
-	/* Custom Services HISP INDIA*/
+	/* Custom Services */
 	
 	/**
 	 * Created by Gourav.
@@ -13143,7 +13140,7 @@
 	/* global trackerCapture, angular */
 	
 	var trackerCapture = angular.module('trackerCapture');
-	trackerCapture.controller('RegistrationController', ["$rootScope", "$q", "$scope", "$location", "$timeout", "$modal", "$translate", "$window", "$parse", "orderByFilter", "AttributesFactory", "DHIS2EventFactory", "TEService", "CustomFormService", "EnrollmentService", "NotificationService", "CurrentSelection", "MetaDataFactory", "EventUtils", "RegistrationService", "DateUtils", "TEIGridService", "TEIService", "TrackerRulesFactory", "TrackerRulesExecutionService", "TCStorageService", "ModalService", "SearchGroupService", "AccessUtils", "AuthorityService", "SessionStorageService", "AttributeUtils", "TCOrgUnitService", function ($rootScope, $q, $scope, $location, $timeout, $modal, $translate, $window, $parse, orderByFilter, AttributesFactory, DHIS2EventFactory, TEService, CustomFormService, EnrollmentService, NotificationService, CurrentSelection, MetaDataFactory, EventUtils, RegistrationService, DateUtils, TEIGridService, TEIService, TrackerRulesFactory, TrackerRulesExecutionService, TCStorageService, ModalService, SearchGroupService, AccessUtils, AuthorityService, SessionStorageService, AttributeUtils, TCOrgUnitService) {
+	trackerCapture.controller('RegistrationController', ["$rootScope", "$q", "$scope", "$location", "$timeout", "$modal", "$translate", "$window", "$parse", "orderByFilter", "AttributesFactory", "DHIS2EventFactory", "TEService", "CustomFormService", "EnrollmentService", "NotificationService", "CurrentSelection", "MetaDataFactory", "EventUtils", "RegistrationService", "DateUtils", "TEIGridService", "TEIService", "TrackerRulesFactory", "TrackerRulesExecutionService", "TCStorageService", "ModalService", "SearchGroupService", "AccessUtils", "AuthorityService", "SessionStorageService", "AttributeUtils", "TCOrgUnitService", "ProgramFactory", function ($rootScope, $q, $scope, $location, $timeout, $modal, $translate, $window, $parse, orderByFilter, AttributesFactory, DHIS2EventFactory, TEService, CustomFormService, EnrollmentService, NotificationService, CurrentSelection, MetaDataFactory, EventUtils, RegistrationService, DateUtils, TEIGridService, TEIService, TrackerRulesFactory, TrackerRulesExecutionService, TCStorageService, ModalService, SearchGroupService, AccessUtils, AuthorityService, SessionStorageService, AttributeUtils, TCOrgUnitService, ProgramFactory) {
 	    var prefilledTet = null;
 	    $scope.today = DateUtils.getToday();
 	    $scope.trackedEntityForm = null;
@@ -13157,6 +13154,7 @@
 	    $scope.hiddenSections = [];
 	    $scope.mandatoryFields = [];
 	    $scope.currentEvent = null;
+	    $scope.orgUnitTree = false;
 	    $scope.prStDes = null;
 	    $scope.registrationAndDataEntry = false;
 	    $scope.model = { autoGeneratedAttFailed: false, savingRegistration: false };
@@ -13173,10 +13171,15 @@
 	
 	    //Placeholder till proper settings for time is implemented. Currently hard coded to 24h format.
 	    $scope.timeFormat = '24h';
+	    var styles = {
+	        multiSelectWrapper: {
+	            position: 'relative',
+	            minWidth: 850
+	        }
 	
-	    // UPHMIS Custom Changes
+	        // UPHMIS Custom Changes
 	
-	    $scope.usernameAttributeId = 'GCyx4hTzy3j';
+	    };$scope.usernameAttributeId = 'GCyx4hTzy3j';
 	    $scope.username = '';
 	    $scope.matchUsername = '';
 	
@@ -13511,6 +13514,78 @@
 	                    }
 	                });
 	            }
+	        });
+	    };
+	
+	    $scope.multipleOrgUnitSelection = function () {
+	
+	        alert("Please Select multiple orgunit");
+	
+	        $scope.orgUnitTree = true;
+	    };
+	
+	    $(document).ready(function () {
+	
+	        $("#myBtn").click(function () {
+	            $('#myModal').modal('show');
+	        });
+	    });
+	
+	    $scope.validate = function (data, data1) {
+	        // alert("hello");
+	
+	        var options = data;
+	        var selected_option = data1;
+	        for (var i = 0; i < options.length; i++) {
+	
+	            if (options[i].displayName == data1) {
+	                var selectedOp = options[i];
+	                //  console.log("selectedop = " + selectedOp);
+	                var code = selectedOp.code;
+	                var id = selectedOp.id;
+	            }
+	        }
+	        $scope.optionSets;
+	        $scope.optionSet;
+	        // console.log(data);
+	        //.log(data1);
+	
+	        $scope.apicall(code);
+	    };
+	
+	    $scope.apicall = function (code) {
+	        $scope.selectedOption = code;
+	        $.ajax({
+	            type: "GET",
+	            async: 'false',
+	
+	            url: "../api/optionSets.json?fields=id,name,code,options[id,name,code]&filter=code:eq:" + code + "&rootJunction=OR",
+	            data: JSON,
+	
+	            success: function success(data) {
+	
+	                //  console.log(data);
+	                $scope.optionSets.l2y82R8STce.options = $scope.optionarray;
+	                $scope.optionarray = [];
+	
+	                for (var j = 0; j < data.optionSets.length; j++) {
+	
+	                    if ($scope.selectedOption == data.optionSets[j].code) {
+	                        $(data.optionSets[j].options).each(function (index, item1) {
+	                            $scope.name = item1.name;
+	                            $scope.id = item1.id;
+	                            $scope.code = item1.code;
+	                            $scope.obj = { code: $scope.code, id: $scope.id, displayName: $scope.name };
+	                            $scope.optionarray.push($scope.obj);
+	                            //console.log($scope.obj);
+	                            $scope.optionSets.l2y82R8STce.options = $scope.optionarray;
+	                        });
+	                    } else {
+	                        $scope.optionSets.l2y82R8STce.options = $scope.optionarray;
+	                    }
+	                }
+	            }
+	
 	        });
 	    };
 	
@@ -13902,44 +13977,64 @@
 	        return status;
 	    };
 	
+	    var allPrograms = null;
+	    var getAllPrograms = function getAllPrograms() {
+	        var def = $q.defer();
+	        if (allPrograms) {
+	            def.resolve(allPrograms);
+	        } else {
+	            ProgramFactory.getAll().then(function (result) {
+	                allPrograms = result.programs;
+	                def.resolve(allPrograms);
+	            });
+	        }
+	
+	        return def.promise;
+	    };
+	
 	    $scope.getTrackerAssociate = function (_selectedAttribute, _existingAssociateUid) {
-	        var modalInstance = $modal.open({
-	            templateUrl: 'components/teiadd/tei-add.html',
-	            controller: 'TEIAddController',
-	            windowClass: 'modal-full-window',
-	            resolve: {
-	                relationshipTypes: function relationshipTypes() {
-	                    return $scope.relationshipTypes;
-	                },
-	                addingRelationship: function addingRelationship() {
-	                    return false;
-	                },
-	                selections: function selections() {
-	                    return CurrentSelection.get();
-	                },
-	                selectedTei: function selectedTei() {
-	                    return $scope.selectedTei;
-	                },
-	                selectedAttribute: function selectedAttribute() {
-	                    return _selectedAttribute;
-	                },
-	                existingAssociateUid: function existingAssociateUid() {
-	                    return _existingAssociateUid;
-	                },
-	                selectedProgram: function selectedProgram() {
-	                    return $scope.selectedProgram;
-	                },
-	                relatedProgramRelationship: function relatedProgramRelationship() {
-	                    return $scope.relatedProgramRelationship;
+	        return getAllPrograms().then(function (allProgramsResult) {
+	            var modalInstance = $modal.open({
+	                templateUrl: 'components/teiadd/tei-add.html',
+	                controller: 'TEIAddController',
+	                windowClass: 'modal-full-window',
+	                resolve: {
+	                    relationshipTypes: function relationshipTypes() {
+	                        return $scope.relationshipTypes;
+	                    },
+	                    addingRelationship: function addingRelationship() {
+	                        return false;
+	                    },
+	                    selections: function selections() {
+	                        return CurrentSelection.get();
+	                    },
+	                    selectedTei: function selectedTei() {
+	                        return $scope.selectedTei;
+	                    },
+	                    selectedAttribute: function selectedAttribute() {
+	                        return _selectedAttribute;
+	                    },
+	                    existingAssociateUid: function existingAssociateUid() {
+	                        return _existingAssociateUid;
+	                    },
+	                    selectedProgram: function selectedProgram() {
+	                        return $scope.selectedProgram;
+	                    },
+	                    relatedProgramRelationship: function relatedProgramRelationship() {
+	                        return $scope.relatedProgramRelationship;
+	                    },
+	                    allPrograms: function allPrograms() {
+	                        return allProgramsResult;
+	                    }
 	                }
-	            }
-	        });
-	        return modalInstance.result.then(function (res) {
-	            if (res && res.id) {
-	                //Send object with tei id and program id
-	                $scope.selectedTei[_selectedAttribute.id] = res.id;
-	            }
-	            return res;
+	            });
+	            return modalInstance.result.then(function (res) {
+	                if (res && res.id) {
+	                    //Send object with tei id and program id
+	                    $scope.selectedTei[_selectedAttribute.id] = res.id;
+	                }
+	                return res;
+	            });
 	        });
 	    };
 	
@@ -16793,17 +16888,6 @@
 	        return 'form-control';
 	    };
 	
-	    var completeEnrollmentAllowed = function completeEnrollmentAllowed(ignoreEventId) {
-	        for (var i = 0; i < $scope.programStages.length; i++) {
-	            for (var e = 0; e < $scope.eventsByStage[$scope.programStages[i].id].length; e++) {
-	                if ($scope.eventsByStage[$scope.programStages[i].id][e].status === 'ACTIVE' && $scope.eventsByStage[$scope.programStages[i].id][e].event !== ignoreEventId) {
-	                    return false;
-	                }
-	            }
-	        }
-	        return true;
-	    };
-	
 	    var completeEnrollment = function completeEnrollment() {
 	        $scope.deleteScheduleAndOverdueEvents().then(function (result) {
 	
@@ -16945,24 +17029,15 @@
 	        }
 	        ModalService.showModal(modalDefaults, modalOptions).then(function (modalResult) {
 	            if (modalResult === modalCompleteIncompleteActions.completeEnrollment) {
-	                if (!completeEnrollmentAllowed(dhis2Event.event)) {
-	                    modalOptions = {
-	                        actionButtonText: 'OK',
-	                        headerText: 'complete_enrollment_failed',
-	                        bodyText: 'complete_active_events_before_completing_enrollment'
-	                    };
-	                    ModalService.showModal({}, modalOptions);
-	                } else {
-	                    modalOptions = {
-	                        closeButtonText: 'cancel',
-	                        actionButtonText: 'complete',
-	                        headerText: 'complete_enrollment',
-	                        bodyText: 'are_you_sure_to_complete_enrollment_delete_schedule'
-	                    };
-	                    ModalService.showModal({}, modalOptions).then(function () {
-	                        $scope.executeCompleteIncompleteEvent(dhis2Event, modalResult);
-	                    });
-	                }
+	                modalOptions = {
+	                    closeButtonText: 'cancel',
+	                    actionButtonText: 'complete',
+	                    headerText: 'complete_enrollment',
+	                    bodyText: 'are_you_sure_to_complete_enrollment_delete_schedule'
+	                };
+	                ModalService.showModal({}, modalOptions).then(function () {
+	                    $scope.executeCompleteIncompleteEvent(dhis2Event, modalResult);
+	                });
 	            } else {
 	                $scope.executeCompleteIncompleteEvent(dhis2Event, modalResult);
 	            }
@@ -18590,12 +18665,12 @@
 	                    newEvent.dueDate = DateUtils.formatFromUserToApi($scope.dhis2Event.dueDate);
 	                }
 	            }
-	
 	            newEvent.status = newEvent.eventDate ? 'ACTIVE' : 'SCHEDULE';
 	
 	            //for saving category combo
 	            if ($scope.selectedProgram.categoryCombo && !$scope.selectedProgram.categoryCombo.isDefault) {
 	                if ($scope.selectedOptions.length !== $scope.selectedCategories.length) {
+	                    $scope.lockButton = false;
 	                    NotificationService.showNotifcationDialog($translate.instant("error"), $translate.instant("fill_all_category_options"));
 	                    return;
 	                }
@@ -18614,7 +18689,6 @@
 	            });
 	        }
 	    };
-	
 	    //Start referral logic
 	    $scope.setSelectedSearchingOrgUnit = function (orgUnit) {
 	        $scope.selectedSearchingOrgUnit = orgUnit;
@@ -20225,19 +20299,16 @@
 	    } else {
 	        $scope.teiAddLabel = $scope.selectedAttribute && $scope.selectedAttribute.displayName ? $scope.selectedAttribute.displayName : $translate.instant('tracker_associate');
 	        $scope.addingTeiAssociate = true;
-	        ProgramFactory.getProgramsByOu($scope.selectedOrgUnit, true, $scope.selectedProgram).then(function (response) {
-	            var programs = response.programs;
-	            if ($scope.selectedAttribute && $scope.selectedAttribute.trackedEntityType && $scope.selectedAttribute.trackedEntityType.id) {
-	                programs = [];
-	                angular.forEach(response.programs, function (pr) {
-	                    if (pr.trackedEntityType && pr.trackedEntityType.id === $scope.selectedAttribute.trackedEntityType.id) {
-	                        programs.push(pr);
-	                    }
-	                });
-	            }
-	            $scope.programs = AccessUtils.toWritable(programs);
-	            $scope.selectedProgram = response.selectedProgram;
-	        });
+	        var programs = allPrograms;
+	        if ($scope.selectedAttribute && $scope.selectedAttribute.trackedEntityType && $scope.selectedAttribute.trackedEntityType.id) {
+	            programs = [];
+	            angular.forEach(allPrograms, function (pr) {
+	                if (pr.trackedEntityType && pr.trackedEntityType.id === $scope.selectedAttribute.trackedEntityType.id) {
+	                    programs.push(pr);
+	                }
+	            });
+	        }
+	        $scope.relatedAvailablePrograms = AccessUtils.toWritable(programs);
 	
 	        if (existingAssociateUid) {
 	            TEIService.get(existingAssociateUid, $scope.optionSets, $scope.attributesById).then(function (data) {
@@ -38844,4 +38915,4 @@
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=app-f3b9e0da46bd1beb749f.js.map
+//# sourceMappingURL=app-5593ee63d3fdf9352875.js.map
