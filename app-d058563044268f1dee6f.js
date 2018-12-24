@@ -10773,7 +10773,7 @@
 	    $scope.checked = false;
 	    $scope.dataEntryUserName = 'Data Entry User';
 	    $scope.validdataEntryUser = false;
-	    $scope.displayAttrHeader = ["Org Unit", "Patient Registration Number", "Date of Birth", "AMR ID", "Approval Status", "Level 1 Reason for Rejection/Re-submission"];
+	    $scope.displayAttrHeader = ["Org Unit", "Patient Registration Number", "Date of Birth", "AMR ID", "Level 1 - Approval status-Regional", "Level 2 - Approval Status-Nodal", "Level 1 Reason for Rejection/Re-submission"];
 	
 	    var resolvedEmptyPromise = function resolvedEmptyPromise() {
 	        var deferred = $q.defer();
@@ -10914,7 +10914,7 @@
 	            if ($scope.eventDV.indexOf('tAyVrNUTVHX') === -1) {
 	                $scope.deExist = true;
 	            }
-	            if (evDetails.status === "COMPLETED" && $scope.approveRejectStatus != 'Approved' || evDetails.status === "COMPLETED" && $scope.deExist === true || evDetails.status === "ACTIVE" && $scope.approveRejectStatus != 'Approved' || evDetails.status === "ACTIVE" && $scope.deExist === true) {
+	            if (evDetails.status === "COMPLETED" && $scope.approveRejectStatus != 'Approved' || evDetails.status === "COMPLETED" && $scope.deExist === true) {
 	                $scope.teiList.push({ tei: evDetails.trackedEntityInstance, eventId: evDetails.event, ou: evDetails.orgUnit, prgId: evDetails.program, prgStgId: evDetails.programStage, evDV: evDetails.dataValues });
 	            }
 	            if (evDetails.status === "COMPLETED" && $scope.deExist === true || evDetails.status === "ACTIVE" && $scope.deExist === true) {
@@ -10945,6 +10945,9 @@
 	                    if (de.dataElement == 'tAyVrNUTVHX') {
 	                        $scope.approveRejectStatus = de.value;
 	                    }
+	                    if (de.dataElement == 'sXDQT6Yaf77') {
+	                        $scope.approveRejectStatus2 = de.value;
+	                    }
 	                    if (de.dataElement == 'NLmLwjdSHMv') {
 	                        $scope.reasonOfRejection = de.value;
 	                    }
@@ -10952,8 +10955,8 @@
 	                        $scope.amr_id = de.value;
 	                    }
 	                });
-	                $scope.displayingValues.push({ tei: evData.tei, eventId: evData.eventId, ouId: evData.ou, prg: evData.prgId, prgStg: evData.prgStgId, path: getPath(evData.ou), amrId: $scope.amr_id, patRegNum: $scope.patientRegNum, dob: $scope.dOb, apprRejStatus: $scope.approveRejectStatus, reasonOfRej: $scope.reasonOfRejection });
-	                $scope.amr_id = '', $scope.patientRegNum = '', $scope.dOb = '';$scope.approveRejectStatus = '';$scope.reasonOfRejection = '';
+	                $scope.displayingValues.push({ tei: evData.tei, eventId: evData.eventId, ouId: evData.ou, prg: evData.prgId, prgStg: evData.prgStgId, path: getPath(evData.ou), amrId: $scope.amr_id, patRegNum: $scope.patientRegNum, dob: $scope.dOb, apprRejStatus: $scope.approveRejectStatus, apprRejStatus2: $scope.approveRejectStatus2, reasonOfRej: $scope.reasonOfRejection });
+	                $scope.amr_id = '', $scope.patientRegNum = '', $scope.dOb = '';$scope.approveRejectStatus = '';$scope.approveRejectStatus2 = '';$scope.reasonOfRejection = '';
 	            });
 	        });
 	        console.log($scope.displayingValues);
@@ -10973,6 +10976,9 @@
 	                    if (de.dataElement == 'tAyVrNUTVHX') {
 	                        $scope.approveRejectStatus = de.value;
 	                    }
+	                    if (de.dataElement == 'sXDQT6Yaf77') {
+	                        $scope.approveRejectStatus2 = de.value;
+	                    }
 	                    if (de.dataElement == 'NLmLwjdSHMv') {
 	                        $scope.reasonOfRejection = de.value;
 	                    }
@@ -10980,8 +10986,8 @@
 	                        $scope.amr_id = de.value;
 	                    }
 	                });
-	                $scope.validateddisplayingValues.push({ tei: evData.tei, eventId: evData.eventId, ouId: evData.ou, prg: evData.prgId, prgStg: evData.prgStgId, path: getPath(evData.ou), amrId: $scope.amr_id, patRegNum: $scope.patientRegNum, dob: $scope.dOb, apprRejStatus: $scope.approveRejectStatus, reasonOfRej: $scope.reasonOfRejection });
-	                $scope.amr_id = '', $scope.patientRegNum = '', $scope.dOb = '';$scope.approveRejectStatus = '';$scope.reasonOfRejection = '';
+	                $scope.validateddisplayingValues.push({ tei: evData.tei, eventId: evData.eventId, ouId: evData.ou, prg: evData.prgId, prgStg: evData.prgStgId, path: getPath(evData.ou), amrId: $scope.amr_id, patRegNum: $scope.patientRegNum, dob: $scope.dOb, apprRejStatus: $scope.approveRejectStatus, apprRejStatus2: $scope.approveRejectStatus2, reasonOfRej: $scope.reasonOfRejection });
+	                $scope.amr_id = '', $scope.patientRegNum = '', $scope.dOb = '';$scope.approveRejectStatus = '';$scope.approveRejectStatus2 = '', $scope.reasonOfRejection = '';
 	            });
 	        });
 	        console.log($scope.validateddisplayingValues);
@@ -11001,6 +11007,9 @@
 	                    if (de.dataElement == 'tAyVrNUTVHX') {
 	                        $scope.approveRejectStatus = de.value;
 	                    }
+	                    if (de.dataElement == 'sXDQT6Yaf77') {
+	                        $scope.approveRejectStatus2 = de.value;
+	                    }
 	                    if (de.dataElement == 'NLmLwjdSHMv') {
 	                        $scope.reasonOfRejection = de.value;
 	                    }
@@ -11008,8 +11017,8 @@
 	                        $scope.amr_id = de.value;
 	                    }
 	                });
-	                $scope.apprDisplayingValues.push({ tei: evData.tei, eventId: evData.eventId, ouId: evData.ou, prg: evData.prgId, prgStg: evData.prgStgId, path: getPath(evData.ou), amrId: $scope.amr_id, patRegNum: $scope.patientRegNum, dob: $scope.dOb, apprRejStatus: $scope.approveRejectStatus, reasonOfRej: $scope.reasonOfRejection });
-	                $scope.amr_id = '', $scope.patientRegNum = '', $scope.dOb = '';$scope.approveRejectStatus = '';$scope.reasonOfRejection = '';
+	                $scope.apprDisplayingValues.push({ tei: evData.tei, eventId: evData.eventId, ouId: evData.ou, prg: evData.prgId, prgStg: evData.prgStgId, path: getPath(evData.ou), amrId: $scope.amr_id, patRegNum: $scope.patientRegNum, dob: $scope.dOb, apprRejStatus: $scope.approveRejectStatus, apprRejStatus2: $scope.approveRejectStatus2, reasonOfRej: $scope.reasonOfRejection });
+	                $scope.amr_id = '', $scope.patientRegNum = '', $scope.dOb = '';$scope.approveRejectStatus = '';$scope.approveRejectStatus2 = '';$scope.reasonOfRejection = '';
 	            });
 	        });
 	        console.log($scope.apprDisplayingValues);
@@ -11029,6 +11038,9 @@
 	                    if (de.dataElement == 'tAyVrNUTVHX') {
 	                        $scope.approveRejectStatus = de.value;
 	                    }
+	                    if (de.dataElement == 'sXDQT6Yaf77') {
+	                        $scope.approveRejectStatus2 = de.value;
+	                    }
 	                    if (de.dataElement == 'NLmLwjdSHMv') {
 	                        $scope.reasonOfRejection = de.value;
 	                    }
@@ -11036,8 +11048,8 @@
 	                        $scope.amr_id = de.value;
 	                    }
 	                });
-	                $scope.rejctDisplayingValues.push({ tei: evData.tei, eventId: evData.eventId, ouId: evData.ou, prg: evData.prgId, prgStg: evData.prgStgId, path: getPath(evData.ou), amrId: $scope.amr_id, patRegNum: $scope.patientRegNum, dob: $scope.dOb, apprRejStatus: $scope.approveRejectStatus, reasonOfRej: $scope.reasonOfRejection });
-	                $scope.amr_id = '', $scope.patientRegNum = '', $scope.dOb = '';$scope.approveRejectStatus = '';$scope.reasonOfRejection = '';
+	                $scope.rejctDisplayingValues.push({ tei: evData.tei, eventId: evData.eventId, ouId: evData.ou, prg: evData.prgId, prgStg: evData.prgStgId, path: getPath(evData.ou), amrId: $scope.amr_id, patRegNum: $scope.patientRegNum, dob: $scope.dOb, apprRejStatus: $scope.approveRejectStatus, apprRejStatus2: $scope.approveRejectStatus2, reasonOfRej: $scope.reasonOfRejection });
+	                $scope.amr_id = '', $scope.patientRegNum = '', $scope.dOb = '';$scope.approveRejectStatus = '';$scope.approveRejectStatus2 = '';$scope.reasonOfRejection = '';
 	            });
 	        });
 	        console.log($scope.rejctDisplayingValues);
@@ -11057,6 +11069,9 @@
 	                    if (de.dataElement == 'tAyVrNUTVHX') {
 	                        $scope.approveRejectStatus = de.value;
 	                    }
+	                    if (de.dataElement == 'sXDQT6Yaf77') {
+	                        $scope.approveRejectStatus2 = de.value;
+	                    }
 	                    if (de.dataElement == 'NLmLwjdSHMv') {
 	                        $scope.reasonOfRejection = de.value;
 	                    }
@@ -11064,8 +11079,8 @@
 	                        $scope.amr_id = de.value;
 	                    }
 	                });
-	                $scope.resentDisplayingValues.push({ tei: evData.tei, eventId: evData.eventId, ouId: evData.ou, prg: evData.prgId, prgStg: evData.prgStgId, path: getPath(evData.ou), amrId: $scope.amr_id, patRegNum: $scope.patientRegNum, dob: $scope.dOb, apprRejStatus: $scope.approveRejectStatus, reasonOfRej: $scope.reasonOfRejection });
-	                $scope.amr_id = '', $scope.patientRegNum = '', $scope.dOb = '';$scope.approveRejectStatus = '';$scope.reasonOfRejection = '';
+	                $scope.resentDisplayingValues.push({ tei: evData.tei, eventId: evData.eventId, ouId: evData.ou, prg: evData.prgId, prgStg: evData.prgStgId, path: getPath(evData.ou), amrId: $scope.amr_id, patRegNum: $scope.patientRegNum, dob: $scope.dOb, apprRejStatus: $scope.approveRejectStatus, apprRejStatus2: $scope.approveRejectStatus2, reasonOfRej: $scope.reasonOfRejection });
+	                $scope.amr_id = '', $scope.patientRegNum = '', $scope.dOb = '';$scope.approveRejectStatus = '';$scope.approveRejectStatus2 = '';$scope.reasonOfRejection = '';
 	            });
 	        });
 	        console.log($scope.resentDisplayingValues);
@@ -11122,17 +11137,22 @@
 	    };
 	
 	    $scope.approvalDashboard = function (tei, eventId1, selectedProgram, evprgStage, evOu) {
-	        $window.location.assign('../dhis-web-tracker-capture/index.html#/dashboard?tei=' + tei + '&program=' + selectedProgram + '&ou=' + evOu + '&ev=' + evprgStage);
+	        $window.location.assign('../dhis-web-tracker-capture/index.html#/dashboard?tei=' + tei + '&program=' + selectedProgram + '&ou=' + evOu + '&ev=' + eventId1);
 	
 	        var event = {
-	            status: "ACTIVE"
+	            program: selectedProgram,
+	            status: "ACTIVE",
+	            dataValues: [{
+	                "dataElement": "HNKjsI260TE",
+	                "value": "Go to dashboard"
+	            }]
 	        };
 	        $.ajax({
 	            type: "PUT",
 	            dataType: "json",
 	            contentType: "application/json",
 	            data: JSON.stringify(event),
-	            url: DHIS2URL + '/events/' + eventId1 + '/' + event.status, event: event,
+	            url: DHIS2URL + '/events/' + eventId1 + '/' + event.dataValues[0].dataElement, event: event,
 	            success: function success(response) {
 	                console.log("Event updated with Active status:" + eventId1);
 	            },
@@ -11163,7 +11183,7 @@
 	    $scope.checked = false;
 	    $scope.dataEntryUserName = 'Data Entry User';
 	    $scope.validdataEntryUser = false;
-	    $scope.displayAttrHeader = ["Org Unit", "Patient Registration Number", "Date of Birth", "AMR ID", "Approval Status", "Level 2 Reason for Rejection/Re-submission"];
+	    $scope.displayAttrHeader = ["Org Unit", "Patient Registration Number", "Date of Birth", "AMR ID", "Level 1 - Approval status-Regional", "Level 2 - Approval Status-Nodal", "Level 2 Reason for Rejection/Re-submission"];
 	
 	    var resolvedEmptyPromise = function resolvedEmptyPromise() {
 	        var deferred = $q.defer();
@@ -11291,7 +11311,7 @@
 	                    $scope.approveRejectStatus2 = evDV.value;
 	                }
 	            });
-	            if (evDetails.status === "COMPLETED" && $scope.approveRejectStatus === 'Approved' || evDetails.status === "ACTIVE" && $scope.approveRejectStatus === 'Approved') {
+	            if (evDetails.status === "COMPLETED" && $scope.approveRejectStatus === 'Approved') {
 	                $scope.teiList.push({ tei: evDetails.trackedEntityInstance, eventId: evDetails.event, ou: evDetails.orgUnit, prgId: evDetails.program, prgStgId: evDetails.programStage, evDV: evDetails.dataValues });
 	            }
 	            if ($scope.approveRejectStatus2 == 'Approved') {
@@ -11319,6 +11339,9 @@
 	                    if (de.dataElement == 'tAyVrNUTVHX') {
 	                        $scope.approveRejectStatus = de.value;
 	                    }
+	                    if (de.dataElement == 'sXDQT6Yaf77') {
+	                        $scope.approveRejectStatus2 = de.value;
+	                    }
 	                    if (de.dataElement == 'NLmLwjdSHMv') {
 	                        $scope.reasonOfRejection = de.value;
 	                    }
@@ -11326,8 +11349,8 @@
 	                        $scope.amr_id = de.value;
 	                    }
 	                });
-	                $scope.displayingValues.push({ tei: evData.tei, eventId: evData.eventId, ouId: evData.ou, prg: evData.prgId, prgStg: evData.prgStgId, path: getPath(evData.ou), amrId: $scope.amr_id, patRegNum: $scope.patientRegNum, dob: $scope.dOb, apprRejStatus: $scope.approveRejectStatus, reasonOfRej: $scope.reasonOfRejection });
-	                $scope.amr_id = '', $scope.patientRegNum = '', $scope.dOb = '';$scope.approveRejectStatus = '';$scope.reasonOfRejection = '';
+	                $scope.displayingValues.push({ tei: evData.tei, eventId: evData.eventId, ouId: evData.ou, prg: evData.prgId, prgStg: evData.prgStgId, path: getPath(evData.ou), amrId: $scope.amr_id, patRegNum: $scope.patientRegNum, dob: $scope.dOb, apprRejStatus: $scope.approveRejectStatus, apprRejStatus2: $scope.approveRejectStatus2, reasonOfRej: $scope.reasonOfRejection });
+	                $scope.amr_id = '', $scope.patientRegNum = '', $scope.dOb = '';$scope.approveRejectStatus = '';$scope.approveRejectStatus2 = '';$scope.reasonOfRejection = '';
 	            });
 	            $scope.showtable = true;
 	        });
@@ -11345,6 +11368,9 @@
 	                    }
 	                });
 	                evData.evDV.forEach(function (de) {
+	                    if (de.dataElement == 'tAyVrNUTVHX') {
+	                        $scope.approveRejectStatus = de.value;
+	                    }
 	                    if (de.dataElement == 'sXDQT6Yaf77') {
 	                        $scope.approveRejectStatus2 = de.value;
 	                    }
@@ -11355,8 +11381,8 @@
 	                        $scope.amr_id = de.value;
 	                    }
 	                });
-	                $scope.apprDisplayingValues.push({ tei: evData.tei, eventId: evData.eventId, ouId: evData.ou, prg: evData.prgId, prgStg: evData.prgStgId, path: getPath(evData.ou), amrId: $scope.amr_id, patRegNum: $scope.patientRegNum, dob: $scope.dOb, apprRejStatus: $scope.approveRejectStatus2, reasonOfRej: $scope.reasonOfRejection });
-	                $scope.amr_id = '', $scope.patientRegNum = '', $scope.dOb = '';$scope.approveRejectStatus2 = '';$scope.reasonOfRejection = '';
+	                $scope.apprDisplayingValues.push({ tei: evData.tei, eventId: evData.eventId, ouId: evData.ou, prg: evData.prgId, prgStg: evData.prgStgId, path: getPath(evData.ou), amrId: $scope.amr_id, patRegNum: $scope.patientRegNum, dob: $scope.dOb, apprRejStatus: $scope.approveRejectStatus, apprRejStatus2: $scope.approveRejectStatus2, reasonOfRej: $scope.reasonOfRejection });
+	                $scope.amr_id = '', $scope.patientRegNum = '', $scope.dOb = '';$scope.approveRejectStatus = '';$scope.approveRejectStatus2 = '';$scope.reasonOfRejection = '';
 	            });
 	        });
 	        console.log($scope.apprDisplayingValues);
@@ -11373,6 +11399,9 @@
 	                    }
 	                });
 	                evData.evDV.forEach(function (de) {
+	                    if (de.dataElement == 'tAyVrNUTVHX') {
+	                        $scope.approveRejectStatus = de.value;
+	                    }
 	                    if (de.dataElement == 'sXDQT6Yaf77') {
 	                        $scope.approveRejectStatus2 = de.value;
 	                    }
@@ -11383,8 +11412,8 @@
 	                        $scope.amr_id = de.value;
 	                    }
 	                });
-	                $scope.rejctDisplayingValues.push({ tei: evData.tei, eventId: evData.eventId, ouId: evData.ou, prg: evData.prgId, prgStg: evData.prgStgId, path: getPath(evData.ou), amrId: $scope.amr_id, patRegNum: $scope.patientRegNum, dob: $scope.dOb, apprRejStatus: $scope.approveRejectStatus2, reasonOfRej: $scope.reasonOfRejection });
-	                $scope.amr_id = '', $scope.patientRegNum = '', $scope.dOb = '';$scope.approveRejectStatus2 = '';$scope.reasonOfRejection = '';
+	                $scope.rejctDisplayingValues.push({ tei: evData.tei, eventId: evData.eventId, ouId: evData.ou, prg: evData.prgId, prgStg: evData.prgStgId, path: getPath(evData.ou), amrId: $scope.amr_id, patRegNum: $scope.patientRegNum, dob: $scope.dOb, apprRejStatus: $scope.approveRejectStatus, apprRejStatus2: $scope.approveRejectStatus2, reasonOfRej: $scope.reasonOfRejection });
+	                $scope.amr_id = '', $scope.patientRegNum = '', $scope.dOb = '';$scope.approveRejectStatus = '';$scope.approveRejectStatus2 = '';$scope.reasonOfRejection = '';
 	            });
 	        });
 	        console.log($scope.rejctDisplayingValues);
@@ -11401,6 +11430,9 @@
 	                    }
 	                });
 	                evData.evDV.forEach(function (de) {
+	                    if (de.dataElement == 'tAyVrNUTVHX') {
+	                        $scope.approveRejectStatus = de.value;
+	                    }
 	                    if (de.dataElement == 'sXDQT6Yaf77') {
 	                        $scope.approveRejectStatus2 = de.value;
 	                    }
@@ -11411,8 +11443,8 @@
 	                        $scope.amr_id = de.value;
 	                    }
 	                });
-	                $scope.resentDisplayingValues.push({ tei: evData.tei, eventId: evData.eventId, ouId: evData.ou, prg: evData.prgId, prgStg: evData.prgStgId, path: getPath(evData.ou), amrId: $scope.amr_id, patRegNum: $scope.patientRegNum, dob: $scope.dOb, apprRejStatus: $scope.approveRejectStatus2, reasonOfRej: $scope.reasonOfRejection });
-	                $scope.amr_id = '', $scope.patientRegNum = '', $scope.dOb = '';$scope.approveRejectStatus2 = '';$scope.reasonOfRejection = '';
+	                $scope.resentDisplayingValues.push({ tei: evData.tei, eventId: evData.eventId, ouId: evData.ou, prg: evData.prgId, prgStg: evData.prgStgId, path: getPath(evData.ou), amrId: $scope.amr_id, patRegNum: $scope.patientRegNum, dob: $scope.dOb, apprRejStatus: $scope.approveRejectStatus, apprRejStatus2: $scope.approveRejectStatus2, reasonOfRej: $scope.reasonOfRejection });
+	                $scope.amr_id = '', $scope.patientRegNum = '', $scope.dOb = '';$scope.approveRejectStatus = '';$scope.approveRejectStatus2 = '';$scope.reasonOfRejection = '';
 	            });
 	        });
 	        console.log($scope.resentDisplayingValues);
@@ -11469,17 +11501,22 @@
 	    };
 	
 	    $scope.approvalDashboard = function (tei, eventId1, selectedProgram, evprgStage, evOu) {
-	        $window.location.assign('../dhis-web-tracker-capture/index.html#/dashboard?tei=' + tei + '&program=' + selectedProgram + '&ou=' + evOu + '&ev=' + evprgStage);
+	        $window.location.assign('../dhis-web-tracker-capture/index.html#/dashboard?tei=' + tei + '&program=' + selectedProgram + '&ou=' + evOu + '&ev=' + eventId1);
 	
 	        var event = {
-	            status: "ACTIVE"
+	            program: selectedProgram,
+	            status: "ACTIVE",
+	            dataValues: [{
+	                "dataElement": "HNKjsI260TE",
+	                "value": "Go to dashboard"
+	            }]
 	        };
 	        $.ajax({
 	            type: "PUT",
 	            dataType: "json",
 	            contentType: "application/json",
 	            data: JSON.stringify(event),
-	            url: DHIS2URL + '/events/' + eventId1 + '/' + event.status, event: event,
+	            url: DHIS2URL + '/events/' + eventId1 + '/' + event.dataValues[0].dataElement, event: event,
 	            success: function success(response) {
 	                console.log("Event updated with Active status:" + eventId1);
 	            },
@@ -12633,13 +12670,18 @@
 	    };
 	
 	    $scope.back = function () {
-	        if (!$scope.dataEntryMainMenuItemSelected) {
-	            //reload OU tree
-	            selection.load();
-	            $location.path('/').search({ program: $scope.selectedProgramId });
+	        var apprURL1 = window.location.href;
+	        if (apprURL1.indexOf("&ev") >= 0) {
+	            window.history.back();
 	        } else {
-	            $rootScope.$broadcast('DashboardBackClicked');
-	            $scope.dataEntryMainMenuItemSelected = false;
+	            if (!$scope.dataEntryMainMenuItemSelected) {
+	                //reload OU tree
+	                selection.load();
+	                $location.path('/').search({ program: $scope.selectedProgramId });
+	            } else {
+	                $rootScope.$broadcast('DashboardBackClicked');
+	                $scope.dataEntryMainMenuItemSelected = false;
+	            }
 	        }
 	    };
 	
@@ -14449,7 +14491,7 @@
 	    $scope.useBottomLine = false;
 	
 	    //AMR Custom Variables
-	    $scope.customSectionName = 'Genotypic Test (Special Test Type)';
+	    $scope.customSectionName = 'Special tests - Genotypic tests';
 	
 	    $scope.currentSelectedProgramUid = CurrentSelection.currentSelection.pr.id;
 	    $scope.validProgram = false;
@@ -14460,10 +14502,10 @@
 	    $scope.level2UserGroupNameCode = 'Level 2 Approval Users';
 	    $scope.userLevelHiddenSections = ['Level 1 Approval status', 'Level 2 Approval status'];
 	    $scope.level1HiddenSections = 'Level 2 Approval status';
-	    $scope.level1EnabledSections = ['Phenotypic Test (Special Test Type)', 'Genotypic Test (Special Test Type)', 'Level 1 Approval status'];
-	    $scope.level2EnabledSections = ['Phenotypic Test (Special Test Type)', 'Genotypic Test (Special Test Type)', 'Level 2 Approval status'];
-	    $scope.var1 = 'Phenotypic Test (Special Test Type)';
-	    $scope.var2 = 'Genotypic Test (Special Test Type)';
+	    $scope.level1EnabledSections = ['Special tests - Phenotypic tests', 'Special tests - Genotypic tests', 'Level 1 Approval status'];
+	    $scope.level2EnabledSections = ['Special tests - Phenotypic tests', 'Special tests - Genotypic tests', 'Level 2 Approval status'];
+	    $scope.var1 = 'Special tests - Phenotypic tests';
+	    $scope.var2 = 'Special tests - Genotypic tests';
 	    $scope.var3 = 'Level 1 Approval status';
 	    $scope.organismList = [];
 	    $scope.organismGroupMap = [];
@@ -15198,16 +15240,7 @@
 	            });
 	
 	            $scope.programStages = orderByFilter($scope.programStages, '-sortOrder').reverse();
-	            //Custom changes for going to the selected program stage for approval//
-	            var apprURL1 = window.location.href;
-	
-	            if (apprURL1.indexOf("&ev") >= 0) {
-	                var apprURL2 = apprURL1.split('=');
-	                var apprURL = apprURL2[apprURL2.length - 1];
-	                AMRCustomService.getPrgStg(apprURL).then(function (response) {
-	                    $scope.currentStage = response;
-	                });
-	            } else if (!$scope.currentStage) {
+	            if (!$scope.currentStage) {
 	                $scope.currentStage = $scope.programStages[0];
 	            }
 	
@@ -15309,7 +15342,22 @@
 	            $scope.fileNames = CurrentSelection.getFileNames();
 	            $scope.allEventsSorted = orderByFilter($scope.allEventsSorted, '-sortingDate').reverse();
 	            sortEventsByStage(null);
-	            $scope.showDataEntry($scope.currentEvent, true, true);
+	            //Custom changes for going to the selected Event for approval//
+	            var apprURL1 = window.location.href;
+	            if (apprURL1.indexOf("&ev") >= 0) {
+	                var apprURL2 = apprURL1.split('=');
+	                var apprURL = apprURL2[apprURL2.length - 1];
+	                if ($scope.allEventsSorted.length > 0) {
+	                    angular.forEach($scope.allEventsSorted, function (allEv) {
+	                        if (allEv.event === apprURL) {
+	                            $scope.currentEvent = allEv;
+	                            $scope.showDataEntry($scope.currentEvent, true, true);
+	                        }
+	                    });
+	                }
+	            } else {
+	                $scope.showDataEntry($scope.currentEvent, true, true);
+	            }
 	            $scope.eventsLoaded = true;
 	        } else {
 	            //There is no events - so loading is finished:
@@ -38243,4 +38291,4 @@
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=app-80b58b23b416ce934523.js.map
+//# sourceMappingURL=app-d058563044268f1dee6f.js.map
