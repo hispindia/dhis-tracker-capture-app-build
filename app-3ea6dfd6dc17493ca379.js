@@ -19730,7 +19730,7 @@
 	/* global trackerCapture, angular */
 	
 	var trackerCapture = angular.module('trackerCapture');
-	trackerCapture.controller('TEIAddController', ["$scope", "$rootScope", "$translate", "$modalInstance", "$location", "DateUtils", "CurrentSelection", "OperatorFactory", "AttributesFactory", "EntityQueryFactory", "OrgUnitFactory", "ProgramFactory", "MetaDataFactory", "TEIService", "TEIGridService", "NotificationService", "Paginator", "relationshipTypes", "selectedProgram", "relatedProgramRelationship", "selections", "selectedAttribute", "existingAssociateUid", "addingRelationship", "selectedTei", "AccessUtils", "TEService", "allPrograms", function ($scope, $rootScope, $translate, $modalInstance, $location, DateUtils, CurrentSelection, OperatorFactory, AttributesFactory, EntityQueryFactory, OrgUnitFactory, ProgramFactory, MetaDataFactory, TEIService, TEIGridService, NotificationService, Paginator, relationshipTypes, selectedProgram, relatedProgramRelationship, selections, selectedAttribute, existingAssociateUid, addingRelationship, selectedTei, AccessUtils, TEService, allPrograms) {
+	trackerCapture.controller('TEIAddController', ["$scope", "$rootScope", "$translate", "$modal", "$modalInstance", "$location", "DateUtils", "CurrentSelection", "OperatorFactory", "AttributesFactory", "EntityQueryFactory", "OrgUnitFactory", "ProgramFactory", "MetaDataFactory", "TEIService", "TEIGridService", "NotificationService", "Paginator", "relationshipTypes", "selectedProgram", "relatedProgramRelationship", "selections", "selectedAttribute", "existingAssociateUid", "addingRelationship", "selectedTei", "AccessUtils", "TEService", "allPrograms", function ($scope, $rootScope, $translate, $modal, $modalInstance, $location, DateUtils, CurrentSelection, OperatorFactory, AttributesFactory, EntityQueryFactory, OrgUnitFactory, ProgramFactory, MetaDataFactory, TEIService, TEIGridService, NotificationService, Paginator, relationshipTypes, selectedProgram, relatedProgramRelationship, selections, selectedAttribute, existingAssociateUid, addingRelationship, selectedTei, AccessUtils, TEService, allPrograms) {
 	    var selection = CurrentSelection.get();
 	
 	    $scope.base = {};
@@ -19759,6 +19759,45 @@
 	            CurrentSelection.setOptionSets($scope.optionSets);
 	        });
 	    }
+	
+	    $scope.getTrackerAssociateInternal = function (_selectedAttribute, _existingAssociateUid, tei) {
+	        var p = allPrograms;
+	        var modalInstance = $modal.open({
+	            templateUrl: 'components/teiadd/tei-add.html',
+	            controller: 'TEIAddController',
+	            windowClass: 'modal-full-window',
+	            resolve: {
+	                relationshipTypes: function relationshipTypes() {
+	                    return $scope.relationshipTypes;
+	                },
+	                addingRelationship: function addingRelationship() {
+	                    return false;
+	                },
+	                selections: function selections() {
+	                    return CurrentSelection.get();
+	                },
+	                selectedTei: function selectedTei() {
+	                    return tei;
+	                },
+	                selectedAttribute: function selectedAttribute() {
+	                    return _selectedAttribute;
+	                },
+	                existingAssociateUid: function existingAssociateUid() {
+	                    return _existingAssociateUid;
+	                },
+	                selectedProgram: function selectedProgram() {
+	                    return $scope.selectedProgram;
+	                },
+	                relatedProgramRelationship: function relatedProgramRelationship() {
+	                    return $scope.relatedProgramRelationship;
+	                },
+	                allPrograms: function allPrograms() {
+	                    return p;
+	                }
+	            }
+	        });
+	        return modalInstance.result;
+	    };
 	
 	    var isValidCurrentTeiConstraint = function isValidCurrentTeiConstraint(constraint) {
 	        var tetTypeValid = constraint.trackedEntityType.id === $scope.mainTei.trackedEntityType;
@@ -20290,6 +20329,16 @@
 	        });
 	    }
 	
+	    $scope.getTrackerAssociate = function (selectedAttribute, existingAssociateUid) {
+	        return $scope.getTrackerAssociateInternal(selectedAttribute, existingAssociateUid, $scope.selectedTei).then(function (res) {
+	            if (res && res.id) {
+	                //Send object with tei id and program id
+	                $scope.selectedTei[selectedAttribute.id] = res.id;
+	            }
+	            return res;
+	        });
+	    };
+	
 	    $scope.optionSets = CurrentSelection.getOptionSets();
 	    if (!$scope.optionSets) {
 	        $scope.optionSets = [];
@@ -20425,9 +20474,9 @@
 	        }
 	
 	        RegistrationService.registerOrUpdate($scope.tei, $scope.optionSets, $scope.attributesById).then(function (registrationResponse) {
-	            var reg = registrationResponse.response ? registrationResponse.response : {};
-	            if (reg.importSummaries[0].reference && reg.status === 'SUCCESS') {
-	                $scope.tei.trackedEntityInstance = $scope.tei.id = reg.importSummaries[0].reference;
+	            var reg = registrationResponse.response.responseType === 'ImportSummaries' ? registrationResponse.response.importSummaries[0] : registrationResponse.response.responseType === 'ImportSummary' ? registrationResponse.response : {};
+	            if (reg.status === 'SUCCESS') {
+	                $scope.tei.trackedEntityInstance = $scope.tei.id = reg.reference;
 	
 	                //registration is successful and check for enrollment
 	                if ($scope.base.selectedProgramForRelative) {
@@ -20483,9 +20532,11 @@
 	
 	            CurrentSelection.setRelationshipInfo({ tei: $scope.tei });
 	
-	            $timeout(function () {
-	                $rootScope.$broadcast('relationship', { result: 'SUCCESS' });
-	            }, 100);
+	            if ($scope.addingRelationship) {
+	                $timeout(function () {
+	                    $rootScope.$broadcast('relationship', { result: 'SUCCESS' });
+	                }, 100);
+	            }
 	        }
 	    };
 	
@@ -38258,4 +38309,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-bf272bb8c57414f4d1b6.js.map
+//# sourceMappingURL=app-3ea6dfd6dc17493ca379.js.map
