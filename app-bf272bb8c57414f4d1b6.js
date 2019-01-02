@@ -14678,7 +14678,7 @@
 	/* global angular, trackerCapture */
 	
 	var trackerCapture = angular.module('trackerCapture');
-	trackerCapture.controller('DataEntryController', ["$rootScope", "$scope", "$modal", "$filter", "$log", "$timeout", "$translate", "$window", "$q", "$parse", "$location", "CommonUtils", "DateUtils", "EventUtils", "orderByFilter", "SessionStorageService", "EnrollmentService", "DHIS2EventFactory", "ModalService", "NotificationService", "CurrentSelection", "TrackerRulesExecutionService", "CustomFormService", "PeriodService", "OptionSetService", "AttributesFactory", "TrackerRulesFactory", "EventCreationService", "AuthorityService", "AccessUtils", "TCOrgUnitService", function ($rootScope, $scope, $modal, $filter, $log, $timeout, $translate, $window, $q, $parse, $location, CommonUtils, DateUtils, EventUtils, orderByFilter, SessionStorageService, EnrollmentService, DHIS2EventFactory, ModalService, NotificationService, CurrentSelection, TrackerRulesExecutionService, CustomFormService, PeriodService, OptionSetService, AttributesFactory, TrackerRulesFactory, EventCreationService, AuthorityService, AccessUtils, TCOrgUnitService) {
+	trackerCapture.controller('DataEntryController', ["$rootScope", "$scope", "$modal", "$filter", "$log", "$timeout", "$translate", "$window", "$q", "$parse", "$location", "CommonUtils", "DateUtils", "EventUtils", "orderByFilter", "SessionStorageService", "EnrollmentService", "DHIS2EventFactory", "ModalService", "NotificationService", "CurrentSelection", "TrackerRulesExecutionService", "CustomFormService", "PeriodService", "OptionSetService", "AttributesFactory", "TrackerRulesFactory", "EventCreationService", "AuthorityService", "AccessUtils", "TCOrgUnitService", "MetaDataFactory", function ($rootScope, $scope, $modal, $filter, $log, $timeout, $translate, $window, $q, $parse, $location, CommonUtils, DateUtils, EventUtils, orderByFilter, SessionStorageService, EnrollmentService, DHIS2EventFactory, ModalService, NotificationService, CurrentSelection, TrackerRulesExecutionService, CustomFormService, PeriodService, OptionSetService, AttributesFactory, TrackerRulesFactory, EventCreationService, AuthorityService, AccessUtils, TCOrgUnitService, MetaDataFactory) {
 	
 	    //Unique instance id for the controller:
 	    $scope.APIURL = DHIS2URL;
@@ -14748,6 +14748,17 @@
 	            });
 	
 	            CurrentSelection.setAttributesById($scope.attributesById);
+	        });
+	    }
+	
+	    $scope.optionSets = CurrentSelection.getOptionSets();
+	    if (!$scope.optionSets) {
+	        $scope.optionSets = [];
+	        MetaDataFactory.getAll('optionSets').then(function (optionSets) {
+	            angular.forEach(optionSets, function (optionSet) {
+	                $scope.optionSets[optionSet.id] = optionSet;
+	            });
+	            CurrentSelection.setOptionSets($scope.optionSets);
 	        });
 	    }
 	
@@ -38247,4 +38258,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-b4d810ff79d34c105837.js.map
+//# sourceMappingURL=app-bf272bb8c57414f4d1b6.js.map
