@@ -7311,7 +7311,7 @@
 	.controller('OrgUnitTreeController', function($scope, $modalInstance, OrgUnitFactory, orgUnitId, orgUnitNames) {
 	    
 	    $scope.model = {selectedOrgUnitId: orgUnitId ? orgUnitId : null};
-	    $scope.orgUnitNames = orgUnitNames;
+	    $scope.orgUnitNames = orgUnitNames ? orgUnitNames : {};
 	
 	    function expandOrgUnit( orgUnit, ou ){
 	        if( ou.path.indexOf( orgUnit.path ) !== -1 ){
@@ -38309,4 +38309,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-3ea6dfd6dc17493ca379.js.map
+//# sourceMappingURL=app-1d1143661bf6dd518e52.js.map
