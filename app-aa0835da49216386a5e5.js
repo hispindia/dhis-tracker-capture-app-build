@@ -4731,7 +4731,7 @@
 	                        }
 	                        scope.d2FileInputName[scope.d2FileInput.event][de] = data.response.fileResource.name;
 	                        if( update ){
-	                            var updatedSingleValueEvent = {event: scope.d2FileInput.event, dataValues: [{value: data.response.fileResource.id, dataElement:  de}]};
+	                            var updatedSingleValueEvent = {program: scope.d2FileInput.program, event: scope.d2FileInput.event, dataValues: [{value: data.response.fileResource.id, dataElement:  de}]};
 	                            var updatedFullValueEvent = DHIS2EventService.reconstructEvent(scope.d2FileInput, scope.d2FileInputPs.programStageDataElements);
 	                            DHIS2EventFactory.updateForSingleValue(updatedSingleValueEvent, updatedFullValueEvent).then(function(data){
 	                                scope.d2FileInputList = DHIS2EventService.refreshList(scope.d2FileInputList, scope.d2FileInput);
@@ -38309,4 +38309,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-1d1143661bf6dd518e52.js.map
+//# sourceMappingURL=app-aa0835da49216386a5e5.js.map
