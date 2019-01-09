@@ -13396,7 +13396,7 @@
 	        var selections = CurrentSelection.get();
 	        CurrentSelection.set({
 	            tei: $scope.selectedTei,
-	            te: $scope.selectedTei.trackedEntityType,
+	            te: selections.te,
 	            prs: selections.prs,
 	            pr: $scope.selectedProgram,
 	            prNames: selections.prNames,
@@ -38396,4 +38396,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-8cc90a0b8678653c2acb.js.map
+//# sourceMappingURL=app-74d58a0d68465b92578b.js.map
