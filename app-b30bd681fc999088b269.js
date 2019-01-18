@@ -20973,17 +20973,12 @@
 	
 	var trackerCapture = angular.module('trackerCapture');
 	
-	trackerCapture.controller('HomeController', ["$rootScope", "$scope", "$modal", "$location", "$filter", "$timeout", "$q", "Paginator", "MetaDataFactory", "DateUtils", "OrgUnitFactory", "ProgramFactory", "AttributesFactory", "EntityQueryFactory", "CurrentSelection", "TEIGridService", "TEIService", "GridColumnService", "ProgramWorkingListService", "TCStorageService", "orderByFilter", "TEService", "AccessUtils", "TeiAccessApiService", "SessionStorageService", function ($rootScope, $scope, $modal, $location, $filter, $timeout, $q, Paginator, MetaDataFactory, DateUtils, OrgUnitFactory, ProgramFactory, AttributesFactory, EntityQueryFactory, CurrentSelection, TEIGridService, TEIService, GridColumnService, ProgramWorkingListService, TCStorageService, orderByFilter, TEService, AccessUtils, TeiAccessApiService, SessionStorageService) {
+	trackerCapture.controller('HomeController', ["$rootScope", "$scope", "$modal", "$location", "$filter", "$timeout", "$q", "Paginator", "MetaDataFactory", "DateUtils", "OrgUnitFactory", "ProgramFactory", "AttributesFactory", "EntityQueryFactory", "CurrentSelection", "TEIGridService", "TEIService", "GridColumnService", "ProgramWorkingListService", "TCStorageService", "orderByFilter", "TEService", "AccessUtils", "TeiAccessApiService", function ($rootScope, $scope, $modal, $location, $filter, $timeout, $q, Paginator, MetaDataFactory, DateUtils, OrgUnitFactory, ProgramFactory, AttributesFactory, EntityQueryFactory, CurrentSelection, TEIGridService, TEIService, GridColumnService, ProgramWorkingListService, TCStorageService, orderByFilter, TEService, AccessUtils, TeiAccessApiService) {
 	    TeiAccessApiService.setAuditCancelledSettings(null);
 	    $scope.trackedEntityTypesById = {};
 	    var previousProgram = null;
 	    $scope.base = {};
 	    $scope.APIURL = DHIS2URL;
-	
-	    var ouFromUrl = $location.search().ou;
-	    if (ouFromUrl) {
-	        SessionStorageService.set('ouSelected', ouFromUrl);
-	    }
 	
 	    var viewsByType = {
 	        registration: {
@@ -21201,7 +21196,7 @@
 	            view.loaded = true;
 	        }
 	
-	        $location.path('/').search({ program: $scope.selectedProgram.id, ou: $scope.selectedOrgUnit.id });
+	        $location.path('/').search({ program: $scope.selectedProgram.id });
 	        loadCanRegister();
 	    };
 	
@@ -38367,4 +38362,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-da71827c650da22eaeb6.js.map
+//# sourceMappingURL=app-b30bd681fc999088b269.js.map
