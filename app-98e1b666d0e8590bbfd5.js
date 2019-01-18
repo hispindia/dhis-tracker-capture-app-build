@@ -21140,7 +21140,19 @@
 	    var loadPrograms = function loadPrograms() {
 	        return ProgramFactory.getProgramsByOu($scope.selectedOrgUnit, true, previousProgram).then(function (response) {
 	            $scope.programs = response.programs;
-	            $scope.setProgram(response.selectedProgram);
+	            var programIdFromURL = $location.search().program;
+	            var fullProgram = null;
+	            if (programIdFromURL) {
+	                fullProgram = $scope.programs.find(function (program) {
+	                    return program.id === programIdFromURL;
+	                });
+	            }
+	
+	            if (fullProgram) {
+	                $scope.setProgram(fullProgram);
+	            } else {
+	                $scope.setProgram(response.selectedProgram);
+	            }
 	        });
 	    };
 	
@@ -21194,6 +21206,7 @@
 	        } else {
 	            $scope.views[0].disabled = false;
 	        }
+	
 	        resetView(defaultView);
 	        loadCanRegister();
 	    };
@@ -21231,6 +21244,8 @@
 	        if (!view.shouldReset) {
 	            view.loaded = true;
 	        }
+	
+	        $location.path('/').search({ program: $scope.selectedProgram.id });
 	        loadCanRegister();
 	    };
 	
@@ -38396,4 +38411,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-74d58a0d68465b92578b.js.map
+//# sourceMappingURL=app-98e1b666d0e8590bbfd5.js.map
