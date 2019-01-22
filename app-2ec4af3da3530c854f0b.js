@@ -15605,12 +15605,12 @@
 	                        dhis2Event.executionDateLabel = eventStage.executionDateLabel ? eventStage.executionDateLabel : $translate.instant('report_date');
 	                        dhis2Event.dueDateLabel = eventStage.dueDateLabel ? eventStage.dueDateLabel : $translate.instant('due_date');
 	                        dhis2Event.dueDate = DateUtils.formatFromApiToUser(dhis2Event.dueDate);
-	                        dhis2Event.sortingDate = dhis2Event.dueDate;
+	                        dhis2Event.sortingDate = DateUtils.formatFromUserToApi(dhis2Event.dueDate);
 	                        dhis2Event.style = eventStage.style;
 	
 	                        if (dhis2Event.eventDate) {
 	                            dhis2Event.eventDate = DateUtils.formatFromApiToUser(dhis2Event.eventDate);
-	                            dhis2Event.sortingDate = dhis2Event.eventDate;
+	                            dhis2Event.sortingDate = DateUtils.formatFromUserToApi(dhis2Event.eventDate);
 	                        }
 	
 	                        dhis2Event.editingNotAllowed = EventUtils.getEditingStatus(dhis2Event, eventStage, $scope.selectedOrgUnit, $scope.selectedTei, $scope.selectedEnrollment, $scope.selectedProgram, userSearchOrgUnits);
@@ -16379,7 +16379,7 @@
 	        };
 	
 	        DHIS2EventFactory.updateForEventDate(e).then(function (data) {
-	            eventToSave.sortingDate = eventToSave.eventDate;
+	            eventToSave.sortingDate = DateUtils.formatFromUserToApi(eventToSave.eventDate);
 	
 	            $scope.invalidDate = false;
 	            $scope.validatedDateSetForEvent = { date: eventToSave.eventDate, event: eventToSave };
@@ -16748,7 +16748,7 @@
 	
 	                modalDefaults.templateUrl = 'components/dataentry/modal-complete-event.html';
 	                dhis2Event.status = 'COMPLETED';
-	                dhis2Event.completedDate = today;
+	                dhis2Event.completedDate = DateUtils.formatFromUserToApi(today);
 	            }
 	        }
 	        ModalService.showModal(modalDefaults, modalOptions).then(function (modalResult) {
@@ -38411,4 +38411,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-0535992c5f30e7669928.js.map
+//# sourceMappingURL=app-2ec4af3da3530c854f0b.js.map
