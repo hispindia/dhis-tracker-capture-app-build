@@ -21245,7 +21245,10 @@
 	            view.loaded = true;
 	        }
 	
-	        $location.path('/').search({ program: $scope.selectedProgram.id });
+	        if ($scope.selectedProgram) {
+	            $location.path('/').search({ program: $scope.selectedProgram.id });
+	        }
+	
 	        loadCanRegister();
 	    };
 	
@@ -38411,4 +38414,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-1f0dc5a50b8936aa0f2a.js.map
+//# sourceMappingURL=app-f25e27ca05d0bfe72f55.js.map
