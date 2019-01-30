@@ -4528,7 +4528,7 @@
 	                        }
 	                        scope.d2FileInputName[scope.d2FileInput.event][de] = data.response.fileResource.name;
 	                        if( update ){
-	                            var updatedSingleValueEvent = {event: scope.d2FileInput.event, dataValues: [{value: data.response.fileResource.id, dataElement:  de}]};
+	                            var updatedSingleValueEvent = {program: scope.d2FileInput.program, event: scope.d2FileInput.event, dataValues: [{value: data.response.fileResource.id, dataElement:  de}]};
 	                            var updatedFullValueEvent = DHIS2EventService.reconstructEvent(scope.d2FileInput, scope.d2FileInputPs.programStageDataElements);
 	                            DHIS2EventFactory.updateForSingleValue(updatedSingleValueEvent, updatedFullValueEvent).then(function(data){
 	                                scope.d2FileInputList = DHIS2EventService.refreshList(scope.d2FileInputList, scope.d2FileInput);
@@ -6736,7 +6736,7 @@
 	.controller('OrgUnitTreeController', function($scope, $modalInstance, OrgUnitFactory, orgUnitId, orgUnitNames) {
 	    
 	    $scope.model = {selectedOrgUnitId: orgUnitId ? orgUnitId : null};
-	    $scope.orgUnitNames = orgUnitNames;
+	    $scope.orgUnitNames = orgUnitNames ? orgUnitNames : {};
 	
 	    function expandOrgUnit( orgUnit, ou ){
 	        if( ou.path.indexOf( orgUnit.path ) !== -1 ){
@@ -7030,9 +7030,6 @@
 	            angular.extend(dashboardLayout.defaultLayout, response.data);
 	            return dashboardLayout;
 	        }, function () {
-	            if (!dashboardLayout.customLayout) {
-	                NotificationService.showNotifcationDialog($translate.instant("error"), $translate.instant("dashboard_layout_not_fetched"));
-	            }
 	            return dashboardLayout;
 	        });
 	        return promise;
@@ -12225,7 +12222,7 @@
 	        var selections = CurrentSelection.get();
 	        CurrentSelection.set({
 	            tei: $scope.selectedTei,
-	            te: $scope.selectedTei.trackedEntityType,
+	            te: selections.te,
 	            prs: selections.prs,
 	            pr: $scope.selectedProgram,
 	            prNames: selections.prNames,
@@ -14257,11 +14254,11 @@
 	                        dhis2Event.executionDateLabel = eventStage.executionDateLabel ? eventStage.executionDateLabel : $translate.instant('report_date');
 	                        dhis2Event.dueDateLabel = eventStage.dueDateLabel ? eventStage.dueDateLabel : $translate.instant('due_date');
 	                        dhis2Event.dueDate = DateUtils.formatFromApiToUser(dhis2Event.dueDate);
-	                        dhis2Event.sortingDate = dhis2Event.dueDate;
+	                        dhis2Event.sortingDate = DateUtils.formatFromUserToApi(dhis2Event.dueDate);;
 	
 	                        if (dhis2Event.eventDate) {
 	                            dhis2Event.eventDate = DateUtils.formatFromApiToUser(dhis2Event.eventDate);
-	                            dhis2Event.sortingDate = dhis2Event.eventDate;
+	                            dhis2Event.sortingDate = DateUtils.formatFromUserToApi(dhis2Event.eventDate);
 	                        }
 	
 	                        dhis2Event.editingNotAllowed = EventUtils.getEditingStatus(dhis2Event, eventStage, $scope.selectedOrgUnit, $scope.selectedTei, $scope.selectedEnrollment, $scope.selectedProgram, userSearchOrgUnits);
@@ -15026,7 +15023,7 @@
 	        };
 	
 	        DHIS2EventFactory.updateForEventDate(e).then(function (data) {
-	            eventToSave.sortingDate = eventToSave.eventDate;
+	            eventToSave.sortingDate = DateUtils.formatFromUserToApi(eventToSave.eventDate);
 	
 	            $scope.invalidDate = false;
 	            $scope.validatedDateSetForEvent = { date: eventToSave.eventDate, event: eventToSave };
@@ -15407,7 +15404,7 @@
 	
 	                modalDefaults.templateUrl = 'components/dataentry/modal-complete-event.html';
 	                dhis2Event.status = 'COMPLETED';
-	                dhis2Event.completedDate = today;
+	                dhis2Event.completedDate = DateUtils.formatFromUserToApi(today);
 	            }
 	        }
 	        ModalService.showModal(modalDefaults, modalOptions).then(function (modalResult) {
@@ -40352,4 +40349,4 @@
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=app-406a267e7699005d52a5.js.map
+//# sourceMappingURL=app-e38ed557e1322e2a4ea8.js.map
