@@ -10964,8 +10964,6 @@
 	                            }
 	                        } else if (effect.action === "ASSIGN") {
 	                            //the dataentry control saves the variable and or dataelement
-	                        } else {
-	                            $log.warn("action: '" + effect.action + "' not supported by rulebound-controller.js");
 	                        }
 	                    }
 	                });
@@ -38327,4 +38325,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-2471d3219955bd36b7ba.js.map
+//# sourceMappingURL=app-c4da96a23077bffc06a4.js.map
