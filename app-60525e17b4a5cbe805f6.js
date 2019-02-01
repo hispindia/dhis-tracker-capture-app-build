@@ -13470,10 +13470,12 @@
 	                        }
 	
 	                        EnrollmentService.enroll(enrollment).then(function (enrollmentResponse) {
-	                            $scope.model.savingRegistration = false;
 	                            if (enrollmentResponse) {
 	                                var en = enrollmentResponse.response;
 	                                if (en.status === 'SUCCESS') {
+	                                    if ($scope.registrationMode !== 'ENROLLMENT') {
+	                                        $scope.model.savingRegistration = false;
+	                                    }
 	                                    enrollment.enrollment = en.importSummaries[0].reference;
 	                                    $scope.selectedEnrollment = enrollment;
 	                                    var avilableEvent = $scope.currentEvent && $scope.currentEvent.event ? $scope.currentEvent : null;
@@ -13487,6 +13489,7 @@
 	                                    }
 	                                } else {
 	                                    //enrollment has failed
+	                                    $scope.model.savingRegistration = false;
 	                                    NotificationService.showNotifcationDialog($translate.instant("enrollment_error"), enrollmentResponse.message);
 	                                    return;
 	                                }
@@ -38411,4 +38414,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-1ee4f459004d6acb1966.js.map
+//# sourceMappingURL=app-60525e17b4a5cbe805f6.js.map
