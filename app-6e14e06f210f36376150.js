@@ -13422,7 +13422,7 @@
 	    });
 	
 	    var performRegistration = function performRegistration(destination) {
-	        if (destination === "DASHBOARD" || destination === "SELF") {
+	        if (destination === "DASHBOARD" || destination === "SELF" || destination === "ENROLLMENT") {
 	            $scope.model.savingRegistration = true;
 	        }
 	
@@ -13468,10 +13468,12 @@
 	                        }
 	
 	                        EnrollmentService.enroll(enrollment).then(function (enrollmentResponse) {
-	                            $scope.model.savingRegistration = false;
 	                            if (enrollmentResponse) {
 	                                var en = enrollmentResponse.response;
 	                                if (en.status === 'SUCCESS') {
+	                                    if ($scope.registrationMode !== 'ENROLLMENT') {
+	                                        $scope.model.savingRegistration = false;
+	                                    }
 	                                    enrollment.enrollment = en.importSummaries[0].reference;
 	                                    $scope.selectedEnrollment = enrollment;
 	                                    var avilableEvent = $scope.currentEvent && $scope.currentEvent.event ? $scope.currentEvent : null;
@@ -13485,6 +13487,7 @@
 	                                    }
 	                                } else {
 	                                    //enrollment has failed
+	                                    $scope.model.savingRegistration = false;
 	                                    NotificationService.showNotifcationDialog($translate.instant("enrollment_error"), enrollmentResponse.message);
 	                                    return;
 	                                }
@@ -38412,4 +38415,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-88e6496690ff907cb603.js.map
+//# sourceMappingURL=app-6e14e06f210f36376150.js.map
