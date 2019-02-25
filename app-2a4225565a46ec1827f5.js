@@ -19795,7 +19795,10 @@
 	                    relationshipProgram = $scope.relationshipTypes.find(function (relType) {
 	                        return relType.id === rel.relationshipType;
 	                    }).toConstraint.program;
-	                    var relative = { trackedEntityInstance: teiId, relName: relName, relId: rel.relationship, attributes: getRelativeAttributes(tei.attributes), relationshipProgramConstraint: relationshipProgram ? relationshipProgram : null };
+	                    if (!relationshipProgram && $scope.selectedProgram) {
+	                        relationshipProgram = { id: $scope.selectedProgram.id };
+	                    }
+	                    var relative = { trackedEntityInstance: teiId, relName: relName, relId: rel.relationship, attributes: getRelativeAttributes(tei.attributes), relationshipProgramConstraint: relationshipProgram };
 	                    $scope.relatedTeisTo.push(relative);
 	                });
 	            } else if (rel.from && rel.from.trackedEntityInstance && rel.from.trackedEntityInstance.trackedEntityInstance !== $scope.selectedTei.trackedEntityInstance) {
@@ -19805,7 +19808,10 @@
 	                    relationshipProgram = $scope.relationshipTypes.find(function (relType) {
 	                        return relType.id === rel.relationshipType;
 	                    }).fromConstraint.program;
-	                    var relative = { trackedEntityInstance: teiId, relName: relName, relId: rel.relationship, attributes: getRelativeAttributes(tei.attributes), relationshipProgramConstraint: relationshipProgram ? relationshipProgram : null };
+	                    if (!relationshipProgram && $scope.selectedProgram) {
+	                        relationshipProgram = { id: $scope.selectedProgram.id };
+	                    }
+	                    var relative = { trackedEntityInstance: teiId, relName: relName, relId: rel.relationship, attributes: getRelativeAttributes(tei.attributes), relationshipProgramConstraint: relationshipProgram };
 	                    $scope.relatedTeisFrom.push(relative);
 	                });
 	            }
@@ -38444,4 +38450,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-cd123dab02a5d684082f.js.map
+//# sourceMappingURL=app-2a4225565a46ec1827f5.js.map
