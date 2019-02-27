@@ -8436,12 +8436,12 @@
 	    };
 	
 	    return {
-	        registerOrUpdate: function registerOrUpdate(tei, optionSets, attributesById) {
+	        registerOrUpdate: function registerOrUpdate(tei, optionSets, attributesById, programId) {
 	            var apiTei = convertFromUserToApi(angular.copy(tei));
 	            if (apiTei) {
 	                var def = $q.defer();
 	                if (apiTei.trackedEntityInstance) {
-	                    TEIService.update(apiTei, optionSets, attributesById).then(function (response) {
+	                    TEIService.update(apiTei, optionSets, attributesById, programId).then(function (response) {
 	                        def.resolve(response);
 	                    });
 	                } else {
@@ -8994,14 +8994,15 @@
 	            });
 	            return deferred.promise;
 	        },
-	        update: function update(tei, optionSets, attributesById) {
+	        update: function update(tei, optionSets, attributesById, programId) {
 	            var formattedTei = convertFromUserToApi(angular.copy(tei));
 	            var attributes = [];
 	            angular.forEach(formattedTei.attributes, function (att) {
 	                attributes.push({ attribute: att.attribute, value: CommonUtils.formatDataValue(null, att.value, attributesById[att.attribute], optionSets, 'API') });
 	            });
 	            formattedTei.attributes = attributes;
-	            var promise = $http.put(DHIS2URL + '/trackedEntityInstances/' + formattedTei.trackedEntityInstance, formattedTei).then(function (response) {
+	            var programFilter = programId ? "?program=" + programId : "";
+	            var promise = $http.put(DHIS2URL + '/trackedEntityInstances/' + formattedTei.trackedEntityInstance + programFilter, formattedTei).then(function (response) {
 	                return response.data;
 	            }, function (response) {
 	                NotificationService.showNotifcationDialog($translate.instant('update_error'), $translate.instant('failed_to_update_tei'), response);
@@ -13428,7 +13429,7 @@
 	
 	        $scope.tei.attributes = tempAttributes;
 	
-	        RegistrationService.registerOrUpdate($scope.tei, $scope.optionSets, $scope.attributesById).then(function (regResponse) {
+	        RegistrationService.registerOrUpdate($scope.tei, $scope.optionSets, $scope.attributesById, $scope.selectedEnrollment.program).then(function (regResponse) {
 	            var reg = regResponse.response.responseType === 'ImportSummaries' ? regResponse.response.importSummaries[0] : regResponse.response.responseType === 'ImportSummary' ? regResponse.response : {};
 	            if (reg.status === 'SUCCESS') {
 	                $scope.tei.trackedEntityInstance = reg.reference;
@@ -38354,4 +38355,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-2dc87afb3ac034b3ce3f.js.map
+//# sourceMappingURL=app-afcb91ed6bf054170683.js.map
