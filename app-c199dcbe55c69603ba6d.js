@@ -12795,6 +12795,8 @@
 	    $scope.applySelectedProgram = function (pr) {
 	        if (pr) {
 	            $scope.selectedProgram = pr;
+	        } else {
+	            $location.path('/dashboard').search({ ou: $scope.selectedOrgUnit.id, tei: $scope.selectedTei.trackedEntityInstance });
 	        }
 	        $location.path('/dashboard').search({ program: pr.id, ou: $scope.selectedOrgUnit.id, tei: $scope.selectedTei.trackedEntityInstance });
 	    };
@@ -38452,4 +38454,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-43af557e837ace6cadc5.js.map
+//# sourceMappingURL=app-c199dcbe55c69603ba6d.js.map
