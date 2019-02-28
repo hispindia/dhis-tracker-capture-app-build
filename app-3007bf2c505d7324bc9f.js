@@ -10340,6 +10340,7 @@
 	        var modalInstance = $modal.open({
 	            templateUrl: 'components/dataentry/new-event.html',
 	            controller: 'EventCreationController',
+	            windowClass: 'modal-new-event-window',
 	            resolve: {
 	                eventsByStage: function eventsByStage() {
 	                    return _eventsByStage;
@@ -38454,4 +38455,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-c199dcbe55c69603ba6d.js.map
+//# sourceMappingURL=app-3007bf2c505d7324bc9f.js.map
