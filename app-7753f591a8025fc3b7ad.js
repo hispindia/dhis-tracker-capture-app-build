@@ -19679,10 +19679,7 @@
 	                $scope.relationships[rel.id] = rel;
 	            });
 	
-	            TEIService.getRelationships($scope.selectedTei.trackedEntityInstance).then(function (relationships) {
-	                $scope.selectedTei.relationships = relationships;
-	                setRelationships();
-	            });
+	            setRelationships();
 	        });
 	        $scope.selectedOrgUnit = $scope.selections.orgUnit;
 	    });
@@ -20835,18 +20832,14 @@
 	        $scope.selectedTei = selections.tei;
 	
 	        if (selections.selectedEnrollment && selections.selectedEnrollment.enrollment) {
-	            EnrollmentService.get(selections.selectedEnrollment.enrollment).then(function (data) {
-	                if (data) {
-	                    $scope.selectedEnrollment = data;
-	                    if (!angular.isUndefined($scope.selectedEnrollment.notes)) {
-	                        $scope.selectedEnrollment.notes = orderByFilter($scope.selectedEnrollment.notes, '-storedDate');
-	                        angular.forEach($scope.selectedEnrollment.notes, function (note) {
-	                            note.displayDate = DateUtils.formatFromApiToUser(note.storedDate);
-	                            note.storedDate = DateUtils.formatToHrsMins(note.storedDate);
-	                        });
-	                    }
-	                }
-	            });
+	            $scope.selectedEnrollment = angular.copy(selections.selectedEnrollment);
+	            if (!angular.isUndefined($scope.selectedEnrollment.notes)) {
+	                $scope.selectedEnrollment.notes = orderByFilter($scope.selectedEnrollment.notes, '-storedDate');
+	                angular.forEach($scope.selectedEnrollment.notes, function (note) {
+	                    note.displayDate = DateUtils.formatFromApiToUser(note.storedDate);
+	                    note.storedDate = DateUtils.formatToHrsMins(note.storedDate);
+	                });
+	            }
 	        }
 	    });
 	
@@ -38443,4 +38436,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-0e0f64022f2932118fed.js.map
+//# sourceMappingURL=app-7753f591a8025fc3b7ad.js.map
