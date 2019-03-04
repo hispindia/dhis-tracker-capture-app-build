@@ -11582,6 +11582,7 @@
 	
 	    $scope.$on('ErollmentDeleted', function (args, data) {
 	        $scope.allEnrollments = data.enrollments;
+	        updateDashboard();
 	    });
 	
 	    $scope.$on('DataEntryMainMenuVisibilitySet', function (event, data) {
@@ -37113,4 +37114,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-2a3360276fe3221cca2a.js.map
+//# sourceMappingURL=app-237c835a672001df51de.js.map
