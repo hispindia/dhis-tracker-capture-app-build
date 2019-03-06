@@ -2117,7 +2117,7 @@
 	        processedValue = $filter('trimquotes')(processedValue);
 	
 	        //Append single quotation marks in case the variable is of text or date type:
-	        if(valueType === 'LONG_TEXT' || valueType === 'TEXT' || valueType === 'DATE' || valueType === 'OPTION_SET' ||
+	        if(valueType === 'LONG_TEXT' || valueType === 'TEXT' || valueType === 'DATE' || valueType === 'AGE' || valueType === 'OPTION_SET' ||
 	            valueType === 'URL' || valueType === 'DATETIME' || valueType === 'TIME' || valueType === 'PHONE_NUMBER' || 
 	            valueType === 'ORGANISATION_UNIT' || valueType === 'USERNAME') {
 	            if(processedValue) {
@@ -38449,4 +38449,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-e62e00a34728965fe7fd.js.map
+//# sourceMappingURL=app-1b329e226c0af2e049fe.js.map
