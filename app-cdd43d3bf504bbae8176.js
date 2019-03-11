@@ -20954,7 +20954,7 @@
 	var trackerCapture = angular.module('trackerCapture');
 	trackerCapture.controller('MessagingController', ["$scope", "$translate", "MessagingService", "CurrentSelection", function ($scope, $translate, MessagingService, CurrentSelection) {
 	
-	    //$scope.messagingForm = {};
+	    $scope.messagingForm = {};
 	    $scope.note = {};
 	    $scope.message = {};
 	    $scope.showMessagingDiv = false;
@@ -20986,9 +20986,10 @@
 	        }
 	    });
 	
-	    $scope.sendMessage = function () {
+	    $scope.sendMessage = function (messagingForm) {
 	        var message;
 	        //check for form validity
+	        $scope.messagingForm = messagingForm;
 	        $scope.messagingForm.submitted = true;
 	        if ($scope.messagingForm.$invalid) {
 	            return false;
@@ -38450,4 +38451,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-8d9e21263b5b3f317e6d.js.map
+//# sourceMappingURL=app-cdd43d3bf504bbae8176.js.map
