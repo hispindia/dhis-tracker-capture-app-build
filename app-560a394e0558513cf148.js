@@ -22281,9 +22281,9 @@
 	                        angular.forEach(rule.programRuleActions, function (action) {
 	                            if (action.location && (action.programRuleActionType === 'DISPLAYTEXT' || action.programRuleActionType === 'DISPLAYKEYVALUEPAIR')) {
 	                                if (action.location === 'feedback') {
-	                                    feedBackFields[action.id] = action.content;
+	                                    feedBackFields[action.id] = action.content + " " + action.data;
 	                                } else if (action.location === 'indicators') {
-	                                    inidicatorFields[action.id] = action.content;
+	                                    inidicatorFields[action.id] = action.content + " " + action.data;
 	                                }
 	                            }
 	                        });
@@ -38463,4 +38463,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-322f5f47228d3f1b5b14.js.map
+//# sourceMappingURL=app-560a394e0558513cf148.js.map
