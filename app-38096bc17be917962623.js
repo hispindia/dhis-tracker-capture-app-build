@@ -16266,7 +16266,7 @@
 	            }
 	        }
 	
-	        if (field && field.$invalid) {
+	        if (field && field.$invalid && prStDe.dataElement.valueType !== "ORGANISATION_UNIT") {
 	            $scope.currentEvent[prStDe.dataElement.id] = oldValue;
 	            $scope.currentElement = { id: prStDe.dataElement.id, saved: false, event: eventToSave.event };
 	            return false;
@@ -38457,4 +38457,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-24b1cc8c45c94e7f4997.js.map
+//# sourceMappingURL=app-38096bc17be917962623.js.map
