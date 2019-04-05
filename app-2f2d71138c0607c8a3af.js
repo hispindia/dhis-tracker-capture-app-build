@@ -14098,6 +14098,11 @@
 	    $scope.saveEventDate = function () {
 	        $scope.saveDatavalue();
 	    };
+	
+	    $scope.saveAssignedUser = function () {
+	        $scope.saveDatavalue();
+	    };
+	
 	    $scope.verifyEventExpiryDate = function (field) {
 	        if (!$scope.userAuthority.canEditExpiredStuff) {
 	            var date = $scope.currentEvent[field];
@@ -38538,4 +38543,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-262f380688d4b0f6eb4b.js.map
+//# sourceMappingURL=app-2f2d71138c0607c8a3af.js.map
