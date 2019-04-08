@@ -19665,8 +19665,7 @@
 	    $scope.$on('dashboardWidgets', function (event, args) {
 	        $scope.relationshipTypes = [];
 	        $scope.relationships = [];
-	        $scope.relatedTeisTo = [];
-	        $scope.relatedTeisFrom = [];
+	        $scope.relatedTeis = [];
 	        $scope.selections = CurrentSelection.get();
 	        $scope.optionSets = $scope.selections.optionSets;
 	        $scope.selectedTei = angular.copy($scope.selections.tei);
@@ -19792,8 +19791,7 @@
 	    };
 	
 	    var setRelationships = function setRelationships() {
-	        $scope.relatedTeisTo = [];
-	        $scope.relatedTeisFrom = [];
+	        $scope.relatedTeis = [];
 	        $scope.relationshipPrograms = [];
 	        $scope.relationshipAttributes = [];
 	        var relationshipProgram = {};
@@ -19804,11 +19802,11 @@
 	            angular.forEach($scope.selectedTei.relationships, function (rel) {
 	                if (rel.to && rel.to.trackedEntityInstance && rel.to.trackedEntityInstance.trackedEntityInstance !== $scope.selectedTei.trackedEntityInstance) {
 	                    var teiId = rel.to.trackedEntityInstance.trackedEntityInstance;
-	                    var relName = rel.relationshipName;
 	                    TEIService.get(teiId, $scope.optionSets, $scope.attributesById).then(function (tei) {
 	                        relationshipType = $scope.relationshipTypes.find(function (relType) {
 	                            return relType.id === rel.relationshipType;
 	                        });
+	                        var relName = relationshipType.bidirectional ? relationshipType.toFromName : relationshipType.displayName;
 	
 	                        if (relationshipType && teiTypes.filter(function (teiType) {
 	                            return teiType.id === tei.trackedEntityType;
@@ -19834,15 +19832,15 @@
 	                        }
 	
 	                        var relative = { trackedEntityInstance: teiId, relName: relName, relId: rel.relationship, attributes: getRelativeAttributes(tei.attributes), relationshipProgramConstraint: relationshipProgram, relationshipType: relationshipType };
-	                        $scope.relatedTeisTo.push(relative);
+	                        $scope.relatedTeis.push(relative);
 	                    });
-	                } else if (rel.from && rel.from.trackedEntityInstance && rel.from.trackedEntityInstance.trackedEntityInstance !== $scope.selectedTei.trackedEntityInstance) {
+	                } else if (rel.from && rel.bidirectional && rel.from.trackedEntityInstance && rel.from.trackedEntityInstance.trackedEntityInstance !== $scope.selectedTei.trackedEntityInstance) {
 	                    var teiId = rel.from.trackedEntityInstance.trackedEntityInstance;
-	                    var relName = rel.relationshipName;
 	                    TEIService.get(teiId, $scope.optionSets, $scope.attributesById).then(function (tei) {
 	                        relationshipType = $scope.relationshipTypes.find(function (relType) {
 	                            return relType.id === rel.relationshipType;
 	                        });
+	                        var relName = relationshipType.fromToName;
 	
 	                        if (relationshipType && teiTypes.filter(function (teiType) {
 	                            return teiType.id === tei.trackedEntityType;
@@ -19868,7 +19866,7 @@
 	                        }
 	
 	                        var relative = { trackedEntityInstance: teiId, relName: relName, relId: rel.relationship, attributes: getRelativeAttributes(tei.attributes), relationshipProgramConstraint: relationshipProgram, relationshipType: relationshipType };
-	                        $scope.relatedTeisFrom.push(relative);
+	                        $scope.relatedTeis.push(relative);
 	                    });
 	                }
 	            });
@@ -38517,4 +38515,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-d4d65b7e7a63e576f950.js.map
+//# sourceMappingURL=app-eae8d3e11680a342ff2d.js.map
