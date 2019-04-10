@@ -2677,9 +2677,9 @@
 	        if (weight < sdArray[0]) { return -3.5; }
 	        if (weight > sdArray[6]) { return 3.5; }
 	
-	
-	        var { higherLimitIn, lowerLimitIn } = findDeviationLimits(weight, sdArray);
-	
+	        var deviationLimits = findDeviationLimits(weight, sdArray);
+	        var higherLimitIn = deviationLimits.higherLimitIn;
+	        var lowerLimitIn = deviationLimits.lowerLimitIn;
 	
 	        // Find the distance between the two SDs in kilos.
 	        var distance = sdArray[higherLimitIn] - sdArray[lowerLimitIn];
@@ -38832,4 +38832,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-97e59564f6a2131c383e.js.map
+//# sourceMappingURL=app-e8885a4c73872ad21260.js.map
