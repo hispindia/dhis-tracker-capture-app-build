@@ -8585,9 +8585,10 @@
 	            } else {
 	                TCStorageService.currentStore.open().done(function () {
 	                    TCStorageService.currentStore.getAll('programAccess').done(function (programAccess) {
-	                        access = { programsById: {}, programStagesById: {} };
+	                        access = { programsById: {}, programStagesById: {}, programIdNameMap: {} };
 	                        angular.forEach(programAccess, function (program) {
 	                            access.programsById[program.id] = program.access;
+	                            access.programIdNameMap[program.id] = program.displayName;
 	                            angular.forEach(program.programStages, function (programStage) {
 	                                access.programStagesById[programStage.id] = programStage.access;
 	                            });
@@ -20014,6 +20015,10 @@
 	        $scope.selectedProgram = $scope.selections.pr;
 	        $scope.programs = $scope.selections.prs;
 	        $scope.programsById = {};
+	        $scope.allProgramNames = {};
+	        ProgramFactory.getAllAccesses().then(function (programs) {
+	            $scope.allProgramNames = programs.programIdNameMap;
+	        });
 	        angular.forEach($scope.programs, function (program) {
 	            $scope.programsById[program.id] = program;
 	        });
@@ -20220,7 +20225,7 @@
 	
 	                        var convertedEventDate = DateUtils.formatFromApiToUser(event.eventDate);
 	
-	                        var eventToDisplay = { eventId: rel.from.event.event, eventDate: convertedEventDate, status: event.status, orgUnit: event.orgUnitName, relName: relName, relId: rel.relationship, relationshipProgramConstraint: relationshipProgram, relationshipType: relationshipType };
+	                        var eventToDisplay = { eventId: rel.from.event.event, eventDate: convertedEventDate, program: $scope.allProgramNames[event.program], status: event.status, orgUnit: event.orgUnitName, relName: relName, relId: rel.relationship, relationshipProgramConstraint: relationshipProgram, relationshipType: relationshipType };
 	                        $scope.relatedEvents.push(eventToDisplay);
 	                    });
 	                }
@@ -38870,4 +38875,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-b6da3d68ef16716d3ec1.js.map
+//# sourceMappingURL=app-f50a7fe43dd809f79d91.js.map
