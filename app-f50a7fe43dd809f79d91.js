@@ -8585,9 +8585,10 @@
 	            } else {
 	                TCStorageService.currentStore.open().done(function () {
 	                    TCStorageService.currentStore.getAll('programAccess').done(function (programAccess) {
-	                        access = { programsById: {}, programStagesById: {} };
+	                        access = { programsById: {}, programStagesById: {}, programIdNameMap: {} };
 	                        angular.forEach(programAccess, function (program) {
 	                            access.programsById[program.id] = program.access;
+	                            access.programIdNameMap[program.id] = program.displayName;
 	                            angular.forEach(program.programStages, function (programStage) {
 	                                access.programStagesById[programStage.id] = programStage.access;
 	                            });
@@ -9674,6 +9675,18 @@
 	                    var errorBody = $translate.instant('failed_to_fetch_events');
 	                    NotificationService.showNotifcationDialog(errorHeader, errorBody, response);
 	                }
+	            });
+	            return promise;
+	        },
+	        getEventWithoutRegistration: function getEventWithoutRegistration(eventId) {
+	            var url = DHIS2URL + '/events/' + eventId;
+	
+	            var promise = $http.get(url).then(function (response) {
+	                return response.data;
+	            }, function (response) {
+	                var errorBody = $translate.instant('failed_to_update_event');
+	                NotificationService.showNotifcationDialog(errorHeader, errorBody, response);
+	                return null;
 	            });
 	            return promise;
 	        },
@@ -19968,7 +19981,7 @@
 	/* global trackerCapture, angular */
 	
 	var trackerCapture = angular.module('trackerCapture');
-	trackerCapture.controller('RelationshipController', ["$scope", "$rootScope", "$modal", "$location", "TEIService", "AttributesFactory", "CurrentSelection", "RelationshipFactory", "OrgUnitFactory", "ProgramFactory", "EnrollmentService", "ModalService", "CommonUtils", "TEService", function ($scope, $rootScope, $modal, $location, TEIService, AttributesFactory, CurrentSelection, RelationshipFactory, OrgUnitFactory, ProgramFactory, EnrollmentService, ModalService, CommonUtils, TEService) {
+	trackerCapture.controller('RelationshipController', ["$scope", "$rootScope", "$modal", "$location", "TEIService", "AttributesFactory", "CurrentSelection", "RelationshipFactory", "OrgUnitFactory", "ProgramFactory", "EnrollmentService", "ModalService", "CommonUtils", "TEService", "DHIS2EventFactory", "DateUtils", function ($scope, $rootScope, $modal, $location, TEIService, AttributesFactory, CurrentSelection, RelationshipFactory, OrgUnitFactory, ProgramFactory, EnrollmentService, ModalService, CommonUtils, TEService, DHIS2EventFactory, DateUtils) {
 	    $rootScope.showAddRelationshipDiv = false;
 	    $scope.relatedProgramRelationship = false;
 	    var ENTITYNAME = "TRACKED_ENTITY_INSTANCE";
@@ -20002,6 +20015,10 @@
 	        $scope.selectedProgram = $scope.selections.pr;
 	        $scope.programs = $scope.selections.prs;
 	        $scope.programsById = {};
+	        $scope.allProgramNames = {};
+	        ProgramFactory.getAllAccesses().then(function (programs) {
+	            $scope.allProgramNames = programs.programIdNameMap;
+	        });
 	        angular.forEach($scope.programs, function (program) {
 	            $scope.programsById[program.id] = program;
 	        });
@@ -20107,8 +20124,13 @@
 	        $location.path('/dashboard').search({ tei: teiId, program: program, ou: $scope.selectedOrgUnit.id });
 	    };
 	
+	    $scope.showEventInCaptureApp = function (eventId) {
+	        location.href = '../dhis-web-capture/index.html#/viewEvent/' + eventId;
+	    };
+	
 	    var setRelationships = function setRelationships() {
 	        $scope.relatedTeis = [];
+	        $scope.relatedEvents = [];
 	        $scope.relationshipPrograms = [];
 	        $scope.relationshipAttributes = [];
 	        var relationshipProgram = {};
@@ -20184,6 +20206,27 @@
 	
 	                        var relative = { trackedEntityInstance: teiId, relName: relName, relId: rel.relationship, attributes: getRelativeAttributes(tei.attributes), relationshipProgramConstraint: relationshipProgram, relationshipType: relationshipType };
 	                        $scope.relatedTeis.push(relative);
+	                    });
+	                } else if (rel.from && rel.bidirectional && rel.from.event && rel.from.event.event) {
+	                    var event = null;
+	                    DHIS2EventFactory.getEventWithoutRegistration(rel.from.event.event).then(function (e) {
+	                        event = e;
+	
+	                        relationshipType = $scope.relationshipTypes.find(function (relType) {
+	                            return relType.id === rel.relationshipType;
+	                        });
+	                        var relName = relationshipType.fromToName;
+	
+	                        relationshipProgram = relationshipType.fromConstraint.program;
+	
+	                        if (!relationshipProgram && $scope.selectedProgram) {
+	                            relationshipProgram = { id: $scope.selectedProgram.id };
+	                        }
+	
+	                        var convertedEventDate = DateUtils.formatFromApiToUser(event.eventDate);
+	
+	                        var eventToDisplay = { eventId: rel.from.event.event, eventDate: convertedEventDate, program: $scope.allProgramNames[event.program], status: event.status, orgUnit: event.orgUnitName, relName: relName, relId: rel.relationship, relationshipProgramConstraint: relationshipProgram, relationshipType: relationshipType };
+	                        $scope.relatedEvents.push(eventToDisplay);
 	                    });
 	                }
 	            });
@@ -38832,4 +38875,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-e8885a4c73872ad21260.js.map
+//# sourceMappingURL=app-f50a7fe43dd809f79d91.js.map
