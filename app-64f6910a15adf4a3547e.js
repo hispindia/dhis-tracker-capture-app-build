@@ -15632,6 +15632,8 @@
 	                }
 	            }
 	
+	            CurrentSelection.setSelectedTeiEvents();
+	
 	            broadcastDataEntryControllerData();
 	        }, function (error) {
 	
@@ -37115,4 +37117,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-7f392f14b42a91a183ae.js.map
+//# sourceMappingURL=app-64f6910a15adf4a3547e.js.map
