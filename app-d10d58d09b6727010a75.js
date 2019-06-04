@@ -21297,6 +21297,18 @@
 	            if ($scope.currentView.onPostLoad) $scope.currentView.onPostLoad();
 	        }
 	    });
+	    // change for punjab HMIS hide registration Button for upper level <=3
+	    $scope.hideRegister = function (viewName) {
+	        if (viewName === 'Register') {
+	            if ($scope.selectedOrgUnit.l <= 3) {
+	                return false;
+	            } else {
+	                return true;
+	            }
+	        } else if (viewName != 'Register') {
+	            return true;
+	        }
+	    };
 	}]);
 
 /***/ }),
@@ -38862,4 +38874,4 @@
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=app-fcc9d84a28873b704deb.js.map
+//# sourceMappingURL=app-d10d58d09b6727010a75.js.map
