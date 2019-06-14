@@ -878,6 +878,24 @@
 	                return users;
 	            });
 	            return promise;
+	        },
+	        getByQuery: function( queryString ){
+	            var promise = $http.get("../api/users?paging=true&page=1&pageSize=10&query=" + queryString + "&fields=firstName,surname,userCredentials[username],id").then(function (response) {
+	                var users = [];
+	                angular.forEach(response.data.users, function (user) {
+	                    var userObj = {userid: user.id, username: user.userCredentials.username, firstName: user.firstName, lastName: user.surname};
+	                    users.push(userObj);
+	                });
+	                return users;
+	            });
+	            return promise;
+	        },
+	        getByUid: function( uid ){
+	            var promise = $http.get("../api/users/" + uid + "?fields=firstName,surname,userCredentials[username],id").then(function (response) {
+	                var userObj = {userid: response.data.id, username: response.data.userCredentials.username, firstName: response.data.firstName, lastName: response.data.surname};
+	                return userObj;        
+	            });
+	            return promise;
 	        }
 	    };
 	}) 
@@ -2677,9 +2695,9 @@
 	        if (weight < sdArray[0]) { return -3.5; }
 	        if (weight > sdArray[6]) { return 3.5; }
 	
-	
-	        var { higherLimitIn, lowerLimitIn } = findDeviationLimits(weight, sdArray);
-	
+	        var deviationLimits = findDeviationLimits(weight, sdArray);
+	        var higherLimitIn = deviationLimits.higherLimitIn;
+	        var lowerLimitIn = deviationLimits.lowerLimitIn;
 	
 	        // Find the distance between the two SDs in kilos.
 	        var distance = sdArray[higherLimitIn] - sdArray[lowerLimitIn];
@@ -5098,6 +5116,7 @@
 	                    scope.closeOptionList();
 	                });
 	            }
+	
 	            scope.toggleOptionList = function(){
 	                if(scope.optionListOpen) {
 	                    scope.closeOptionList();
@@ -5105,52 +5124,52 @@
 	                }
 	                scope.openOptionList();
 	            }
+	
 	            scope.closeOptionList = function(){
 	                scope.optionListOpen = false;
-	                scope.search();
 	                $(document).unbind('click', onClickOutside);
 	            }
 	
 	            scope.openOptionList = function(){
 	                scope.optionListOpen = true;
+	                scope.search('');
 	                $(document).bind('click', onClickOutside);
 	            }
 	        },
 	        controller: function($scope, UsersService, OrgUnitFactory) {
-	            $scope.allOptions = [];
-	            $scope.currentFilteredOptions = [];
-	            $scope.temp = UsersService.getAll().then(function(users){
-	                $scope.allOptions = users;
-	                $scope.currentFilteredOptions = $scope.allOptions;
-	                setOptions();
+	            $scope.displayOptions = [];       
+	            $scope.userDisplayName = "";
+	
+	            $scope.getNameForUserOject = function(userObject){
+	                return userObject.firstName + " " + userObject.lastName +
+	                    " (" + userObject.username + ")";
+	            }
+	
+	            UsersService.getByQuery('').then(function(users){
+	                $scope.displayOptions = users;
 	            });
 	
-	            $scope.loadMoreId = "loadMore";
-	            $scope.displayOptions = [];
-	            $scope.tempUsername = null;
+	            if( $scope.d2Model.assignedUser ) {
+	                UsersService.getByUid($scope.d2Model.assignedUser).then(function(user){
+	                    $scope.selectedUserObject = user;
+	                    $scope.userDisplayName = $scope.getNameForUserOject(user);
+	                });
+	            }
 	
 	            $scope.saveOption = function() {
 	                $scope.d2SaveMethod()();
 	            };
 	
 	            $scope.search = function(searchParam){
-	                if(searchParam){
-	                    $scope.currentFilteredOptions = $scope.currentFilteredOptions.filter(function (option) {
-	                        return option.username.includes(searchParam);
-	                    });
-	                } else {
-	                    $scope.currentFilteredOptions = $scope.allOptions;
-	                }              
-	                setOptions();
-	            }
-	
-	            var setOptions = function(){
-	                $scope.displayOptions = $scope.currentFilteredOptions;
+	                UsersService.getByQuery(searchParam).then(function(users){
+	                    $scope.displayOptions = users;
+	                });
 	            }
 	
 	            $scope.selectOption = function(option){
 	                $scope.d2Model.assignedUser = option.userid;
-	                $scope.tempUsername = option.username;
+	                $scope.selectedUserObject = option;
+	                $scope.userDisplayName =  $scope.getNameForUserOject(option);
 	                $scope.closeOptionList();
 	                $scope.d2SaveMethod()();
 	            }
@@ -5158,19 +5177,10 @@
 	            $scope.removeSelectedOption = function(event){
 	                event.stopPropagation();
 	                $scope.d2Model.assignedUser = null;
-	                $scope.tempUsername = null;
+	                $scope.selectedUserDisplayString = null;
 	                $scope.d2SaveMethod()();
 	            }
-	
-	            setOptions();
-	
-	            $scope.$watch("$scope.currentFilteredOptions", function(newValue,oldValue){
-	                if(newValue != oldValue){
-	                    setOptions();
-	                }
-	            });
 	        }
-	
 	    };
 	})
 	
@@ -7808,7 +7818,7 @@
 /***/ function(module, exports) {
 
 	angular.module('d2Templates', []).run(['$templateCache', function($templateCache) {$templateCache.put('./templates/age-input.html','<div ng-form="ageForm">\n    <div class="input-group" style="width: 100%; padding-top: 5px;">\n        <input type="text" \n               d2-date name="dob" \n               d2-date-validator\n               ng-model="age.dob"\n               blur-or-change="saveDOB()"\n               ng-required="d2Required"\n               ng-disabled="d2Disabled"\n               ng-attr-placeholder="{{\'dob\'| translate}}" \n               ng-attr-title="{{\'dob\'| translate}}" \n               class="form-control no-right-radius"\n               ng-class="{\'input-success\': d2AgeSaved}"/>\n        <span class="input-group-btn empty-span"></span>\n        <span class="has-float-label">\n            <input type="number" \n                   name="years"\n                   ng-model="age.years" \n                   ng-model-options="{updateOn: \'blur\'}"\n                   ng-change="saveAge()"\n                   ng-disabled="d2Disabled"\n                   d2-number-validator\n                   number-type="INTEGER_ZERO_OR_POSITIVE"\n                   ng-attr-placeholder="{{\'years\'| translate}}"\n                   ng-attr-title="{{\'years\'| translate}}" \n                   class="form-control no-right-radius no-left-radius"\n                   ng-class="{\'input-success\': d2AgeSaved}"\n                   id="year"/>\n            <label for="year">{{\'years\'| translate}}</label>\n        </span>\n        <span class="input-group-btn empty-span"></span>\n        <span class="has-float-label">\n            <input type="number" \n                   name="months"\n                   ng-model="age.months" \n                   ng-model-options="{updateOn: \'blur\'}"\n                   ng-change="saveAge()"\n                   ng-disabled="d2Disabled"\n                   d2-number-validator\n                   number-type="INTEGER_ZERO_OR_POSITIVE"\n                   ng-attr-placeholder="{{\'months\'| translate}}"\n                   ng-attr-title="{{\'months\'| translate}}" \n                   class="form-control no-right-radius no-left-radius"\n                   ng-class="{\'input-success\': d2AgeSaved}"\n                   id="month"/>\n            <label for="month">{{\'months\'| translate}}</label>\n        </span>\n        <span class="input-group-btn empty-span"></span>\n        <span class="has-float-label">\n            <input type="number" \n                   name="days"\n                   ng-model="age.days" \n                   ng-model-options="{updateOn: \'blur\'}"\n                   ng-change="saveAge()"\n                   ng-disabled="d2Disabled"\n                   d2-number-validator\n                   number-type="INTEGER_ZERO_OR_POSITIVE"\n                   ng-attr-placeholder="{{\'days\'| translate}}"\n                   ng-attr-title="{{\'days\'| translate}}" \n                   class="form-control no-left-radius no-right-radius"\n                   ng-class="{\'input-success\': d2AgeSaved}"\n                   id="day"/>\n            <label for="day">{{\'days\'| translate}}</label>\n        </span>\n        <span class="input-group-btn"> \n            <button class="btn btn-danger hideInPrint trim" type="button" ng-attr-title="{{\'remove\'| translate}}" ng-click="removeAge()" ng-disabled="!age.dob || d2Disabled"> \n                <i class="fa fa-trash-o"></i> \n            </button>\n        </span>\n    </div>\n    <div ng-messages="ageForm.dob.$error" ng-if="ageInteracted(ageForm.dob, outerDataEntryForm)" class="required" ng-messages-include="./templates/error-messages.html"></div>\n    <div ng-messages="ageForm.years.$error" ng-if="ageInteracted(ageForm.years, outerDataEntryForm)" class="required" ng-messages-include="./templates/error-messages.html"></div>\n    <div ng-messages="ageForm.months.$error" ng-if="ageInteracted(ageForm.months, outerDataEntryForm)" class="required" ng-messages-include="./templates/error-messages.html"></div>\n    <div ng-messages="ageForm.days.$error" ng-if="ageInteracted(ageForm.days, outerDataEntryForm)" class="required" ng-messages-include="./templates/error-messages.html"></div>\n</div>');
-	$templateCache.put('./templates/assign-user-input.html','<div class="optionListContainerAssignUser">\n    <div ng-if="d2Disabled"><input class="form-control" ng-model="d2Model.assignedUserUsername" disabled></div>\n    <div ng-click="toggleOptionList()" ng-if="!d2Disabled" class="optionListInput" ng-class="{ \'optionListInputOpen\': optionListOpen, \'input-success\': d2Saved }">\n        <div class="optionListInputText" >\n            <span ng-if="d2Model.assignedUser">{{tempUsername ? tempUsername : d2Model.assignedUserUsername}}</span>\n            <span ng-if="!d2Model.assignedUser" class="optionListInputTextPlaceholder">{{\'select_or_search\' | translate}}</span>\n        </div>\n        <div class="optionListInputDelete" ng-click="removeSelectedOption($event)"><i class="fa fa-times" ng-if="d2Model.assignedUser"></i></div>\n        <div class="optionListInputToggle"><i class="fa fa-caret-up" ng-show="optionListOpen"></i><i class="fa fa-caret-down" ng-hide="optionListOpen"></i></div>\n    </div>\n    <div ng-if="optionListOpen" class="optionListPopup">\n        <div class="optionListSearchInputContainer">\n            <input type="text" class="form-control" ng-model="searchText" ng-change="search(searchText)" ng-model-options="{ debounce: 600 }" placeholder="Search..."/>\n        </div>\n        <div vs-repeat class="optionListVsRepeater">\n            <div ng-repeat="option in displayOptions track by option.userid" class="optionListItem" ng-click="selectOption(option)" ng-class="{ \'optionListItemSelected\': (option.userid===d2Model.assignedUser)}">\n                {{option.username}}\n            </div>\n        </div>\n    </div>\n</div>\n');
+	$templateCache.put('./templates/assign-user-input.html','<div class="optionListContainerAssignUser">\n    <div ng-if="d2Disabled"><input class="form-control" ng-model="d2Model.assignedUserUsername" disabled></div>\n    <div ng-click="toggleOptionList()" ng-if="!d2Disabled" class="optionListInput" ng-class="{ \'optionListInputOpen\': optionListOpen, \'input-success\': d2Saved }">\n        <div class="optionListInputText" >\n            <span ng-if="d2Model.assignedUser">{{userDisplayName}}</span>\n            <span ng-if="!d2Model.assignedUser" class="optionListInputTextPlaceholder">{{\'select_or_search\' | translate}}</span>\n        </div>\n        <div class="optionListInputDelete" ng-click="removeSelectedOption($event)"><i class="fa fa-times" ng-if="d2Model.assignedUser"></i></div>\n        <div class="optionListInputToggle"><i class="fa fa-caret-up" ng-show="optionListOpen"></i><i class="fa fa-caret-down" ng-hide="optionListOpen"></i></div>\n    </div>\n    <div ng-if="optionListOpen" class="optionListPopup">\n        <div class="optionListSearchInputContainer">\n            <input type="text" class="form-control" ng-model="searchText" ng-change="search(searchText)" ng-model-options="{ debounce: 600 }" placeholder="Search..."/>\n        </div>\n        <div vs-repeat class="optionListVsRepeater">\n            <div ng-repeat="option in displayOptions track by option.userid" class="optionListItem" ng-click="selectOption(option)" ng-class="{ \'optionListItemSelected\': (option.userid===d2Model.assignedUser)}">\n                {{getNameForUserOject(option)}}\n            </div>\n        </div>\n    </div>\n</div>\n');
 	$templateCache.put('./templates/audit-history.html','<div class="modal-header">\n    <h2>{{\'audit_history\'| translate}}</h2>\n</div>\n<div class="modal-body page" ng-class="{\'waiting-box\':model.showStatus === \'waiting\'}">\n    <div ng-if="model.showStatus === \'data_available\'">\n        <span class="row">\n            <input class="form-control col-md-7" ng-model="model.searchText" ng-attr-placeholder="{{model.searchPlaceholder}}" type="search" />\n        </span>\n        <div class="scroll">\n            <table class="listTable dhis2-table-striped-border">\n                <thead>\n                    <tr>\n                        <th ng-repeat="col in model.auditColumns">\n                            <span ng-switch="col">\n                                <span ng-switch-when="name">\n                                    {{model.name}}\n                                </span>\n                                <span ng-switch-default>\n                                \t{{col | translate}}\n                                </span>                                    \n                            </span>\n                        </th>\n                    </tr>\n                </thead>\n                <tbody ng-repeat="row in model.uniqueRows">\n                    <tr ng-repeat="item in model.itemList | orderBy: \'created\':reverse | filter: {name: row} | filter: {name: model.searchText}" ng-init="rowIndex = $index">\n                        <td ng-repeat="col in model.auditColumns"\n                            rowspan="{{(model.itemList | filter: {name: row} | filter: model.searchText).length}}"\n                            ng-if="col === \'name\' && rowIndex === 0">\n                            {{item[col]}}\n                        </td>\n                        <td class="wrap-text" ng-repeat="col in model.auditColumns" ng-if="col !== \'name\'">\n                        \t<span ng-if="col === \'value\'">\n                        \t\t<span ng-switch="item.valueType">\n\t\t\t\t                    <span ng-switch-when="BOOLEAN">\n\t\t\t\t                        <span ng-if="item[col] === \'true\'">{{\'yes\'| translate}}</span>\n\t\t\t\t                        <span ng-if="item[col] === \'false\'">{{ \'no\' | translate}}</span>\n\t\t\t\t                    </span>\n\t\t\t\t                    <span ng-switch-when="TRUE_ONLY">\n\t\t\t\t                        <span ng-if="item[col]">\n\t\t\t\t                            <i class="fa fa-check"></i>\n\t\t\t\t                        </span>\n\t\t\t\t                    </span>\n\t\t\t\t                    <span ng-switch-default>{{item[col]}}</span>\n\t\t\t\t                </span>\n                        \t</span>\n                        \t<span ng-if="col !== \'value\'">\n                        \t\t{{item[col]}}\n                        \t</span>\n                        \t                            \n                        </td>\n                    </tr>\n                </tbody>\n            </table>\n        </div>\n    </div>\n    <div ng-if="model.showStatus === \'data_unavailable\'">\n        <div class="alert alert-warning">{{\'audit_history_unavailable\'| translate}}</div>\n    </div>\n    <div ng-if="model.showStatus === \'waiting\'">\n        <i class="fa fa-spinner fa-spin audit-spinner"></i>\n        <div class="loading-audit-data">{{\'loading-audit-data\' | translate}}</div>\n    </div>\n</div>\n<div class="modal-footer" ng-if="model.showStatus !== \'waiting\'">\n    <button type="button" class="btn btn-default" data-ng-click="close()">{{\'close\'| translate}}</button>\n</div>');
 	$templateCache.put('./templates/coordinate-input.html','<div  ng-form="coordinateForm">\n    <div class="input-group">\n        <input type="number" \n               ng-model="coordinateObject.coordinate.latitude" \n               ng-attr-placeholder="{{\'latitude\'| translate}}"\n               ng-class="{\'input-success\': d2LatSaved}"\n               name="latitude" \n               d2-coordinate-validator\n               ng-required="d2Required"\n               ng-disabled="d2Disabled"\n               ng-blur="saveD2Coordinate()"\n               class="form-control no-right-radius"/>\n        <span class="input-group-btn empty-span"></span>\n        <input type="number" \n               ng-model="coordinateObject.coordinate.longitude" \n               ng-attr-placeholder="{{\'longitude\'| translate}}"\n               ng-class="{\'input-success\': d2LngSaved}"\n               name="longitude" \n               d2-coordinate-validator\n               ng-required="d2Required"\n               ng-disabled="d2Disabled"\n               ng-blur="saveD2Coordinate()"\n               class="form-control no-left-radius no-right-radius"/>\n        <span class="input-group-btn hideInPrint">\n            <button class="btn btn-grp trim hideInPrint" \n                    type="button"\n                    ng-disabled="{{d2Disabled}}"\n                    ng-attr-title="{{\'get_from_map\'| translate}}"\n                    ng-click="showMap(coordinateObject)"> \n                <i class="fa fa-map-marker"></i>                             \n            </button>\n        </span>    \n    </div>\n    <div ng-messages="coordinateForm.latitude.$error" ng-if="coordinateInteracted(coordinateForm.latitude)" class="required" ng-messages-include="./templates/error-messages.html"></div>\n    <div ng-messages="coordinateForm.longitude.$error" ng-if="coordinateInteracted(coordinateForm.longitude)" class="required" ng-messages-include="./templates/error-messages.html"></div>\n</div>');
 	$templateCache.put('./templates/custom-dataentry-form.html','<d2-custom-data-entry-form custom-data-entry-form="customDataEntryForm"></d2-custom-data-entry-form>');
@@ -38832,4 +38842,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-97e59564f6a2131c383e.js.map
+//# sourceMappingURL=app-958be49ed17cee61460c.js.map
