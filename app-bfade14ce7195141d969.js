@@ -42,15 +42,15 @@
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	__webpack_require__(1);
 
-/***/ },
+/***/ }),
 /* 1 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
@@ -240,9 +240,9 @@
 	    $rootScope.maxOptionSize = 100;
 	}]);
 
-/***/ },
+/***/ }),
 /* 2 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 	
@@ -251,9 +251,9 @@
 	});
 	exports.default = angular.module('trackerCapture', ['ui.bootstrap', 'ngRoute', 'ngCookies', 'ngSanitize', 'ngCsv', 'ngMessages', 'trackerCaptureServices', 'trackerCaptureFilters', 'trackerCaptureDirectives', 'd2Directives', 'd2Filters', 'd2Services', 'd2Controllers', 'd2Templates', 'angularLocalStorage', 'ui.select', 'ui.select2', 'infinite-scroll', 'sticky', 'nvd3ChartDirectives', 'pascalprecht.translate', 'leaflet-directive', 'angularCSS', 'vs-repeat']);
 
-/***/ },
+/***/ }),
 /* 3 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	"use strict";
 	
@@ -455,9 +455,9 @@
 	    return dhis2.tracker.getTrackerObjects( store, objs, url, filter, storage, db );    
 	};
 
-/***/ },
+/***/ }),
 /* 4 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	/* Pagination service */
 	/* global angular, dhis2, moment */
@@ -876,6 +876,24 @@
 	                    users.push(userObj);
 	                });
 	                return users;
+	            });
+	            return promise;
+	        },
+	        getByQuery: function( queryString ){
+	            var promise = $http.get("../api/users?paging=true&page=1&pageSize=10&query=" + queryString + "&fields=firstName,surname,userCredentials[username],id").then(function (response) {
+	                var users = [];
+	                angular.forEach(response.data.users, function (user) {
+	                    var userObj = {userid: user.id, username: user.userCredentials.username, firstName: user.firstName, lastName: user.surname};
+	                    users.push(userObj);
+	                });
+	                return users;
+	            });
+	            return promise;
+	        },
+	        getByUid: function( uid ){
+	            var promise = $http.get("../api/users/" + uid + "?fields=firstName,surname,userCredentials[username],id").then(function (response) {
+	                var userObj = {userid: response.data.id, username: response.data.userCredentials.username, firstName: response.data.firstName, lastName: response.data.surname};
+	                return userObj;        
 	            });
 	            return promise;
 	        }
@@ -4497,9 +4515,9 @@
 	});
 
 
-/***/ },
+/***/ }),
 /* 5 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	/* global moment, angular, directive, dhis2, selection */
 	
@@ -5098,6 +5116,7 @@
 	                    scope.closeOptionList();
 	                });
 	            }
+	
 	            scope.toggleOptionList = function(){
 	                if(scope.optionListOpen) {
 	                    scope.closeOptionList();
@@ -5105,52 +5124,52 @@
 	                }
 	                scope.openOptionList();
 	            }
+	
 	            scope.closeOptionList = function(){
 	                scope.optionListOpen = false;
-	                scope.search();
 	                $(document).unbind('click', onClickOutside);
 	            }
 	
 	            scope.openOptionList = function(){
 	                scope.optionListOpen = true;
+	                scope.search('');
 	                $(document).bind('click', onClickOutside);
 	            }
 	        },
 	        controller: function($scope, UsersService, OrgUnitFactory) {
-	            $scope.allOptions = [];
-	            $scope.currentFilteredOptions = [];
-	            $scope.temp = UsersService.getAll().then(function(users){
-	                $scope.allOptions = users;
-	                $scope.currentFilteredOptions = $scope.allOptions;
-	                setOptions();
+	            $scope.displayOptions = [];       
+	            $scope.userDisplayName = "";
+	
+	            $scope.getNameForUserOject = function(userObject){
+	                return userObject.firstName + " " + userObject.lastName +
+	                    " (" + userObject.username + ")";
+	            }
+	
+	            UsersService.getByQuery('').then(function(users){
+	                $scope.displayOptions = users;
 	            });
 	
-	            $scope.loadMoreId = "loadMore";
-	            $scope.displayOptions = [];
-	            $scope.tempUsername = null;
+	            if( $scope.d2Model.assignedUser ) {
+	                UsersService.getByUid($scope.d2Model.assignedUser).then(function(user){
+	                    $scope.selectedUserObject = user;
+	                    $scope.userDisplayName = $scope.getNameForUserOject(user);
+	                });
+	            }
 	
 	            $scope.saveOption = function() {
 	                $scope.d2SaveMethod()();
 	            };
 	
 	            $scope.search = function(searchParam){
-	                if(searchParam){
-	                    $scope.currentFilteredOptions = $scope.currentFilteredOptions.filter(function (option) {
-	                        return option.username.includes(searchParam);
-	                    });
-	                } else {
-	                    $scope.currentFilteredOptions = $scope.allOptions;
-	                }              
-	                setOptions();
-	            }
-	
-	            var setOptions = function(){
-	                $scope.displayOptions = $scope.currentFilteredOptions;
+	                UsersService.getByQuery(searchParam).then(function(users){
+	                    $scope.displayOptions = users;
+	                });
 	            }
 	
 	            $scope.selectOption = function(option){
 	                $scope.d2Model.assignedUser = option.userid;
-	                $scope.tempUsername = option.username;
+	                $scope.selectedUserObject = option;
+	                $scope.userDisplayName =  $scope.getNameForUserOject(option);
 	                $scope.closeOptionList();
 	                $scope.d2SaveMethod()();
 	            }
@@ -5158,19 +5177,10 @@
 	            $scope.removeSelectedOption = function(event){
 	                event.stopPropagation();
 	                $scope.d2Model.assignedUser = null;
-	                $scope.tempUsername = null;
+	                $scope.selectedUserDisplayString = null;
 	                $scope.d2SaveMethod()();
 	            }
-	
-	            setOptions();
-	
-	            $scope.$watch("$scope.currentFilteredOptions", function(newValue,oldValue){
-	                if(newValue != oldValue){
-	                    setOptions();
-	                }
-	            });
 	        }
-	
 	    };
 	})
 	
@@ -6476,9 +6486,9 @@
 	    };
 	});
 
-/***/ },
+/***/ }),
 /* 6 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	angular.module("d2Directives")
 	.directive('d2NumberValidator', function() {
@@ -6780,9 +6790,9 @@
 	    };
 	});
 
-/***/ },
+/***/ }),
 /* 7 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 	
@@ -6976,9 +6986,9 @@
 	
 
 
-/***/ },
+/***/ }),
 /* 8 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 	
@@ -7803,12 +7813,12 @@
 	});
 
 
-/***/ },
+/***/ }),
 /* 9 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	angular.module('d2Templates', []).run(['$templateCache', function($templateCache) {$templateCache.put('./templates/age-input.html','<div ng-form="ageForm">\n    <div class="input-group" style="width: 100%; padding-top: 5px;">\n        <input type="text" \n               d2-date name="dob" \n               d2-date-validator\n               ng-model="age.dob"\n               blur-or-change="saveDOB()"\n               ng-required="d2Required"\n               ng-disabled="d2Disabled"\n               ng-attr-placeholder="{{\'dob\'| translate}}" \n               ng-attr-title="{{\'dob\'| translate}}" \n               class="form-control no-right-radius"\n               ng-class="{\'input-success\': d2AgeSaved}"/>\n        <span class="input-group-btn empty-span"></span>\n        <span class="has-float-label">\n            <input type="number" \n                   name="years"\n                   ng-model="age.years" \n                   ng-model-options="{updateOn: \'blur\'}"\n                   ng-change="saveAge()"\n                   ng-disabled="d2Disabled"\n                   d2-number-validator\n                   number-type="INTEGER_ZERO_OR_POSITIVE"\n                   ng-attr-placeholder="{{\'years\'| translate}}"\n                   ng-attr-title="{{\'years\'| translate}}" \n                   class="form-control no-right-radius no-left-radius"\n                   ng-class="{\'input-success\': d2AgeSaved}"\n                   id="year"/>\n            <label for="year">{{\'years\'| translate}}</label>\n        </span>\n        <span class="input-group-btn empty-span"></span>\n        <span class="has-float-label">\n            <input type="number" \n                   name="months"\n                   ng-model="age.months" \n                   ng-model-options="{updateOn: \'blur\'}"\n                   ng-change="saveAge()"\n                   ng-disabled="d2Disabled"\n                   d2-number-validator\n                   number-type="INTEGER_ZERO_OR_POSITIVE"\n                   ng-attr-placeholder="{{\'months\'| translate}}"\n                   ng-attr-title="{{\'months\'| translate}}" \n                   class="form-control no-right-radius no-left-radius"\n                   ng-class="{\'input-success\': d2AgeSaved}"\n                   id="month"/>\n            <label for="month">{{\'months\'| translate}}</label>\n        </span>\n        <span class="input-group-btn empty-span"></span>\n        <span class="has-float-label">\n            <input type="number" \n                   name="days"\n                   ng-model="age.days" \n                   ng-model-options="{updateOn: \'blur\'}"\n                   ng-change="saveAge()"\n                   ng-disabled="d2Disabled"\n                   d2-number-validator\n                   number-type="INTEGER_ZERO_OR_POSITIVE"\n                   ng-attr-placeholder="{{\'days\'| translate}}"\n                   ng-attr-title="{{\'days\'| translate}}" \n                   class="form-control no-left-radius no-right-radius"\n                   ng-class="{\'input-success\': d2AgeSaved}"\n                   id="day"/>\n            <label for="day">{{\'days\'| translate}}</label>\n        </span>\n        <span class="input-group-btn"> \n            <button class="btn btn-danger hideInPrint trim" type="button" ng-attr-title="{{\'remove\'| translate}}" ng-click="removeAge()" ng-disabled="!age.dob || d2Disabled"> \n                <i class="fa fa-trash-o"></i> \n            </button>\n        </span>\n    </div>\n    <div ng-messages="ageForm.dob.$error" ng-if="ageInteracted(ageForm.dob, outerDataEntryForm)" class="required" ng-messages-include="./templates/error-messages.html"></div>\n    <div ng-messages="ageForm.years.$error" ng-if="ageInteracted(ageForm.years, outerDataEntryForm)" class="required" ng-messages-include="./templates/error-messages.html"></div>\n    <div ng-messages="ageForm.months.$error" ng-if="ageInteracted(ageForm.months, outerDataEntryForm)" class="required" ng-messages-include="./templates/error-messages.html"></div>\n    <div ng-messages="ageForm.days.$error" ng-if="ageInteracted(ageForm.days, outerDataEntryForm)" class="required" ng-messages-include="./templates/error-messages.html"></div>\n</div>');
-	$templateCache.put('./templates/assign-user-input.html','<div class="optionListContainerAssignUser">\n    <div ng-if="d2Disabled"><input class="form-control" ng-model="d2Model.assignedUserUsername" disabled></div>\n    <div ng-click="toggleOptionList()" ng-if="!d2Disabled" class="optionListInput" ng-class="{ \'optionListInputOpen\': optionListOpen, \'input-success\': d2Saved }">\n        <div class="optionListInputText" >\n            <span ng-if="d2Model.assignedUser">{{tempUsername ? tempUsername : d2Model.assignedUserUsername}}</span>\n            <span ng-if="!d2Model.assignedUser" class="optionListInputTextPlaceholder">{{\'select_or_search\' | translate}}</span>\n        </div>\n        <div class="optionListInputDelete" ng-click="removeSelectedOption($event)"><i class="fa fa-times" ng-if="d2Model.assignedUser"></i></div>\n        <div class="optionListInputToggle"><i class="fa fa-caret-up" ng-show="optionListOpen"></i><i class="fa fa-caret-down" ng-hide="optionListOpen"></i></div>\n    </div>\n    <div ng-if="optionListOpen" class="optionListPopup">\n        <div class="optionListSearchInputContainer">\n            <input type="text" class="form-control" ng-model="searchText" ng-change="search(searchText)" ng-model-options="{ debounce: 600 }" placeholder="Search..."/>\n        </div>\n        <div vs-repeat class="optionListVsRepeater">\n            <div ng-repeat="option in displayOptions track by option.userid" class="optionListItem" ng-click="selectOption(option)" ng-class="{ \'optionListItemSelected\': (option.userid===d2Model.assignedUser)}">\n                {{option.username}}\n            </div>\n        </div>\n    </div>\n</div>\n');
+	$templateCache.put('./templates/assign-user-input.html','<div class="optionListContainerAssignUser">\n    <div ng-if="d2Disabled"><input class="form-control" ng-model="d2Model.assignedUserUsername" disabled></div>\n    <div ng-click="toggleOptionList()" ng-if="!d2Disabled" class="optionListInput" ng-class="{ \'optionListInputOpen\': optionListOpen, \'input-success\': d2Saved }">\n        <div class="optionListInputText" >\n            <span ng-if="d2Model.assignedUser">{{userDisplayName}}</span>\n            <span ng-if="!d2Model.assignedUser" class="optionListInputTextPlaceholder">{{\'select_or_search\' | translate}}</span>\n        </div>\n        <div class="optionListInputDelete" ng-click="removeSelectedOption($event)"><i class="fa fa-times" ng-if="d2Model.assignedUser"></i></div>\n        <div class="optionListInputToggle"><i class="fa fa-caret-up" ng-show="optionListOpen"></i><i class="fa fa-caret-down" ng-hide="optionListOpen"></i></div>\n    </div>\n    <div ng-if="optionListOpen" class="optionListPopup">\n        <div class="optionListSearchInputContainer">\n            <input type="text" class="form-control" ng-model="searchText" ng-change="search(searchText)" ng-model-options="{ debounce: 600 }" placeholder="Search..."/>\n        </div>\n        <div vs-repeat class="optionListVsRepeater">\n            <div ng-repeat="option in displayOptions track by option.userid" class="optionListItem" ng-click="selectOption(option)" ng-class="{ \'optionListItemSelected\': (option.userid===d2Model.assignedUser)}">\n                {{getNameForUserOject(option)}}\n            </div>\n        </div>\n    </div>\n</div>\n');
 	$templateCache.put('./templates/audit-history.html','<div class="modal-header">\n    <h2>{{\'audit_history\'| translate}}</h2>\n</div>\n<div class="modal-body page" ng-class="{\'waiting-box\':model.showStatus === \'waiting\'}">\n    <div ng-if="model.showStatus === \'data_available\'">\n        <span class="row">\n            <input class="form-control col-md-7" ng-model="model.searchText" ng-attr-placeholder="{{model.searchPlaceholder}}" type="search" />\n        </span>\n        <div class="scroll">\n            <table class="listTable dhis2-table-striped-border">\n                <thead>\n                    <tr>\n                        <th ng-repeat="col in model.auditColumns">\n                            <span ng-switch="col">\n                                <span ng-switch-when="name">\n                                    {{model.name}}\n                                </span>\n                                <span ng-switch-default>\n                                \t{{col | translate}}\n                                </span>                                    \n                            </span>\n                        </th>\n                    </tr>\n                </thead>\n                <tbody ng-repeat="row in model.uniqueRows">\n                    <tr ng-repeat="item in model.itemList | orderBy: \'created\':reverse | filter: {name: row} | filter: {name: model.searchText}" ng-init="rowIndex = $index">\n                        <td ng-repeat="col in model.auditColumns"\n                            rowspan="{{(model.itemList | filter: {name: row} | filter: model.searchText).length}}"\n                            ng-if="col === \'name\' && rowIndex === 0">\n                            {{item[col]}}\n                        </td>\n                        <td class="wrap-text" ng-repeat="col in model.auditColumns" ng-if="col !== \'name\'">\n                        \t<span ng-if="col === \'value\'">\n                        \t\t<span ng-switch="item.valueType">\n\t\t\t\t                    <span ng-switch-when="BOOLEAN">\n\t\t\t\t                        <span ng-if="item[col] === \'true\'">{{\'yes\'| translate}}</span>\n\t\t\t\t                        <span ng-if="item[col] === \'false\'">{{ \'no\' | translate}}</span>\n\t\t\t\t                    </span>\n\t\t\t\t                    <span ng-switch-when="TRUE_ONLY">\n\t\t\t\t                        <span ng-if="item[col]">\n\t\t\t\t                            <i class="fa fa-check"></i>\n\t\t\t\t                        </span>\n\t\t\t\t                    </span>\n\t\t\t\t                    <span ng-switch-default>{{item[col]}}</span>\n\t\t\t\t                </span>\n                        \t</span>\n                        \t<span ng-if="col !== \'value\'">\n                        \t\t{{item[col]}}\n                        \t</span>\n                        \t                            \n                        </td>\n                    </tr>\n                </tbody>\n            </table>\n        </div>\n    </div>\n    <div ng-if="model.showStatus === \'data_unavailable\'">\n        <div class="alert alert-warning">{{\'audit_history_unavailable\'| translate}}</div>\n    </div>\n    <div ng-if="model.showStatus === \'waiting\'">\n        <i class="fa fa-spinner fa-spin audit-spinner"></i>\n        <div class="loading-audit-data">{{\'loading-audit-data\' | translate}}</div>\n    </div>\n</div>\n<div class="modal-footer" ng-if="model.showStatus !== \'waiting\'">\n    <button type="button" class="btn btn-default" data-ng-click="close()">{{\'close\'| translate}}</button>\n</div>');
 	$templateCache.put('./templates/coordinate-input.html','<div  ng-form="coordinateForm">\n    <div class="input-group">\n        <input type="number" \n               ng-model="coordinateObject.coordinate.latitude" \n               ng-attr-placeholder="{{\'latitude\'| translate}}"\n               ng-class="{\'input-success\': d2LatSaved}"\n               name="latitude" \n               d2-coordinate-validator\n               ng-required="d2Required"\n               ng-disabled="d2Disabled"\n               ng-blur="saveD2Coordinate()"\n               class="form-control no-right-radius"/>\n        <span class="input-group-btn empty-span"></span>\n        <input type="number" \n               ng-model="coordinateObject.coordinate.longitude" \n               ng-attr-placeholder="{{\'longitude\'| translate}}"\n               ng-class="{\'input-success\': d2LngSaved}"\n               name="longitude" \n               d2-coordinate-validator\n               ng-required="d2Required"\n               ng-disabled="d2Disabled"\n               ng-blur="saveD2Coordinate()"\n               class="form-control no-left-radius no-right-radius"/>\n        <span class="input-group-btn hideInPrint">\n            <button class="btn btn-grp trim hideInPrint" \n                    type="button"\n                    ng-disabled="{{d2Disabled}}"\n                    ng-attr-title="{{\'get_from_map\'| translate}}"\n                    ng-click="showMap(coordinateObject)"> \n                <i class="fa fa-map-marker"></i>                             \n            </button>\n        </span>    \n    </div>\n    <div ng-messages="coordinateForm.latitude.$error" ng-if="coordinateInteracted(coordinateForm.latitude)" class="required" ng-messages-include="./templates/error-messages.html"></div>\n    <div ng-messages="coordinateForm.longitude.$error" ng-if="coordinateInteracted(coordinateForm.longitude)" class="required" ng-messages-include="./templates/error-messages.html"></div>\n</div>');
 	$templateCache.put('./templates/custom-dataentry-form.html','<d2-custom-data-entry-form custom-data-entry-form="customDataEntryForm"></d2-custom-data-entry-form>');
@@ -7830,9 +7840,9 @@
 	$templateCache.put('./templates/tracker-associate-input.html','<div class="panel panel-default" style="margin-top: 5px; margin-bottom: 5px;">\n    <div class="panel-heading">\n        <span class="input-group">                            \n            <input type="text"\n                name="foo" \n                class="form-control"\n                ng-model="d2SelectedTei[d2Attribute.id]" \n                ng-model-options="{ updateOn: \'default blur\', allowInvalid: true }"\n                attribute-data={{d2Attribute}}\n                selected-program-id={{d2SelectedProgram.id}}  \n                selected-tei-id={{d2SelectedTei.trackedEntityInstance}}\n                ng-disabled="true" \n                ng-blur="d2BlurMethode(d2SelectedTei, d2Attribute.id)"\n                ng-required="d2Attribute.mandatory"/>\n            <span class="input-group-btn">\n                <button class="btn btn-success hideInPrint trim"\n                        ng-if="!d2SelectedTei[d2Attribute.id] " \n                        ng-class="{true: \'disable-clicks\'} [editingDisabled]"\n                        ng-disabled="d2SelectedOrgunit.closedStatus"\n                        type="button" \n                        ng-attr-title="{{\'add\'| translate}} {{d2Attribute.displayName}}"\n                        ng-click="getTa()">\n                        <i class="fa fa-external-link"></i>                             \n                </button>\n                <button class="btn btn-danger hideInPrint trim"\n                        ng-if="d2SelectedTei[d2Attribute.id]" \n                        ng-class="{true: \'disable-clicks\'} [editingDisabled]"\n                        ng-disabled="d2SelectedOrgunit.closedStatus"\n                        type="button" \n                        ng-attr-title="{{\'remove\'| translate}} {{d2Attribute.displayName}}"\n                        ng-click="delete()">\n                        <i class="fa fa-trash-o"></i>                             \n                </button>\n            </span>\n        </span>\n    </div>\n    <div class="panel-body" style="max-height: 75px; overflow-y: scroll; padding: 0px;" ng-if="userDetailsName.length > 0">\n        <table class="table table-striped" style="margin-bottom: 0px;">\n            <tbody>\n                <tr ng-repeat="name in userDetailsName">\n                    <th scope="row">{{name}}</th>\n                    <td style="border-bottom: 1px solid #ddd;">{{userDetailsData[$index]}}</td>\n                </tr>\n            </tbody>\n        </table>\n    </div>\n</div>');
 	$templateCache.put('./templates/users-input.html','<ui-select ng-model="d2Model[d2ModelId]"\n           theme="select2"\n           ng-required="d2Required"                                  \n           ng-disabled="d2Disabled" \n           on-select="saveOption()"\n           ng-style="{\'width\': \'100%\'}"\n           name="foo">\n    <ui-select-match allow-clear="true" ng-class="d2UseNotification ? getInputNotifcationClass(d2ModelId) : \'\'"  class="form-control-ui-select"  ng-attr-placeholder="{{\'select_or_search\' | translate}}">{{$select.selected.displayName  || $select.selected.username ||  $select.selected}}</ui-select-match>\n    <ui-select-choices  repeat="user.username as user in allUsers | filter: $select.search | limitTo:d2MaxOptionSize">\n        <span ng-bind-html="user.username | highlight: $select.search"></span>\n    </ui-select-choices>\n</ui-select>');}]);
 
-/***/ },
+/***/ }),
 /* 10 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
@@ -7856,9 +7866,9 @@
 		module.hot.dispose(function() { update(); });
 	}
 
-/***/ },
+/***/ }),
 /* 11 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(12)();
 	// imports
@@ -7870,9 +7880,9 @@
 	// exports
 
 
-/***/ },
+/***/ }),
 /* 12 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	/*
 		MIT License http://www.opensource.org/licenses/mit-license.php
@@ -7926,9 +7936,9 @@
 	};
 
 
-/***/ },
+/***/ }),
 /* 13 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/*
 		MIT License http://www.opensource.org/licenses/mit-license.php
@@ -8178,9 +8188,9 @@
 	}
 
 
-/***/ },
+/***/ }),
 /* 14 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	/* global angular, moment, dhis2 */
 	
@@ -11372,9 +11382,9 @@
 	    };
 	}]);
 
-/***/ },
+/***/ }),
 /* 15 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 	
@@ -11417,9 +11427,9 @@
 	    };
 	}]);
 
-/***/ },
+/***/ }),
 /* 16 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	/* global directive, selection, dhis2, angular */
 	
@@ -12004,9 +12014,9 @@
 	    };
 	});
 
-/***/ },
+/***/ }),
 /* 17 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 	
@@ -12023,9 +12033,9 @@
 	    };
 	}]);
 
-/***/ },
+/***/ }),
 /* 18 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 	
@@ -12053,9 +12063,9 @@
 	    };
 	}]);
 
-/***/ },
+/***/ }),
 /* 19 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 	
@@ -12068,9 +12078,9 @@
 	  };
 	}]);
 
-/***/ },
+/***/ }),
 /* 20 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 	
@@ -12422,9 +12432,9 @@
 	  }();
 	})();
 
-/***/ },
+/***/ }),
 /* 21 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 	
@@ -12637,9 +12647,9 @@
 	  }]);
 	})(window, document);
 
-/***/ },
+/***/ }),
 /* 22 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 	
@@ -13314,9 +13324,9 @@
 	    };
 	}]);
 
-/***/ },
+/***/ }),
 /* 23 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 	
@@ -13329,9 +13339,9 @@
 	    };
 	}]);
 
-/***/ },
+/***/ }),
 /* 24 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 	
@@ -14574,9 +14584,9 @@
 	    };
 	}]);
 
-/***/ },
+/***/ }),
 /* 25 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 	
@@ -15033,9 +15043,9 @@
 	    };
 	}]);
 
-/***/ },
+/***/ }),
 /* 26 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 	
@@ -18376,9 +18386,9 @@
 	    }
 	}]);
 
-/***/ },
+/***/ }),
 /* 27 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 	
@@ -18437,9 +18447,9 @@
 	    };
 	}]);
 
-/***/ },
+/***/ }),
 /* 28 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 	
@@ -18518,9 +18528,9 @@
 	    };
 	}]);
 
-/***/ },
+/***/ }),
 /* 29 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 	
@@ -18850,9 +18860,9 @@
 	    };
 	}]);
 
-/***/ },
+/***/ }),
 /* 30 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 	
@@ -18894,9 +18904,9 @@
 	    };
 	}]);
 
-/***/ },
+/***/ }),
 /* 31 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 	
@@ -19092,9 +19102,9 @@
 	    };
 	}]);
 
-/***/ },
+/***/ }),
 /* 32 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 	
@@ -19239,9 +19249,9 @@
 	    };
 	}]);
 
-/***/ },
+/***/ }),
 /* 33 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 	
@@ -19376,9 +19386,9 @@
 	    };
 	}]);
 
-/***/ },
+/***/ }),
 /* 34 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 	
@@ -19647,9 +19657,9 @@
 	    };
 	}]);
 
-/***/ },
+/***/ }),
 /* 35 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 	
@@ -19945,9 +19955,9 @@
 	    };
 	}]);
 
-/***/ },
+/***/ }),
 /* 36 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 	
@@ -19972,9 +19982,9 @@
 	    });
 	}]);
 
-/***/ },
+/***/ }),
 /* 37 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 	
@@ -20259,9 +20269,9 @@
 	    };
 	}]);
 
-/***/ },
+/***/ }),
 /* 38 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 	
@@ -21134,9 +21144,9 @@
 	    };
 	}]);
 
-/***/ },
+/***/ }),
 /* 39 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 	
@@ -21236,9 +21246,9 @@
 	    };
 	}]);
 
-/***/ },
+/***/ }),
 /* 40 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 	
@@ -21305,9 +21315,9 @@
 	    };
 	}]);
 
-/***/ },
+/***/ }),
 /* 41 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 	
@@ -21367,9 +21377,9 @@
 	    });
 	}]);
 
-/***/ },
+/***/ }),
 /* 42 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 	
@@ -21465,9 +21475,9 @@
 	    };
 	}]);
 
-/***/ },
+/***/ }),
 /* 43 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 	
@@ -21740,9 +21750,9 @@
 	    });
 	}]);
 
-/***/ },
+/***/ }),
 /* 44 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 	
@@ -22119,9 +22129,9 @@
 	    };
 	}]);
 
-/***/ },
+/***/ }),
 /* 45 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 	
@@ -22496,9 +22506,9 @@
 	    };
 	}]);
 
-/***/ },
+/***/ }),
 /* 46 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 	
@@ -22708,9 +22718,9 @@
 	    });
 	}]);
 
-/***/ },
+/***/ }),
 /* 47 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 	
@@ -22746,9 +22756,9 @@
 	    };
 	}]);
 
-/***/ },
+/***/ }),
 /* 48 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/* @preserve
 	 * Leaflet 1.3.1, a JS library for interactive maps. http://leafletjs.com
@@ -36554,15 +36564,15 @@
 	//# sourceMappingURL=leaflet-src.js.map
 
 
-/***/ },
+/***/ }),
 /* 49 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	function _toConsumableArray(e){if(Array.isArray(e)){for(var t=0,n=new Array(e.length);t<e.length;t++)n[t]=e[t];return n}return Array.from(e)}function _extends(){return(_extends=Object.assign||function(e){for(var t=1;t<arguments.length;t++){var n=arguments[t];for(var r in n)Object.prototype.hasOwnProperty.call(n,r)&&(e[r]=n[r])}return e}).apply(this,arguments)}function _defineProperty(e,t,n){return t in e?Object.defineProperty(e,t,{value:n,enumerable:!0,configurable:!0,writable:!0}):e[t]=n,e}function _sliceIterator(e,t){var n=[],r=!0,o=!1,a=void 0;try{for(var s,i=e[Symbol.iterator]();!(r=(s=i.next()).done)&&(n.push(s.value),!t||n.length!==t);r=!0);}catch(e){o=!0,a=e}finally{try{r||null==i.return||i.return()}finally{if(o)throw a}}return n}function _slicedToArray(e,t){if(Array.isArray(e))return e;if(Symbol.iterator in Object(e))return _sliceIterator(e,t);throw new TypeError("Invalid attempt to destructure non-iterable instance")}!function(Y,U){var X=U.element.prototype.closest;if(!X){var r=["matches","matchesSelector","webkitMatches","webkitMatchesSelector","msMatches","msMatchesSelector","mozMatches","mozMatchesSelector"].reduce(function(e,t){var n;return null!==(n=e)&&void 0!==n?n:t in document.documentElement?t:null},null);X=function(e){for(var t,n=this[0].parentNode;n!==document.documentElement&&null!=n&&!n[r](e);)n=n.parentNode;return(null===(t=n)||void 0===t?void 0:t[r](e))?U.element(n):U.element()}}function G(){var e,t,n,r;return"pageYOffset"in Y?{scrollTop:Y.pageYOffset,scrollLeft:Y.pageXOffset}:{scrollTop:null!==(e=null!==(t=document.documentElement.scrollTop)&&void 0!==t?t:document.body.scrollTop)&&void 0!==e?e:0,scrollLeft:null!==(n=null!==(r=document.documentElement.scrollLeft)&&void 0!==r?r:document.body.scrollLeft)&&void 0!==n?n:0}}function K(e,t){return e===Y?"clientWidth"===t?Y.innerWidth:Y.innerHeight:e[t]}function c(e,t){var n,r;n=t,r="".concat(e," attribute is deprecated. Pass the options object to vs-repeat attribute instead https://github.com/kamilkp/angular-vs-repeat#options"),console.warn("vs-repeat deprecation: ".concat(r),n[0])}var Q={latch:!1,container:null,scrollParent:null,size:null,offsetBefore:0,offsetAfter:0,scrolledToBeginning:U.noop,scrolledToEnd:U.noop,scrolledToBeginningOffset:0,scrolledToEndOffset:0,scrollMargin:0,horizontal:!1,autoresize:!1,hunked:!1,hunkSize:0},e=U.module("vs-repeat",[]).directive("vsRepeat",["$compile","$parse",function(F,J){return{restrict:"A",scope:!0,compile:function(t,n){var e="vsRepeatContainer"in n?U.element(t[0].querySelector(n.vsRepeatContainer)):t,r=e.children(),o=r.eq(0),L=o[0].outerHTML,q="$vs_collection";["vsSize","vsScrollParent","vsSizeProperty","vsHorizontal","vsOffsetBefore","vsOffsetAfter","vsScrolledToEndOffset","vsScrolledToBeginningOffset","vsExcess","vsScrollMargin"].forEach(function(e){e in n&&c(e,t)});var a=_slicedToArray(function(e){for(var t=["ng-repeat","data-ng-repeat","ng-repeat-start","data-ng-repeat-start"],n=0;n<t.length;n++){var r=t[n];if(e.attr(r))return[r,e.attr(r),0<=r.indexOf("-start")]}throw new Error("angular-vs-repeat: no ng-repeat directive on a child element")}(o),3),H=a[0],s=a[1],W=a[2],i=_slicedToArray(/^\s*(\S+)\s+in\s+([\S\s]+?)(track\s+by\s+\S+)?$/.exec(s),4),j=i[1],N=i[2],D=i[3];if(W)for(var l=0,d=r.eq(l);null==d.attr("ng-repeat-end")&&null==d.attr("data-ng-repeat-end");)l++,d=r.eq(l),L+=d[0].outerHTML;return e.empty(),{pre:function(g,m,e){var t;function n(e){if("number"==typeof e.size)e.getSize=function(){return e.size};else{var t=J(String(e.size));e.getSize=function(e){return t(g,_defineProperty({},j,e))}}}g.vsRepeat={options:_extends({},Q,null!==(t=g.$eval(e.vsRepeat))&&void 0!==t?t:{})};var R=g.vsRepeat.options;n(R);var x,z=U.isDefined(e.vsRepeatContainer)?U.element(m[0].querySelector(e.vsRepeatContainer)):m,r=U.element(L),o=r[0].tagName.toLowerCase(),y=[],$=U.element("<"+o+' class="vs-repeat-before-content"></'+o+">"),b=U.element("<"+o+' class="vs-repeat-after-content"></'+o+">"),I=null===R.size,w=R.scrollParent?"window"===R.scrollParent?U.element(Y):X.call(z,R.scrollParent):z,S=R.horizontal?"clientWidth":"clientHeight",a=R.horizontal?"offsetWidth":"offsetHeight",T=R.horizontal?"scrollWidth":"scrollHeight",A=R.horizontal?"scrollLeft":"scrollTop";if((g.vsRepeat.totalSize=0)===w.length)throw"Specified scroll parent selector did not match any element";if(g.vsRepeat.$scrollParent=w,g.vsRepeat.sizesCumulative=[],R.debug){var s="window"===R.scrollParent?U.element(document.body):w,i=U.element('<div class="vs-repeat-debug-element"></div>');i.css("position","window"===R.scrollParent?"fixed":"absolute"),s.append(i),g.$on("$destroy",function(){i.remove()})}var C,O,M,_,l,d=K(w[0],S)||50;function c(){!y||y.length<1?(g[q]=[],x=0,g.vsRepeat.sizesCumulative=[0]):(x=y.length,R.size?u():p()),h()}function u(){var n=0<arguments.length&&void 0!==arguments[0]?arguments[0]:null,e=y.map(function(e){var t;return null!==(t=n)&&void 0!==t?t:R.getSize(e)}),t=0;g.vsRepeat.sizesCumulative=[0].concat(_toConsumableArray(e.map(function(e){return t+=e})))}function p(){I?g.$$postDigest(function(){if(z[0].offsetHeight||z[0].offsetWidth){for(var e=z.children(),t=0,n=!1,r=!1;t<e.length;){if(null!=e[t].attributes[H]||r){if(n||(d=0),n=!0,e[t][a]&&(d+=e[t][a]),!W)break;if(null!=e[t].attributes["ng-repeat-end"]||null!=e[t].attributes["data-ng-repeat-end"])break;r=!0}t++}n&&(u(d),h(),I=!1,g.$root&&!g.$root.$$phase&&g.$digest())}else var o=g.$watch(function(){(z[0].offsetHeight||z[0].offsetWidth)&&(o(),p())})}):u(d)}function B(n){var r=R.horizontal?"width":"height";return["","min-","max-"].reduce(function(e,t){return e["".concat(t).concat(r)]=n,e},{})}function v(){var e=w[0][A];k()&&(g.$digest(),R._ensureScrollIntegrity&&(w[0][A]=e))}function f(){R.autoresize&&(I=!0,p(),g.$root&&!g.$root.$$phase&&g.$digest()),k()&&g.$digest()}function h(){var e;O=C=void 0,M=x,_=0,e=g.vsRepeat.sizesCumulative[x],g.vsRepeat.totalSize=R.offsetBefore+e+R.offsetAfter,k(),g.$emit("vsRepeatReinitialized",g.vsRepeat.startIndex,g.vsRepeat.endIndex)}function E(){var e=K(w[0],S);e!==l&&(h(),g.$root&&!g.$root.$$phase&&g.$digest()),l=e}function P(e,t){var n=2<arguments.length&&void 0!==arguments[2]?arguments[2]:0,r=3<arguments.length&&void 0!==arguments[3]?arguments[3]:e.length-1,o=4<arguments.length&&void 0!==arguments[4]?arguments[4]:1;if(e[n]===t)return[n,n,o];if(e[r]===t)return[r,r,o];if(1<r-n){var a=Math.floor((n+r)/2);return e[a]>t?P(e,t,n,a,o+1):P(e,t,a,r,o+1)}return[t>e[r]?r:n,t<e[n]?n:r,o]}function k(){var e,t,n=(e=w[0],t=A,e===Y?G()[t]:e[t]),r=K(w[0],S);R.debug&&(r/=2);var o,a,s,i=z[0]===w[0]?0:(o=z[0],a=w[0],s=R.horizontal,o.getBoundingClientRect()[s?"left":"top"]-(a===Y?0:a.getBoundingClientRect()[s?"left":"top"])+(a===Y?G():a)[s?"scrollLeft":"scrollTop"]),l=g.vsRepeat.startIndex,d=g.vsRepeat.endIndex;if(I&&!R.size)l=0,d=1;else{g.$$postDigest(function(){Y.requestAnimationFrame(function(){var e=g.vsRepeat.sizesCumulative[x],n=Y.getComputedStyle(z[0]),t=R.horizontal?["paddingLeft","paddingRight"]:["paddingTop","paddingBottom"],r=z[0][T]-t.reduce(function(e,t){return e+Number(n[t].slice(0,-2))},0);z[0][T]&&e!==r&&console.warn("vsRepeat: size mismatch. Expected size "+e+"px whereas actual size is "+r+"px. Fix vsSize on element:",m[0])})});var c=n-R.offsetBefore-i;l=_slicedToArray(P(g.vsRepeat.sizesCumulative,c-R.scrollMargin),1)[0],l=Math.max(l,0),d=_slicedToArray(P(g.vsRepeat.sizesCumulative,c+R.scrollMargin+r,l),2)[1],d=Math.min(d,x)}M=Math.min(l,M),_=Math.max(d,_),g.vsRepeat.startIndex=R.latch?M:l,g.vsRepeat.endIndex=R.latch?_:d,_<g.vsRepeat.startIndex&&(g.vsRepeat.startIndex=_);var u=!1;if(null==C?u=!0:null==O&&(u=!0),u||(R.hunked?Math.abs(g.vsRepeat.startIndex-C)>=R.hunkSize||0===g.vsRepeat.startIndex&&0!==C?u=!0:(Math.abs(g.vsRepeat.endIndex-O)>=R.hunkSize||g.vsRepeat.endIndex===x&&O!==x)&&(u=!0):u=g.vsRepeat.startIndex!==C||g.vsRepeat.endIndex!==O),u){var p;g[q]=y.slice(g.vsRepeat.startIndex,g.vsRepeat.endIndex),g.$emit("vsRepeatInnerCollectionUpdated",g.vsRepeat.startIndex,g.vsRepeat.endIndex,C,O),R.scrolledToEnd&&(p=y.length-R.scrolledToEndOffset,(g.vsRepeat.endIndex>=p&&O<p||y.length&&g.vsRepeat.endIndex===y.length)&&g.$eval(R.scrolledToEnd)),R.scrolledToBeginning&&(p=R.scrolledToBeginningOffset,g.vsRepeat.startIndex<=p&&C>g.vsRepeat.startIndex&&g.$eval(R.scrolledToBeginning)),C=g.vsRepeat.startIndex,O=g.vsRepeat.endIndex;var v=g.vsRepeat.sizesCumulative[g.vsRepeat.startIndex]+R.offsetBefore,f=g.vsRepeat.sizesCumulative[g.vsRepeat.startIndex+g[q].length]+R.offsetBefore,h=g.vsRepeat.totalSize;$.css(B(v+"px")),b.css(B(h-f+"px"))}return u}R.horizontal?($.css("height","100%"),b.css("height","100%")):($.css("width","100%"),b.css("width","100%")),e.vsRepeatOptions&&g.$watchCollection(e.vsRepeatOptions,function(e){var t=_extends({},R,e);JSON.stringify(t)!==JSON.stringify(R)&&(Object.assign(R,e),n(R),h())}),g.$watchCollection(N,function(){var e=0<arguments.length&&void 0!==arguments[0]?arguments[0]:[];y=e,c()}),r.eq(0).attr(H,j+" in "+q+(D?" "+D:"")),r.addClass("vs-repeat-repeated-element"),z.append($),z.append(r),F(r)(g),z.append(b),g.vsRepeat.startIndex=0,g.vsRepeat.endIndex=0,w.on("scroll",v),U.element(Y).on("resize",f),g.$on("$destroy",function(){U.element(Y).off("resize",f),w.off("scroll",v)}),g.$on("vsRepeatTrigger",c),g.$on("vsRepeatResize",function(){I=!0,p()}),g.$on("vsRenderAll",function(){R.latch&&(g.vsRepeat.endIndex!==x?setTimeout(function(){var e=x;_=Math.max(e,_),g.vsRepeat.endIndex=R.latch?_:e,g[q]=y.slice(g.vsRepeat.startIndex,g.vsRepeat.endIndex),O=g.vsRepeat.endIndex,$.css(B(0)),b.css(B(0)),g.$emit("vsRenderAllDone"),g.$root&&!g.$root.$$phase&&g.$digest()}):g.$emit("vsRenderAllDone"))}),g.$watch(function(){"function"==typeof Y.requestAnimationFrame?Y.requestAnimationFrame(E):E()})}}}}}]);U.element(document.head).append('<style id="angular-vs-repeat-style">\n\t  \t.vs-repeat-debug-element {\n        top: 50%;\n        left: 0;\n        right: 0;\n        height: 1px;\n        background: red;\n        z-index: 99999999;\n        box-shadow: 0 0 20px red;\n      }\n\n      .vs-repeat-debug-element + .vs-repeat-debug-element {\n        display: none;\n      }\n\n      .vs-repeat-before-content,\n      .vs-repeat-after-content {\n        border: none !important;\n        padding: 0 !important;\n      }\n    </style>'),"undefined"!=typeof module&&module.exports&&(module.exports=e.name)}(window,window.angular);
 
-/***/ },
+/***/ }),
 /* 50 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*
 		Leaflet.contextmenu, a context menu for Leaflet.
@@ -37131,9 +37141,9 @@
 		});
 
 
-/***/ },
+/***/ }),
 /* 51 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	/*
 	 * Google layer using Google Maps API
@@ -37337,9 +37347,9 @@
 		L.Google.asyncWait = [];
 	};
 
-/***/ },
+/***/ }),
 /* 52 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
@@ -37363,9 +37373,9 @@
 		module.hot.dispose(function() { update(); });
 	}
 
-/***/ },
+/***/ }),
 /* 53 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(12)();
 	// imports
@@ -37377,21 +37387,21 @@
 	// exports
 
 
-/***/ },
+/***/ }),
 /* 54 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "a987f06fc5d9aaa4e9dfa3df0b37ee22.png";
 
-/***/ },
+/***/ }),
 /* 55 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "7bec7f6885833b0b60a0426f027d8f16.gif";
 
-/***/ },
+/***/ }),
 /* 56 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.leafletControlGeocoder = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 	(function (global){
@@ -38690,9 +38700,9 @@
 	},{}]},{},[12])(12)
 	});
 
-/***/ },
+/***/ }),
 /* 57 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	/*
 	 Leaflet.draw 1.0.2, a plugin that adds drawing and editing tools to Leaflet powered maps.
@@ -38705,9 +38715,9 @@
 	iconSize:new L.Point(20,20),className:"leaflet-div-icon leaflet-editing-icon leaflet-edit-move leaflet-touch-icon"}),touchResizeIcon:new L.DivIcon({iconSize:new L.Point(20,20),className:"leaflet-div-icon leaflet-editing-icon leaflet-edit-resize leaflet-touch-icon"})},initialize:function(t,e){L.Browser.touch&&(this.options.moveIcon=this.options.touchMoveIcon,this.options.resizeIcon=this.options.touchResizeIcon),this._shape=t,L.Util.setOptions(this,e)},addHooks:function(){var t=this._shape;this._shape._map&&(this._map=this._shape._map,t.setStyle(t.options.editing),t._map&&(this._map=t._map,this._markerGroup||this._initMarkers(),this._map.addLayer(this._markerGroup)))},removeHooks:function(){var t=this._shape;if(t.setStyle(t.options.original),t._map){this._unbindMarker(this._moveMarker);for(var e=0,i=this._resizeMarkers.length;e<i;e++)this._unbindMarker(this._resizeMarkers[e]);this._resizeMarkers=null,this._map.removeLayer(this._markerGroup),delete this._markerGroup}this._map=null},updateMarkers:function(){this._markerGroup.clearLayers(),this._initMarkers()},_initMarkers:function(){this._markerGroup||(this._markerGroup=new L.LayerGroup),this._createMoveMarker(),this._createResizeMarker()},_createMoveMarker:function(){},_createResizeMarker:function(){},_createMarker:function(t,e){var i=new L.Marker.Touch(t,{draggable:!0,icon:e,zIndexOffset:10});return this._bindMarker(i),this._markerGroup.addLayer(i),i},_bindMarker:function(t){t.on("dragstart",this._onMarkerDragStart,this).on("drag",this._onMarkerDrag,this).on("dragend",this._onMarkerDragEnd,this).on("touchstart",this._onTouchStart,this).on("touchmove",this._onTouchMove,this).on("MSPointerMove",this._onTouchMove,this).on("touchend",this._onTouchEnd,this).on("MSPointerUp",this._onTouchEnd,this)},_unbindMarker:function(t){t.off("dragstart",this._onMarkerDragStart,this).off("drag",this._onMarkerDrag,this).off("dragend",this._onMarkerDragEnd,this).off("touchstart",this._onTouchStart,this).off("touchmove",this._onTouchMove,this).off("MSPointerMove",this._onTouchMove,this).off("touchend",this._onTouchEnd,this).off("MSPointerUp",this._onTouchEnd,this)},_onMarkerDragStart:function(t){t.target.setOpacity(0),this._shape.fire("editstart")},_fireEdit:function(){this._shape.edited=!0,this._shape.fire("edit")},_onMarkerDrag:function(t){var e=t.target,i=e.getLatLng();e===this._moveMarker?this._move(i):this._resize(i),this._shape.redraw(),this._shape.fire("editdrag")},_onMarkerDragEnd:function(t){t.target.setOpacity(1),this._fireEdit()},_onTouchStart:function(t){if(L.Edit.SimpleShape.prototype._onMarkerDragStart.call(this,t),"function"==typeof this._getCorners){var e=this._getCorners(),i=t.target,o=i._cornerIndex;i.setOpacity(0),this._oppositeCorner=e[(o+2)%4],this._toggleCornerMarkers(0,o)}this._shape.fire("editstart")},_onTouchMove:function(t){var e=this._map.mouseEventToLayerPoint(t.originalEvent.touches[0]),i=this._map.layerPointToLatLng(e);return t.target===this._moveMarker?this._move(i):this._resize(i),this._shape.redraw(),!1},_onTouchEnd:function(t){t.target.setOpacity(1),this.updateMarkers(),this._fireEdit()},_move:function(){},_resize:function(){}}),L.Edit=L.Edit||{},L.Edit.Rectangle=L.Edit.SimpleShape.extend({_createMoveMarker:function(){var t=this._shape.getBounds(),e=t.getCenter();this._moveMarker=this._createMarker(e,this.options.moveIcon)},_createResizeMarker:function(){var t=this._getCorners();this._resizeMarkers=[];for(var e=0,i=t.length;e<i;e++)this._resizeMarkers.push(this._createMarker(t[e],this.options.resizeIcon)),this._resizeMarkers[e]._cornerIndex=e},_onMarkerDragStart:function(t){L.Edit.SimpleShape.prototype._onMarkerDragStart.call(this,t);var e=this._getCorners(),i=t.target,o=i._cornerIndex;this._oppositeCorner=e[(o+2)%4],this._toggleCornerMarkers(0,o)},_onMarkerDragEnd:function(t){var e,i,o=t.target;o===this._moveMarker&&(e=this._shape.getBounds(),i=e.getCenter(),o.setLatLng(i)),this._toggleCornerMarkers(1),this._repositionCornerMarkers(),L.Edit.SimpleShape.prototype._onMarkerDragEnd.call(this,t)},_move:function(t){for(var e,i=this._shape._defaultShape?this._shape._defaultShape():this._shape.getLatLngs(),o=this._shape.getBounds(),a=o.getCenter(),n=[],s=0,r=i.length;s<r;s++)e=[i[s].lat-a.lat,i[s].lng-a.lng],n.push([t.lat+e[0],t.lng+e[1]]);this._shape.setLatLngs(n),this._repositionCornerMarkers(),this._map.fire(L.Draw.Event.EDITMOVE,{layer:this._shape})},_resize:function(t){var e;this._shape.setBounds(L.latLngBounds(t,this._oppositeCorner)),e=this._shape.getBounds(),this._moveMarker.setLatLng(e.getCenter()),this._map.fire(L.Draw.Event.EDITRESIZE,{layer:this._shape})},_getCorners:function(){var t=this._shape.getBounds();return[t.getNorthWest(),t.getNorthEast(),t.getSouthEast(),t.getSouthWest()]},_toggleCornerMarkers:function(t){for(var e=0,i=this._resizeMarkers.length;e<i;e++)this._resizeMarkers[e].setOpacity(t)},_repositionCornerMarkers:function(){for(var t=this._getCorners(),e=0,i=this._resizeMarkers.length;e<i;e++)this._resizeMarkers[e].setLatLng(t[e])}}),L.Rectangle.addInitHook(function(){L.Edit.Rectangle&&(this.editing=new L.Edit.Rectangle(this),this.options.editable&&this.editing.enable())}),L.Edit=L.Edit||{},L.Edit.CircleMarker=L.Edit.SimpleShape.extend({_createMoveMarker:function(){var t=this._shape.getLatLng();this._moveMarker=this._createMarker(t,this.options.moveIcon)},_createResizeMarker:function(){this._resizeMarkers=[]},_move:function(t){if(this._resizeMarkers.length){var e=this._getResizeMarkerPoint(t);this._resizeMarkers[0].setLatLng(e)}this._shape.setLatLng(t),this._map.fire(L.Draw.Event.EDITMOVE,{layer:this._shape})}}),L.CircleMarker.addInitHook(function(){L.Edit.CircleMarker&&(this.editing=new L.Edit.CircleMarker(this),this.options.editable&&this.editing.enable()),this.on("add",function(){this.editing&&this.editing.enabled()&&this.editing.addHooks()}),this.on("remove",function(){this.editing&&this.editing.enabled()&&this.editing.removeHooks()})}),L.Edit=L.Edit||{},L.Edit.Circle=L.Edit.CircleMarker.extend({_createResizeMarker:function(){var t=this._shape.getLatLng(),e=this._getResizeMarkerPoint(t);this._resizeMarkers=[],this._resizeMarkers.push(this._createMarker(e,this.options.resizeIcon))},_getResizeMarkerPoint:function(t){var e=this._shape._radius*Math.cos(Math.PI/4),i=this._map.project(t);return this._map.unproject([i.x+e,i.y-e])},_resize:function(t){var e=this._moveMarker.getLatLng();L.GeometryUtil.isVersion07x()?radius=e.distanceTo(t):radius=this._map.distance(e,t),this._shape.setRadius(radius),this._map.editTooltip&&this._map._editTooltip.updateContent({text:L.drawLocal.edit.handlers.edit.tooltip.subtext+"<br />"+L.drawLocal.edit.handlers.edit.tooltip.text,subtext:L.drawLocal.draw.handlers.circle.radius+": "+L.GeometryUtil.readableDistance(radius,!0,this.options.feet,this.options.nautic)}),this._shape.setRadius(radius),this._map.fire(L.Draw.Event.EDITRESIZE,{layer:this._shape})}}),L.Circle.addInitHook(function(){L.Edit.Circle&&(this.editing=new L.Edit.Circle(this),this.options.editable&&this.editing.enable()),this.on("add",function(){this.editing&&this.editing.enabled()&&this.editing.addHooks()}),this.on("remove",function(){this.editing&&this.editing.enabled()&&this.editing.removeHooks()})}),L.Map.mergeOptions({touchExtend:!0}),L.Map.TouchExtend=L.Handler.extend({initialize:function(t){this._map=t,this._container=t._container,this._pane=t._panes.overlayPane},addHooks:function(){L.DomEvent.on(this._container,"touchstart",this._onTouchStart,this),L.DomEvent.on(this._container,"touchend",this._onTouchEnd,this),L.DomEvent.on(this._container,"touchmove",this._onTouchMove,this),this._detectIE()?(L.DomEvent.on(this._container,"MSPointerDown",this._onTouchStart,this),L.DomEvent.on(this._container,"MSPointerUp",this._onTouchEnd,this),L.DomEvent.on(this._container,"MSPointerMove",this._onTouchMove,this),L.DomEvent.on(this._container,"MSPointerCancel",this._onTouchCancel,this)):(L.DomEvent.on(this._container,"touchcancel",this._onTouchCancel,this),L.DomEvent.on(this._container,"touchleave",this._onTouchLeave,this))},removeHooks:function(){L.DomEvent.off(this._container,"touchstart",this._onTouchStart),L.DomEvent.off(this._container,"touchend",this._onTouchEnd),L.DomEvent.off(this._container,"touchmove",this._onTouchMove),this._detectIE()?(L.DomEvent.off(this._container,"MSPointerDowm",this._onTouchStart),L.DomEvent.off(this._container,"MSPointerUp",this._onTouchEnd),L.DomEvent.off(this._container,"MSPointerMove",this._onTouchMove),L.DomEvent.off(this._container,"MSPointerCancel",this._onTouchCancel)):(L.DomEvent.off(this._container,"touchcancel",this._onTouchCancel),L.DomEvent.off(this._container,"touchleave",this._onTouchLeave))},_touchEvent:function(t,e){var i={};if(void 0!==t.touches){if(!t.touches.length)return;i=t.touches[0]}else{if("touch"!==t.pointerType)return;if(i=t,!this._filterClick(t))return}var o=this._map.mouseEventToContainerPoint(i),a=this._map.mouseEventToLayerPoint(i),n=this._map.layerPointToLatLng(a);this._map.fire(e,{latlng:n,layerPoint:a,containerPoint:o,pageX:i.pageX,pageY:i.pageY,originalEvent:t})},_filterClick:function(t){var e=t.timeStamp||t.originalEvent.timeStamp,i=L.DomEvent._lastClick&&e-L.DomEvent._lastClick;return i&&i>100&&i<500||t.target._simulatedClick&&!t._simulated?(L.DomEvent.stop(t),!1):(L.DomEvent._lastClick=e,!0)},_onTouchStart:function(t){if(this._map._loaded){this._touchEvent(t,"touchstart")}},_onTouchEnd:function(t){if(this._map._loaded){this._touchEvent(t,"touchend")}},_onTouchCancel:function(t){if(this._map._loaded){var e="touchcancel";this._detectIE()&&(e="pointercancel"),this._touchEvent(t,e)}},_onTouchLeave:function(t){if(this._map._loaded){this._touchEvent(t,"touchleave")}},_onTouchMove:function(t){if(this._map._loaded){this._touchEvent(t,"touchmove")}},_detectIE:function(){var e=t.navigator.userAgent,i=e.indexOf("MSIE ");if(i>0)return parseInt(e.substring(i+5,e.indexOf(".",i)),10);if(e.indexOf("Trident/")>0){var o=e.indexOf("rv:");return parseInt(e.substring(o+3,e.indexOf(".",o)),10)}var a=e.indexOf("Edge/");return a>0&&parseInt(e.substring(a+5,e.indexOf(".",a)),10)}}),L.Map.addInitHook("addHandler","touchExtend",L.Map.TouchExtend),L.Marker.Touch=L.Marker.extend({_initInteraction:function(){return this.addInteractiveTarget?L.Marker.prototype._initInteraction.apply(this):this._initInteractionLegacy()},_initInteractionLegacy:function(){if(this.options.clickable){var t=this._icon,e=["dblclick","mousedown","mouseover","mouseout","contextmenu","touchstart","touchend","touchmove"];this._detectIE?e.concat(["MSPointerDown","MSPointerUp","MSPointerMove","MSPointerCancel"]):e.concat(["touchcancel"]),L.DomUtil.addClass(t,"leaflet-clickable"),L.DomEvent.on(t,"click",this._onMouseClick,this),L.DomEvent.on(t,"keypress",this._onKeyPress,this);for(var i=0;i<e.length;i++)L.DomEvent.on(t,e[i],this._fireMouseEvent,this);L.Handler.MarkerDrag&&(this.dragging=new L.Handler.MarkerDrag(this),this.options.draggable&&this.dragging.enable())}},_detectIE:function(){var e=t.navigator.userAgent,i=e.indexOf("MSIE ");if(i>0)return parseInt(e.substring(i+5,e.indexOf(".",i)),10);if(e.indexOf("Trident/")>0){var o=e.indexOf("rv:");return parseInt(e.substring(o+3,e.indexOf(".",o)),10)}var a=e.indexOf("Edge/");return a>0&&parseInt(e.substring(a+5,e.indexOf(".",a)),10)}}),L.LatLngUtil={cloneLatLngs:function(t){for(var e=[],i=0,o=t.length;i<o;i++)Array.isArray(t[i])?e.push(L.LatLngUtil.cloneLatLngs(t[i])):e.push(this.cloneLatLng(t[i]));return e},cloneLatLng:function(t){return L.latLng(t.lat,t.lng)}},function(){var t={km:2,ha:2,m:0,mi:2,ac:2,yd:0,ft:0,nm:2};L.GeometryUtil=L.extend(L.GeometryUtil||{},{geodesicArea:function(t){var e,i,o=t.length,a=0,n=Math.PI/180;if(o>2){for(var s=0;s<o;s++)e=t[s],i=t[(s+1)%o],a+=(i.lng-e.lng)*n*(2+Math.sin(e.lat*n)+Math.sin(i.lat*n));a=6378137*a*6378137/2}return Math.abs(a)},formattedNumber:function(t,e){var i=parseFloat(t).toFixed(e),o=L.drawLocal.format&&L.drawLocal.format.numeric,a=o&&o.delimiters,n=a&&a.thousands,s=a&&a.decimal;if(n||s){var r=i.split(".");i=n?r[0].replace(/(\d)(?=(\d{3})+(?!\d))/g,"$1"+n):r[0],s=s||".",r.length>1&&(i=i+s+r[1])}return i},readableArea:function(e,i,o){var a,n,o=L.Util.extend({},t,o);return i?(n=["ha","m"],type=typeof i,"string"===type?n=[i]:"boolean"!==type&&(n=i),a=e>=1e6&&-1!==n.indexOf("km")?L.GeometryUtil.formattedNumber(1e-6*e,o.km)+" km²":e>=1e4&&-1!==n.indexOf("ha")?L.GeometryUtil.formattedNumber(1e-4*e,o.ha)+" ha":L.GeometryUtil.formattedNumber(e,o.m)+" m²"):(e/=.836127,a=e>=3097600?L.GeometryUtil.formattedNumber(e/3097600,o.mi)+" mi²":e>=4840?L.GeometryUtil.formattedNumber(e/4840,o.ac)+" acres":L.GeometryUtil.formattedNumber(e,o.yd)+" yd²"),a},readableDistance:function(e,i,o,a,n){var s,n=L.Util.extend({},t,n);switch(i?"string"==typeof i?i:"metric":o?"feet":a?"nauticalMile":"yards"){case"metric":s=e>1e3?L.GeometryUtil.formattedNumber(e/1e3,n.km)+" km":L.GeometryUtil.formattedNumber(e,n.m)+" m";break;case"feet":e*=3.28083,s=L.GeometryUtil.formattedNumber(e,n.ft)+" ft";break;case"nauticalMile":e*=.53996,s=L.GeometryUtil.formattedNumber(e/1e3,n.nm)+" nm";break;case"yards":default:e*=1.09361,s=e>1760?L.GeometryUtil.formattedNumber(e/1760,n.mi)+" miles":L.GeometryUtil.formattedNumber(e,n.yd)+" yd"}return s},isVersion07x:function(){var t=L.version.split(".");return 0===parseInt(t[0],10)&&7===parseInt(t[1],10)}})}(),L.Util.extend(L.LineUtil,{segmentsIntersect:function(t,e,i,o){return this._checkCounterclockwise(t,i,o)!==this._checkCounterclockwise(e,i,o)&&this._checkCounterclockwise(t,e,i)!==this._checkCounterclockwise(t,e,o)},_checkCounterclockwise:function(t,e,i){return(i.y-t.y)*(e.x-t.x)>(e.y-t.y)*(i.x-t.x)}}),L.Polyline.include({intersects:function(){var t,e,i,o=this._getProjectedPoints(),a=o?o.length:0;if(this._tooFewPointsForIntersection())return!1;for(t=a-1;t>=3;t--)if(e=o[t-1],i=o[t],this._lineSegmentsIntersectsRange(e,i,t-2))return!0;return!1},newLatLngIntersects:function(t,e){return!!this._map&&this.newPointIntersects(this._map.latLngToLayerPoint(t),e)},newPointIntersects:function(t,e){var i=this._getProjectedPoints(),o=i?i.length:0,a=i?i[o-1]:null,n=o-2;return!this._tooFewPointsForIntersection(1)&&this._lineSegmentsIntersectsRange(a,t,n,e?1:0)},_tooFewPointsForIntersection:function(t){var e=this._getProjectedPoints(),i=e?e.length:0;return i+=t||0,!e||i<=3},_lineSegmentsIntersectsRange:function(t,e,i,o){var a,n,s=this._getProjectedPoints();o=o||0;for(var r=i;r>o;r--)if(a=s[r-1],n=s[r],L.LineUtil.segmentsIntersect(t,e,a,n))return!0;return!1},_getProjectedPoints:function(){if(!this._defaultShape)return this._originalPoints;for(var t=[],e=this._defaultShape(),i=0;i<e.length;i++)t.push(this._map.latLngToLayerPoint(e[i]));return t}}),L.Polygon.include({intersects:function(){var t,e,i,o,a=this._getProjectedPoints();return!this._tooFewPointsForIntersection()&&(!!L.Polyline.prototype.intersects.call(this)||(t=a.length,e=a[0],i=a[t-1],o=t-2,this._lineSegmentsIntersectsRange(i,e,o,1)))}}),L.Control.Draw=L.Control.extend({options:{position:"topleft",draw:{},edit:!1},initialize:function(t){if(L.version<"0.7")throw new Error("Leaflet.draw 0.2.3+ requires Leaflet 0.7.0+. Download latest from https://github.com/Leaflet/Leaflet/");L.Control.prototype.initialize.call(this,t);var e;this._toolbars={},L.DrawToolbar&&this.options.draw&&(e=new L.DrawToolbar(this.options.draw),this._toolbars[L.DrawToolbar.TYPE]=e,this._toolbars[L.DrawToolbar.TYPE].on("enable",this._toolbarEnabled,this)),L.EditToolbar&&this.options.edit&&(e=new L.EditToolbar(this.options.edit),this._toolbars[L.EditToolbar.TYPE]=e,this._toolbars[L.EditToolbar.TYPE].on("enable",this._toolbarEnabled,this)),L.toolbar=this},onAdd:function(t){var e,i=L.DomUtil.create("div","leaflet-draw"),o=!1;for(var a in this._toolbars)this._toolbars.hasOwnProperty(a)&&(e=this._toolbars[a].addToolbar(t))&&(o||(L.DomUtil.hasClass(e,"leaflet-draw-toolbar-top")||L.DomUtil.addClass(e.childNodes[0],"leaflet-draw-toolbar-top"),o=!0),i.appendChild(e));return i},onRemove:function(){for(var t in this._toolbars)this._toolbars.hasOwnProperty(t)&&this._toolbars[t].removeToolbar()},setDrawingOptions:function(t){for(var e in this._toolbars)this._toolbars[e]instanceof L.DrawToolbar&&this._toolbars[e].setOptions(t)},_toolbarEnabled:function(t){var e=t.target;for(var i in this._toolbars)this._toolbars[i]!==e&&this._toolbars[i].disable()}}),L.Map.mergeOptions({drawControlTooltips:!0,drawControl:!1}),L.Map.addInitHook(function(){this.options.drawControl&&(this.drawControl=new L.Control.Draw,this.addControl(this.drawControl))}),L.Toolbar=L.Class.extend({initialize:function(t){L.setOptions(this,t),this._modes={},this._actionButtons=[],this._activeMode=null;var e=L.version.split(".");1===parseInt(e[0],10)&&parseInt(e[1],10)>=2?L.Toolbar.include(L.Evented.prototype):L.Toolbar.include(L.Mixin.Events)},enabled:function(){return null!==this._activeMode},disable:function(){this.enabled()&&this._activeMode.handler.disable()},addToolbar:function(t){var e,i=L.DomUtil.create("div","leaflet-draw-section"),o=0,a=this._toolbarClass||"",n=this.getModeHandlers(t);for(this._toolbarContainer=L.DomUtil.create("div","leaflet-draw-toolbar leaflet-bar"),this._map=t,e=0;e<n.length;e++)n[e].enabled&&this._initModeHandler(n[e].handler,this._toolbarContainer,o++,a,n[e].title);if(o)return this._lastButtonIndex=--o,this._actionsContainer=L.DomUtil.create("ul","leaflet-draw-actions"),i.appendChild(this._toolbarContainer),i.appendChild(this._actionsContainer),i},removeToolbar:function(){for(var t in this._modes)this._modes.hasOwnProperty(t)&&(this._disposeButton(this._modes[t].button,this._modes[t].handler.enable,this._modes[t].handler),this._modes[t].handler.disable(),this._modes[t].handler.off("enabled",this._handlerActivated,this).off("disabled",this._handlerDeactivated,this));this._modes={};for(var e=0,i=this._actionButtons.length;e<i;e++)this._disposeButton(this._actionButtons[e].button,this._actionButtons[e].callback,this);this._actionButtons=[],this._actionsContainer=null},_initModeHandler:function(t,e,i,o,a){var n=t.type;this._modes[n]={},this._modes[n].handler=t,this._modes[n].button=this._createButton({type:n,title:a,className:o+"-"+n,container:e,callback:this._modes[n].handler.enable,context:this._modes[n].handler}),this._modes[n].buttonIndex=i,this._modes[n].handler.on("enabled",this._handlerActivated,this).on("disabled",this._handlerDeactivated,this)},_detectIOS:function(){return/iPad|iPhone|iPod/.test(navigator.userAgent)&&!t.MSStream},_createButton:function(t){var e=L.DomUtil.create("a",t.className||"",t.container),i=L.DomUtil.create("span","sr-only",t.container);e.href="#",e.appendChild(i),t.title&&(e.title=t.title,i.innerHTML=t.title),t.text&&(e.innerHTML=t.text,i.innerHTML=t.text);var o=this._detectIOS()?"touchstart":"click";return L.DomEvent.on(e,"click",L.DomEvent.stopPropagation).on(e,"mousedown",L.DomEvent.stopPropagation).on(e,"dblclick",L.DomEvent.stopPropagation).on(e,"touchstart",L.DomEvent.stopPropagation).on(e,"click",L.DomEvent.preventDefault).on(e,o,t.callback,t.context),e},_disposeButton:function(t,e){var i=this._detectIOS()?"touchstart":"click";L.DomEvent.off(t,"click",L.DomEvent.stopPropagation).off(t,"mousedown",L.DomEvent.stopPropagation).off(t,"dblclick",L.DomEvent.stopPropagation).off(t,"touchstart",L.DomEvent.stopPropagation).off(t,"click",L.DomEvent.preventDefault).off(t,i,e)},_handlerActivated:function(t){this.disable(),this._activeMode=this._modes[t.handler],L.DomUtil.addClass(this._activeMode.button,"leaflet-draw-toolbar-button-enabled"),this._showActionsToolbar(),this.fire("enable")},_handlerDeactivated:function(){this._hideActionsToolbar(),L.DomUtil.removeClass(this._activeMode.button,"leaflet-draw-toolbar-button-enabled"),this._activeMode=null,this.fire("disable")},_createActions:function(t){var e,i,o,a,n=this._actionsContainer,s=this.getActions(t),r=s.length;for(i=0,o=this._actionButtons.length;i<o;i++)this._disposeButton(this._actionButtons[i].button,this._actionButtons[i].callback);for(this._actionButtons=[];n.firstChild;)n.removeChild(n.firstChild);for(var l=0;l<r;l++)"enabled"in s[l]&&!s[l].enabled||(e=L.DomUtil.create("li","",n),a=this._createButton({title:s[l].title,text:s[l].text,container:e,callback:s[l].callback,context:s[l].context}),this._actionButtons.push({button:a,callback:s[l].callback}))},_showActionsToolbar:function(){var t=this._activeMode.buttonIndex,e=this._lastButtonIndex,i=this._activeMode.button.offsetTop-1;this._createActions(this._activeMode.handler),this._actionsContainer.style.top=i+"px",0===t&&(L.DomUtil.addClass(this._toolbarContainer,"leaflet-draw-toolbar-notop"),L.DomUtil.addClass(this._actionsContainer,"leaflet-draw-actions-top")),t===e&&(L.DomUtil.addClass(this._toolbarContainer,"leaflet-draw-toolbar-nobottom"),L.DomUtil.addClass(this._actionsContainer,"leaflet-draw-actions-bottom")),this._actionsContainer.style.display="block",this._map.fire(L.Draw.Event.TOOLBAROPENED)},_hideActionsToolbar:function(){this._actionsContainer.style.display="none",L.DomUtil.removeClass(this._toolbarContainer,"leaflet-draw-toolbar-notop"),L.DomUtil.removeClass(this._toolbarContainer,"leaflet-draw-toolbar-nobottom"),L.DomUtil.removeClass(this._actionsContainer,"leaflet-draw-actions-top"),L.DomUtil.removeClass(this._actionsContainer,"leaflet-draw-actions-bottom"),this._map.fire(L.Draw.Event.TOOLBARCLOSED)}}),L.Draw=L.Draw||{},L.Draw.Tooltip=L.Class.extend({initialize:function(t){this._map=t,this._popupPane=t._panes.popupPane,this._visible=!1,this._container=t.options.drawControlTooltips?L.DomUtil.create("div","leaflet-draw-tooltip",this._popupPane):null,this._singleLineLabel=!1,this._map.on("mouseout",this._onMouseOut,this)},dispose:function(){this._map.off("mouseout",this._onMouseOut,this),this._container&&(this._popupPane.removeChild(this._container),this._container=null)},updateContent:function(t){return this._container?(t.subtext=t.subtext||"",0!==t.subtext.length||this._singleLineLabel?t.subtext.length>0&&this._singleLineLabel&&(L.DomUtil.removeClass(this._container,"leaflet-draw-tooltip-single"),this._singleLineLabel=!1):(L.DomUtil.addClass(this._container,"leaflet-draw-tooltip-single"),this._singleLineLabel=!0),this._container.innerHTML=(t.subtext.length>0?'<span class="leaflet-draw-tooltip-subtext">'+t.subtext+"</span><br />":"")+"<span>"+t.text+"</span>",t.text||t.subtext?(this._visible=!0,this._container.style.visibility="inherit"):(this._visible=!1,this._container.style.visibility="hidden"),this):this},updatePosition:function(t){var e=this._map.latLngToLayerPoint(t),i=this._container;return this._container&&(this._visible&&(i.style.visibility="inherit"),L.DomUtil.setPosition(i,e)),this},showAsError:function(){return this._container&&L.DomUtil.addClass(this._container,"leaflet-error-draw-tooltip"),this},removeError:function(){return this._container&&L.DomUtil.removeClass(this._container,"leaflet-error-draw-tooltip"),this},_onMouseOut:function(){this._container&&(this._container.style.visibility="hidden")}}),L.DrawToolbar=L.Toolbar.extend({statics:{TYPE:"draw"},options:{polyline:{},polygon:{},rectangle:{},circle:{},marker:{},circlemarker:{}},initialize:function(t){for(var e in this.options)this.options.hasOwnProperty(e)&&t[e]&&(t[e]=L.extend({},this.options[e],t[e]));this._toolbarClass="leaflet-draw-draw",L.Toolbar.prototype.initialize.call(this,t)},getModeHandlers:function(t){return[{enabled:this.options.polyline,handler:new L.Draw.Polyline(t,this.options.polyline),title:L.drawLocal.draw.toolbar.buttons.polyline},{enabled:this.options.polygon,handler:new L.Draw.Polygon(t,this.options.polygon),title:L.drawLocal.draw.toolbar.buttons.polygon},{enabled:this.options.rectangle,handler:new L.Draw.Rectangle(t,this.options.rectangle),title:L.drawLocal.draw.toolbar.buttons.rectangle},{enabled:this.options.circle,handler:new L.Draw.Circle(t,this.options.circle),title:L.drawLocal.draw.toolbar.buttons.circle},{enabled:this.options.marker,handler:new L.Draw.Marker(t,this.options.marker),title:L.drawLocal.draw.toolbar.buttons.marker},{enabled:this.options.circlemarker,handler:new L.Draw.CircleMarker(t,this.options.circlemarker),title:L.drawLocal.draw.toolbar.buttons.circlemarker}]},getActions:function(t){return[{enabled:t.completeShape,title:L.drawLocal.draw.toolbar.finish.title,text:L.drawLocal.draw.toolbar.finish.text,callback:t.completeShape,context:t},{enabled:t.deleteLastVertex,title:L.drawLocal.draw.toolbar.undo.title,text:L.drawLocal.draw.toolbar.undo.text,callback:t.deleteLastVertex,context:t},{title:L.drawLocal.draw.toolbar.actions.title,text:L.drawLocal.draw.toolbar.actions.text,callback:this.disable,context:this}]},setOptions:function(t){L.setOptions(this,t);for(var e in this._modes)this._modes.hasOwnProperty(e)&&t.hasOwnProperty(e)&&this._modes[e].handler.setOptions(t[e])}}),L.EditToolbar=L.Toolbar.extend({statics:{TYPE:"edit"},options:{edit:{selectedPathOptions:{dashArray:"10, 10",fill:!0,fillColor:"#fe57a1",fillOpacity:.1,maintainColor:!1}},remove:{},poly:null,featureGroup:null},initialize:function(t){t.edit&&(void 0===t.edit.selectedPathOptions&&(t.edit.selectedPathOptions=this.options.edit.selectedPathOptions),t.edit.selectedPathOptions=L.extend({},this.options.edit.selectedPathOptions,t.edit.selectedPathOptions)),t.remove&&(t.remove=L.extend({},this.options.remove,t.remove)),t.poly&&(t.poly=L.extend({},this.options.poly,t.poly)),this._toolbarClass="leaflet-draw-edit",L.Toolbar.prototype.initialize.call(this,t),this._selectedFeatureCount=0},getModeHandlers:function(t){var e=this.options.featureGroup;return[{enabled:this.options.edit,handler:new L.EditToolbar.Edit(t,{featureGroup:e,selectedPathOptions:this.options.edit.selectedPathOptions,poly:this.options.poly}),title:L.drawLocal.edit.toolbar.buttons.edit},{enabled:this.options.remove,handler:new L.EditToolbar.Delete(t,{featureGroup:e}),title:L.drawLocal.edit.toolbar.buttons.remove}]},getActions:function(t){var e=[{title:L.drawLocal.edit.toolbar.actions.save.title,text:L.drawLocal.edit.toolbar.actions.save.text,callback:this._save,context:this},{title:L.drawLocal.edit.toolbar.actions.cancel.title,text:L.drawLocal.edit.toolbar.actions.cancel.text,callback:this.disable,context:this}];return t.removeAllLayers&&e.push({title:L.drawLocal.edit.toolbar.actions.clearAll.title,text:L.drawLocal.edit.toolbar.actions.clearAll.text,callback:this._clearAllLayers,context:this}),e},addToolbar:function(t){var e=L.Toolbar.prototype.addToolbar.call(this,t);return this._checkDisabled(),this.options.featureGroup.on("layeradd layerremove",this._checkDisabled,this),e},removeToolbar:function(){this.options.featureGroup.off("layeradd layerremove",this._checkDisabled,this),L.Toolbar.prototype.removeToolbar.call(this)},disable:function(){this.enabled()&&(this._activeMode.handler.revertLayers(),L.Toolbar.prototype.disable.call(this))},_save:function(){this._activeMode.handler.save(),this._activeMode&&this._activeMode.handler.disable()},_clearAllLayers:function(){this._activeMode.handler.removeAllLayers(),this._activeMode&&this._activeMode.handler.disable()},_checkDisabled:function(){var t,e=this.options.featureGroup,i=0!==e.getLayers().length;this.options.edit&&(t=this._modes[L.EditToolbar.Edit.TYPE].button,i?L.DomUtil.removeClass(t,"leaflet-disabled"):L.DomUtil.addClass(t,"leaflet-disabled"),t.setAttribute("title",i?L.drawLocal.edit.toolbar.buttons.edit:L.drawLocal.edit.toolbar.buttons.editDisabled)),this.options.remove&&(t=this._modes[L.EditToolbar.Delete.TYPE].button,i?L.DomUtil.removeClass(t,"leaflet-disabled"):L.DomUtil.addClass(t,"leaflet-disabled"),t.setAttribute("title",i?L.drawLocal.edit.toolbar.buttons.remove:L.drawLocal.edit.toolbar.buttons.removeDisabled))}}),L.EditToolbar.Edit=L.Handler.extend({statics:{TYPE:"edit"},initialize:function(t,e){if(L.Handler.prototype.initialize.call(this,t),L.setOptions(this,e),this._featureGroup=e.featureGroup,!(this._featureGroup instanceof L.FeatureGroup))throw new Error("options.featureGroup must be a L.FeatureGroup");this._uneditedLayerProps={},this.type=L.EditToolbar.Edit.TYPE;var i=L.version.split(".");1===parseInt(i[0],10)&&parseInt(i[1],10)>=2?L.EditToolbar.Edit.include(L.Evented.prototype):L.EditToolbar.Edit.include(L.Mixin.Events)},enable:function(){!this._enabled&&this._hasAvailableLayers()&&(this.fire("enabled",{handler:this.type}),this._map.fire(L.Draw.Event.EDITSTART,{handler:this.type}),L.Handler.prototype.enable.call(this),this._featureGroup.on("layeradd",this._enableLayerEdit,this).on("layerremove",this._disableLayerEdit,this))},disable:function(){this._enabled&&(this._featureGroup.off("layeradd",this._enableLayerEdit,this).off("layerremove",this._disableLayerEdit,this),L.Handler.prototype.disable.call(this),this._map.fire(L.Draw.Event.EDITSTOP,{handler:this.type}),this.fire("disabled",{handler:this.type}))},addHooks:function(){var t=this._map;t&&(t.getContainer().focus(),this._featureGroup.eachLayer(this._enableLayerEdit,this),this._tooltip=new L.Draw.Tooltip(this._map),this._tooltip.updateContent({text:L.drawLocal.edit.handlers.edit.tooltip.text,subtext:L.drawLocal.edit.handlers.edit.tooltip.subtext}),t._editTooltip=this._tooltip,this._updateTooltip(),this._map.on("mousemove",this._onMouseMove,this).on("touchmove",this._onMouseMove,this).on("MSPointerMove",this._onMouseMove,this).on(L.Draw.Event.EDITVERTEX,this._updateTooltip,this))},removeHooks:function(){this._map&&(this._featureGroup.eachLayer(this._disableLayerEdit,this),this._uneditedLayerProps={},this._tooltip.dispose(),this._tooltip=null,this._map.off("mousemove",this._onMouseMove,this).off("touchmove",this._onMouseMove,this).off("MSPointerMove",this._onMouseMove,this).off(L.Draw.Event.EDITVERTEX,this._updateTooltip,this))},revertLayers:function(){this._featureGroup.eachLayer(function(t){this._revertLayer(t)},this)},save:function(){var t=new L.LayerGroup;this._featureGroup.eachLayer(function(e){e.edited&&(t.addLayer(e),e.edited=!1)}),this._map.fire(L.Draw.Event.EDITED,{layers:t})},_backupLayer:function(t){var e=L.Util.stamp(t);this._uneditedLayerProps[e]||(t instanceof L.Polyline||t instanceof L.Polygon||t instanceof L.Rectangle?this._uneditedLayerProps[e]={latlngs:L.LatLngUtil.cloneLatLngs(t.getLatLngs())}:t instanceof L.Circle?this._uneditedLayerProps[e]={latlng:L.LatLngUtil.cloneLatLng(t.getLatLng()),radius:t.getRadius()}:(t instanceof L.Marker||t instanceof L.CircleMarker)&&(this._uneditedLayerProps[e]={latlng:L.LatLngUtil.cloneLatLng(t.getLatLng())}))},_getTooltipText:function(){return{text:L.drawLocal.edit.handlers.edit.tooltip.text,subtext:L.drawLocal.edit.handlers.edit.tooltip.subtext}},_updateTooltip:function(){this._tooltip.updateContent(this._getTooltipText())},_revertLayer:function(t){var e=L.Util.stamp(t);t.edited=!1,this._uneditedLayerProps.hasOwnProperty(e)&&(t instanceof L.Polyline||t instanceof L.Polygon||t instanceof L.Rectangle?t.setLatLngs(this._uneditedLayerProps[e].latlngs):t instanceof L.Circle?(t.setLatLng(this._uneditedLayerProps[e].latlng),t.setRadius(this._uneditedLayerProps[e].radius)):(t instanceof L.Marker||t instanceof L.CircleMarker)&&t.setLatLng(this._uneditedLayerProps[e].latlng),t.fire("revert-edited",{layer:t}))},_enableLayerEdit:function(t){var e,i,o=t.layer||t.target||t;this._backupLayer(o),this.options.poly&&(i=L.Util.extend({},this.options.poly),o.options.poly=i),this.options.selectedPathOptions&&(e=L.Util.extend({},this.options.selectedPathOptions),e.maintainColor&&(e.color=o.options.color,e.fillColor=o.options.fillColor),o.options.original=L.extend({},o.options),o.options.editing=e),o instanceof L.Marker?(o.editing&&o.editing.enable(),o.dragging.enable(),o.on("dragend",this._onMarkerDragEnd).on("touchmove",this._onTouchMove,this).on("MSPointerMove",this._onTouchMove,this).on("touchend",this._onMarkerDragEnd,this).on("MSPointerUp",this._onMarkerDragEnd,this)):o.editing.enable()},_disableLayerEdit:function(t){var e=t.layer||t.target||t;e.edited=!1,e.editing&&e.editing.disable(),delete e.options.editing,delete e.options.original,
 	this._selectedPathOptions&&(e instanceof L.Marker?this._toggleMarkerHighlight(e):(e.setStyle(e.options.previousOptions),delete e.options.previousOptions)),e instanceof L.Marker?(e.dragging.disable(),e.off("dragend",this._onMarkerDragEnd,this).off("touchmove",this._onTouchMove,this).off("MSPointerMove",this._onTouchMove,this).off("touchend",this._onMarkerDragEnd,this).off("MSPointerUp",this._onMarkerDragEnd,this)):e.editing.disable()},_onMouseMove:function(t){this._tooltip.updatePosition(t.latlng)},_onMarkerDragEnd:function(t){var e=t.target;e.edited=!0,this._map.fire(L.Draw.Event.EDITMOVE,{layer:e})},_onTouchMove:function(t){var e=t.originalEvent.changedTouches[0],i=this._map.mouseEventToLayerPoint(e),o=this._map.layerPointToLatLng(i);t.target.setLatLng(o)},_hasAvailableLayers:function(){return 0!==this._featureGroup.getLayers().length}}),L.EditToolbar.Delete=L.Handler.extend({statics:{TYPE:"remove"},initialize:function(t,e){if(L.Handler.prototype.initialize.call(this,t),L.Util.setOptions(this,e),this._deletableLayers=this.options.featureGroup,!(this._deletableLayers instanceof L.FeatureGroup))throw new Error("options.featureGroup must be a L.FeatureGroup");this.type=L.EditToolbar.Delete.TYPE;var i=L.version.split(".");1===parseInt(i[0],10)&&parseInt(i[1],10)>=2?L.EditToolbar.Delete.include(L.Evented.prototype):L.EditToolbar.Delete.include(L.Mixin.Events)},enable:function(){!this._enabled&&this._hasAvailableLayers()&&(this.fire("enabled",{handler:this.type}),this._map.fire(L.Draw.Event.DELETESTART,{handler:this.type}),L.Handler.prototype.enable.call(this),this._deletableLayers.on("layeradd",this._enableLayerDelete,this).on("layerremove",this._disableLayerDelete,this))},disable:function(){this._enabled&&(this._deletableLayers.off("layeradd",this._enableLayerDelete,this).off("layerremove",this._disableLayerDelete,this),L.Handler.prototype.disable.call(this),this._map.fire(L.Draw.Event.DELETESTOP,{handler:this.type}),this.fire("disabled",{handler:this.type}))},addHooks:function(){var t=this._map;t&&(t.getContainer().focus(),this._deletableLayers.eachLayer(this._enableLayerDelete,this),this._deletedLayers=new L.LayerGroup,this._tooltip=new L.Draw.Tooltip(this._map),this._tooltip.updateContent({text:L.drawLocal.edit.handlers.remove.tooltip.text}),this._map.on("mousemove",this._onMouseMove,this))},removeHooks:function(){this._map&&(this._deletableLayers.eachLayer(this._disableLayerDelete,this),this._deletedLayers=null,this._tooltip.dispose(),this._tooltip=null,this._map.off("mousemove",this._onMouseMove,this))},revertLayers:function(){this._deletedLayers.eachLayer(function(t){this._deletableLayers.addLayer(t),t.fire("revert-deleted",{layer:t})},this)},save:function(){this._map.fire(L.Draw.Event.DELETED,{layers:this._deletedLayers})},removeAllLayers:function(){this._deletableLayers.eachLayer(function(t){this._removeLayer({layer:t})},this),this.save()},_enableLayerDelete:function(t){(t.layer||t.target||t).on("click",this._removeLayer,this)},_disableLayerDelete:function(t){var e=t.layer||t.target||t;e.off("click",this._removeLayer,this),this._deletedLayers.removeLayer(e)},_removeLayer:function(t){var e=t.layer||t.target||t;this._deletableLayers.removeLayer(e),this._deletedLayers.addLayer(e),e.fire("deleted")},_onMouseMove:function(t){this._tooltip.updatePosition(t.latlng)},_hasAvailableLayers:function(){return 0!==this._deletableLayers.getLayers().length}})}(window,document);
 
-/***/ },
+/***/ }),
 /* 58 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
@@ -38731,9 +38741,9 @@
 		module.hot.dispose(function() { update(); });
 	}
 
-/***/ },
+/***/ }),
 /* 59 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(12)();
 	// imports
@@ -38745,27 +38755,27 @@
 	// exports
 
 
-/***/ },
+/***/ }),
 /* 60 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "deac1d4aa2ccf7ed832e4db55bb64e63.png";
 
-/***/ },
+/***/ }),
 /* 61 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "fd5728f2cf777b06b966d05c0c823dc9.svg";
 
-/***/ },
+/***/ }),
 /* 62 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "6a1e950d14904d4b6fb5c9bdc3dfad06.png";
 
-/***/ },
+/***/ }),
 /* 63 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
@@ -38789,9 +38799,9 @@
 		module.hot.dispose(function() { update(); });
 	}
 
-/***/ },
+/***/ }),
 /* 64 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(12)();
 	// imports
@@ -38803,27 +38813,27 @@
 	// exports
 
 
-/***/ },
+/***/ }),
 /* 65 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "a6137456ed160d7606981aa57c559898.png";
 
-/***/ },
+/***/ }),
 /* 66 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "4f0283c6ce28e888000e978e537a6a56.png";
 
-/***/ },
+/***/ }),
 /* 67 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "2273e3d8ad9264b7daa5bdbf8e6b47f8.png";
 
-/***/ },
+/***/ }),
 /* 68 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
@@ -38847,9 +38857,9 @@
 		module.hot.dispose(function() { update(); });
 	}
 
-/***/ },
+/***/ }),
 /* 69 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(12)();
 	// imports
@@ -38861,18 +38871,18 @@
 	// exports
 
 
-/***/ },
+/***/ }),
 /* 70 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "401d815dc206b8dc1b17cd0e37695975.png";
 
-/***/ },
+/***/ }),
 /* 71 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "44a526eed258222515aa21eaffd14a96.png";
 
-/***/ }
+/***/ })
 /******/ ]);
-//# sourceMappingURL=app-f50a7fe43dd809f79d91.js.map
+//# sourceMappingURL=app-bfade14ce7195141d969.js.map
