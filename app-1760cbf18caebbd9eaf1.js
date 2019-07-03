@@ -15048,7 +15048,9 @@
 	                    }
 	                }
 	            } else if (effect.action === "SETMANDATORYFIELD") {
-	                $scope.mandatoryFields[event][effect.dataElement.id] = effect.ineffect;
+	                if (effect.dataElement) {
+	                    $scope.mandatoryFields[event][effect.dataElement.id] = effect.ineffect;
+	                }
 	            } else if (effect.action === "HIDEPROGRAMSTAGE") {
 	                if (effect.programStage) {
 	                    if ($scope.stagesNotShowingInStageTasks[effect.programStage.id] !== effect.ineffect) {
@@ -38420,4 +38422,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-4493c7b1977c8b678a75.js.map
+//# sourceMappingURL=app-1760cbf18caebbd9eaf1.js.map
