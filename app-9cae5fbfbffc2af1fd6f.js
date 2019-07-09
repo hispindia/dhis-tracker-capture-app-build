@@ -2107,7 +2107,7 @@
 	        processedValue = $filter('trimquotes')(processedValue);
 	
 	        //Append single quotation marks in case the variable is of text or date type:
-	        if(valueType === 'LONG_TEXT' || valueType === 'TEXT' || valueType === 'DATE' || valueType === 'OPTION_SET' ||
+	        if(valueType === 'LONG_TEXT' || valueType === 'TEXT' || valueType === 'DATE' || valueType === 'AGE' || valueType === 'OPTION_SET' ||
 	            valueType === 'URL' || valueType === 'DATETIME' || valueType === 'TIME' || valueType === 'PHONE_NUMBER' || 
 	            valueType === 'ORGANISATION_UNIT' || valueType === 'USERNAME') {
 	            if(processedValue) {
@@ -7449,11 +7449,11 @@
 	/* service to deal with TEI registration and update */
 	.service('RegistrationService', ["TEIService", "$q", function (TEIService, $q) {
 	    return {
-	        registerOrUpdate: function registerOrUpdate(tei, optionSets, attributesById) {
+	        registerOrUpdate: function registerOrUpdate(tei, optionSets, attributesById, programId) {
 	            if (tei) {
 	                var def = $q.defer();
 	                if (tei.trackedEntityInstance) {
-	                    TEIService.update(tei, optionSets, attributesById).then(function (response) {
+	                    TEIService.update(tei, optionSets, attributesById, programId).then(function (response) {
 	                        def.resolve(response);
 	                    });
 	                } else {
@@ -7858,14 +7858,15 @@
 	            });
 	            return deferred.promise;
 	        },
-	        update: function update(tei, optionSets, attributesById) {
+	        update: function update(tei, optionSets, attributesById, programId) {
 	            var formattedTei = angular.copy(tei);
 	            var attributes = [];
 	            angular.forEach(formattedTei.attributes, function (att) {
 	                attributes.push({ attribute: att.attribute, value: CommonUtils.formatDataValue(null, att.value, attributesById[att.attribute], optionSets, 'API') });
 	            });
 	            formattedTei.attributes = attributes;
-	            var promise = $http.put(DHIS2URL + '/trackedEntityInstances/' + formattedTei.trackedEntityInstance, formattedTei).then(function (response) {
+	            var programFilter = programId ? "?program=" + programId : "";
+	            var promise = $http.put(DHIS2URL + '/trackedEntityInstances/' + formattedTei.trackedEntityInstance + programFilter, formattedTei).then(function (response) {
 	                return response.data;
 	            }, function (response) {
 	                NotificationService.showNotifcationDialog($translate.instant('update_error'), $translate.instant('failed_to_update_tei'), response);
@@ -9183,6 +9184,7 @@
 	        var modalInstance = $modal.open({
 	            templateUrl: 'components/dataentry/new-event.html',
 	            controller: 'EventCreationController',
+	            windowClass: 'modal-new-event-window',
 	            resolve: {
 	                eventsByStage: function eventsByStage() {
 	                    return _eventsByStage;
@@ -9816,8 +9818,6 @@
 	                            }
 	                        } else if (effect.action === "ASSIGN") {
 	                            //the dataentry control saves the variable and or dataelement
-	                        } else {
-	                            $log.warn("action: '" + effect.action + "' not supported by rulebound-controller.js");
 	                        }
 	                    }
 	                });
@@ -11601,6 +11601,7 @@
 	
 	    $scope.$on('ErollmentDeleted', function (args, data) {
 	        $scope.allEnrollments = data.enrollments;
+	        updateDashboard();
 	    });
 	
 	    $scope.$on('DataEntryMainMenuVisibilitySet', function (event, data) {
@@ -12250,7 +12251,7 @@
 	    });
 	
 	    var performRegistration = function performRegistration(destination) {
-	        if (destination === "DASHBOARD" || destination === "SELF") {
+	        if (destination === "DASHBOARD" || destination === "SELF" || destination === "ENROLLMENT") {
 	            $scope.model.savingRegistration = true;
 	        }
 	
@@ -12264,7 +12265,7 @@
 	
 	        $scope.tei.attributes = tempAttributes;
 	
-	        RegistrationService.registerOrUpdate($scope.tei, $scope.optionSets, $scope.attributesById).then(function (regResponse) {
+	        RegistrationService.registerOrUpdate($scope.tei, $scope.optionSets, $scope.attributesById, $scope.selectedEnrollment.program).then(function (regResponse) {
 	            var reg = regResponse.response.responseType === 'ImportSummaries' ? regResponse.response.importSummaries[0] : regResponse.response.responseType === 'ImportSummary' ? regResponse.response : {};
 	            if (reg.status === 'SUCCESS') {
 	                $scope.tei.trackedEntityInstance = reg.reference;
@@ -12296,10 +12297,12 @@
 	                        }
 	
 	                        EnrollmentService.enroll(enrollment).then(function (enrollmentResponse) {
-	                            $scope.model.savingRegistration = false;
 	                            if (enrollmentResponse) {
 	                                var en = enrollmentResponse.response;
 	                                if (en.status === 'SUCCESS') {
+	                                    if ($scope.registrationMode !== 'ENROLLMENT') {
+	                                        $scope.model.savingRegistration = false;
+	                                    }
 	                                    enrollment.enrollment = en.importSummaries[0].reference;
 	                                    $scope.selectedEnrollment = enrollment;
 	                                    var avilableEvent = $scope.currentEvent && $scope.currentEvent.event ? $scope.currentEvent : null;
@@ -12326,6 +12329,7 @@
 	                                    // update for PLAN for custom_id_generation  id close
 	                                } else {
 	                                    //enrollment has failed
+	                                    $scope.model.savingRegistration = false;
 	                                    NotificationService.showNotifcationDialog($translate.instant("enrollment_error"), enrollmentResponse.message);
 	                                    return;
 	                                }
@@ -15591,8 +15595,13 @@
 	        return true;
 	    };
 	
+	    $scope.canDeleteEvent = function () {
+	        if (!$scope.currentStage || !$scope.currentStage.access || !$scope.currentStage.access.data.write) return false;
+	        return true;
+	    };
+	
 	    $scope.deleteEvent = function () {
-	        if (!$scope.eventEditable()) {
+	        if (!$scope.canDeleteEvent()) {
 	            var bodyText = $translate.instant('you_do_not_have_the_necessary_authorities_to_delete') + ' ' + $translate.instant('this') + ' ' + $translate.instant('event').toLowerCase();
 	            var headerText = $translate.instant('delete_failed');
 	            return NotificationService.showNotifcationDialog(headerText, bodyText);
@@ -15661,6 +15670,8 @@
 	                    }
 	                }
 	            }
+	
+	            CurrentSelection.setSelectedTeiEvents();
 	
 	            broadcastDataEntryControllerData();
 	        }, function (error) {
@@ -18334,10 +18345,7 @@
 	                $scope.relationships[rel.id] = rel;
 	            });
 	
-	            TEIService.getRelationships($scope.selectedTei.trackedEntityInstance).then(function (relationships) {
-	                $scope.selectedTei.relationships = relationships;
-	                setRelationships();
-	            });
+	            setRelationships();
 	        });
 	        $scope.selectedOrgUnit = $scope.selections.orgUnit;
 	    });
@@ -19395,18 +19403,14 @@
 	        $scope.selectedTei = selections.tei;
 	
 	        if (selections.selectedEnrollment && selections.selectedEnrollment.enrollment) {
-	            EnrollmentService.get(selections.selectedEnrollment.enrollment).then(function (data) {
-	                if (data) {
-	                    $scope.selectedEnrollment = data;
-	                    if (!angular.isUndefined($scope.selectedEnrollment.notes)) {
-	                        $scope.selectedEnrollment.notes = orderByFilter($scope.selectedEnrollment.notes, '-storedDate');
-	                        angular.forEach($scope.selectedEnrollment.notes, function (note) {
-	                            note.displayDate = DateUtils.formatFromApiToUser(note.storedDate);
-	                            note.storedDate = DateUtils.formatToHrsMins(note.storedDate);
-	                        });
-	                    }
-	                }
-	            });
+	            $scope.selectedEnrollment = angular.copy(selections.selectedEnrollment);
+	            if (!angular.isUndefined($scope.selectedEnrollment.notes)) {
+	                $scope.selectedEnrollment.notes = orderByFilter($scope.selectedEnrollment.notes, '-storedDate');
+	                angular.forEach($scope.selectedEnrollment.notes, function (note) {
+	                    note.displayDate = DateUtils.formatFromApiToUser(note.storedDate);
+	                    note.storedDate = DateUtils.formatToHrsMins(note.storedDate);
+	                });
+	            }
 	        }
 	    });
 	
@@ -19508,7 +19512,7 @@
 	var trackerCapture = angular.module('trackerCapture');
 	trackerCapture.controller('MessagingController', ["$scope", "$translate", "MessagingService", "CurrentSelection", function ($scope, $translate, MessagingService, CurrentSelection) {
 	
-	    //$scope.messagingForm = {};
+	    $scope.messagingForm = {};
 	    $scope.note = {};
 	    $scope.message = {};
 	    $scope.showMessagingDiv = false;
@@ -19540,9 +19544,10 @@
 	        }
 	    });
 	
-	    $scope.sendMessage = function () {
+	    $scope.sendMessage = function (messagingForm) {
 	        var message;
 	        //check for form validity
+	        $scope.messagingForm = messagingForm;
 	        $scope.messagingForm.submitted = true;
 	        if ($scope.messagingForm.$invalid) {
 	            return false;
@@ -40349,4 +40354,4 @@
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=app-e38ed557e1322e2a4ea8.js.map
+//# sourceMappingURL=app-9cae5fbfbffc2af1fd6f.js.map
