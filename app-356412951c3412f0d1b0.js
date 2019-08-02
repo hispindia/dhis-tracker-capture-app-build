@@ -10967,7 +10967,7 @@
 	        if (searchGroup) {
 	            angular.forEach(searchGroup.attributes, function (attr) {
 	                if (searchGroup.uniqueGroup) uniqueSearch = true;
-	                if (attr.valueType === 'DATE' || attr.valueType === 'NUMBER' || attr.valueType === 'DATETIME') {
+	                if (attr.valueType === 'DATE' || attr.valueType === 'AGE' || attr.valueType === 'NUMBER' || attr.valueType === 'DATETIME') {
 	                    var q = '';
 	
 	                    if (attr.operator === OperatorFactory.defaultOperators[0]) {
@@ -10976,7 +10976,7 @@
 	
 	                        if (exactValue && exactValue !== '') {
 	                            query.hasValue = true;
-	                            if (attr.valueType === 'DATE' || attr.valueType === 'DATETIME') {
+	                            if (attr.valueType === 'DATE' || attr.valueType === 'AGE' || attr.valueType === 'DATETIME') {
 	                                exactValue = DateUtils.formatFromUserToApi(exactValue);
 	                            }
 	                            if (attr.valueType === 'DATETIME') {
@@ -10992,14 +10992,14 @@
 	                        var endValue = searchGroup[attr.id] ? searchGroup[attr.id].endValue : null;
 	                        if (startValue && startValue !== '') {
 	                            query.hasValue = true;
-	                            if (attr.valueType === 'DATE' || attr.valueType === 'DATETIME') {
+	                            if (attr.valueType === 'DATE' || attr.valueType === 'AGE' || attr.valueType === 'DATETIME') {
 	                                startValue = DateUtils.formatFromUserToApi(startValue);
 	                            }
 	                            q += 'GT:' + startValue + ':';
 	                        }
 	                        if (endValue && endValue !== '') {
 	                            query.hasValue = true;
-	                            if (attr.valueType === 'DATE' || attr.valueType === 'DATETIME') {
+	                            if (attr.valueType === 'DATE' || attr.valueType === 'AGE' || attr.valueType === 'DATETIME') {
 	                                endValue = DateUtils.formatFromUserToApi(endValue);
 	                            }
 	                            q += 'LT:' + endValue + ':';
@@ -38817,4 +38817,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-05c744a318b998453ad8.js.map
+//# sourceMappingURL=app-356412951c3412f0d1b0.js.map
