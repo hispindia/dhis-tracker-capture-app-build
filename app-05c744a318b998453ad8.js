@@ -872,10 +872,28 @@
 	            var promise = $http.get("../api/users?paging=false&fields=*").then(function (response) {
 	                var users = [];
 	                angular.forEach(response.data.users, function (user) {
-	                    var userObj = {username: user.userCredentials.username, orgUnits: user.organisationUnits};
+	                    var userObj = {userid: user.id, username: user.userCredentials.username, orgUnits: user.organisationUnits};
 	                    users.push(userObj);
 	                });
 	                return users;
+	            });
+	            return promise;
+	        },
+	        getByQuery: function( queryString ){
+	            var promise = $http.get("../api/users?paging=true&page=1&pageSize=10&query=" + queryString + "&fields=firstName,surname,userCredentials[username],id").then(function (response) {
+	                var users = [];
+	                angular.forEach(response.data.users, function (user) {
+	                    var userObj = {userid: user.id, username: user.userCredentials.username, firstName: user.firstName, lastName: user.surname};
+	                    users.push(userObj);
+	                });
+	                return users;
+	            });
+	            return promise;
+	        },
+	        getByUid: function( uid ){
+	            var promise = $http.get("../api/users/" + uid + "?fields=firstName,surname,userCredentials[username],id").then(function (response) {
+	                var userObj = {userid: response.data.id, username: response.data.userCredentials.username, firstName: response.data.firstName, lastName: response.data.surname};
+	                return userObj;        
 	            });
 	            return promise;
 	        }
@@ -2420,10 +2438,17 @@
 	    var replaceVariables = function(expression, variablesHash){
 	        //replaces the variables in an expression with actual variable values.
 	
+	        //First, check if the special cases like d2:hasValue(#{variableName}) is present. If it is, we need to replace with:
+	        //d2:hasValue('variableName') to avoid the further replacement, and make sure the correct input is fed into d2:hasValue.
+	        var avoidReplacementFunctions = ['d2:hasValue','d2:lastEventDate', 'd2:count', 'd2:countIfZeroPos', 'd2:countIfValue'];
+	        avoidReplacementFunctions.forEach(avoidReplaceFunction => {
+	            expression = expression.replace( new RegExp("(" + avoidReplaceFunction + "\\() *[A#CV]\\{([\\w \\-\\_\\.]+)\\}(.*)\\)" ), "$1'$2'$3\)");
+	        });
+	
 	        //Check if the expression contains program rule variables at all(any curly braces):
 	        if(expression.indexOf('{') !== -1) {
 	            //Find every variable name in the expression;
-	            var variablespresent = expression.match(/[A#CV]\{[\w -_.]+}/g);
+	            var variablespresent = expression.match(/[A#CV]\{[\w \-\_\.]+\}/g);
 	            //Replace each matched variable:
 	            angular.forEach(variablespresent, function(variablepresent) {
 	                //First strip away any prefix and postfix signs from the variable name:
@@ -2510,6 +2535,189 @@
 	        return expression;
 	    };
 	
+	    var maleCodes = { male: 1, MALE: 1, Male: 1, ma: 1, m: 1, M: 1, 0: 1, false: 1 };
+	
+	    // command to produce the body of the map:
+	    // curl https://www.who.int/childgrowth/standards/wfa_girls_0_5_zscores.txt | awk  '{print $1 ": [ " $5 ", " $6 ", " $7 ", " $8 ", " $9 ", " $10 ", " ($11+0) " ]," }'
+	    var femaleMap = {
+	        0: [2.0, 2.4, 2.8, 3.2, 3.7, 4.2, 4.8],
+	        1: [2.7, 3.2, 3.6, 4.2, 4.8, 5.5, 6.2],
+	        2: [3.4, 3.9, 4.5, 5.1, 5.8, 6.6, 7.5],
+	        3: [4.0, 4.5, 5.2, 5.8, 6.6, 7.5, 8.5],
+	        4: [4.4, 5.0, 5.7, 6.4, 7.3, 8.2, 9.3],
+	        5: [4.8, 5.4, 6.1, 6.9, 7.8, 8.8, 10],
+	        6: [5.1, 5.7, 6.5, 7.3, 8.2, 9.3, 10.6],
+	        7: [5.3, 6.0, 6.8, 7.6, 8.6, 9.8, 11.1],
+	        8: [5.6, 6.3, 7.0, 7.9, 9.0, 10.2, 11.6],
+	        9: [5.8, 6.5, 7.3, 8.2, 9.3, 10.5, 12],
+	        10: [5.9, 6.7, 7.5, 8.5, 9.6, 10.9, 12.4],
+	        11: [6.1, 6.9, 7.7, 8.7, 9.9, 11.2, 12.8],
+	        12: [6.3, 7.0, 7.9, 8.9, 10.1, 11.5, 13.1],
+	        13: [6.4, 7.2, 8.1, 9.2, 10.4, 11.8, 13.5],
+	        14: [6.6, 7.4, 8.3, 9.4, 10.6, 12.1, 13.8],
+	        15: [6.7, 7.6, 8.5, 9.6, 10.9, 12.4, 14.1],
+	        16: [6.9, 7.7, 8.7, 9.8, 11.1, 12.6, 14.5],
+	        17: [7.0, 7.9, 8.9, 10.0, 11.4, 12.9, 14.8],
+	        18: [7.2, 8.1, 9.1, 10.2, 11.6, 13.2, 15.1],
+	        19: [7.3, 8.2, 9.2, 10.4, 11.8, 13.5, 15.4],
+	        20: [7.5, 8.4, 9.4, 10.6, 12.1, 13.7, 15.7],
+	        21: [7.6, 8.6, 9.6, 10.9, 12.3, 14.0, 16],
+	        22: [7.8, 8.7, 9.8, 11.1, 12.5, 14.3, 16.4],
+	        23: [7.9, 8.9, 10.0, 11.3, 12.8, 14.6, 16.7],
+	        24: [8.1, 9.0, 10.2, 11.5, 13.0, 14.8, 17],
+	        25: [8.2, 9.2, 10.3, 11.7, 13.3, 15.1, 17.3],
+	        26: [8.4, 9.4, 10.5, 11.9, 13.5, 15.4, 17.7],
+	        27: [8.5, 9.5, 10.7, 12.1, 13.7, 15.7, 18],
+	        28: [8.6, 9.7, 10.9, 12.3, 14.0, 16.0, 18.3],
+	        29: [8.8, 9.8, 11.1, 12.5, 14.2, 16.2, 18.7],
+	        30: [8.9, 10.0, 11.2, 12.7, 14.4, 16.5, 19],
+	        31: [9.0, 10.1, 11.4, 12.9, 14.7, 16.8, 19.3],
+	        32: [9.1, 10.3, 11.6, 13.1, 14.9, 17.1, 19.6],
+	        33: [9.3, 10.4, 11.7, 13.3, 15.1, 17.3, 20],
+	        34: [9.4, 10.5, 11.9, 13.5, 15.4, 17.6, 20.3],
+	        35: [9.5, 10.7, 12.0, 13.7, 15.6, 17.9, 20.6],
+	        36: [9.6, 10.8, 12.2, 13.9, 15.8, 18.1, 20.9],
+	        37: [9.7, 10.9, 12.4, 14.0, 16.0, 18.4, 21.3],
+	        38: [9.8, 11.1, 12.5, 14.2, 16.3, 18.7, 21.6],
+	        39: [9.9, 11.2, 12.7, 14.4, 16.5, 19.0, 22],
+	        40: [10.1, 11.3, 12.8, 14.6, 16.7, 19.2, 22.3],
+	        41: [10.2, 11.5, 13.0, 14.8, 16.9, 19.5, 22.7],
+	        42: [10.3, 11.6, 13.1, 15.0, 17.2, 19.8, 23],
+	        43: [10.4, 11.7, 13.3, 15.2, 17.4, 20.1, 23.4],
+	        44: [10.5, 11.8, 13.4, 15.3, 17.6, 20.4, 23.7],
+	        45: [10.6, 12.0, 13.6, 15.5, 17.8, 20.7, 24.1],
+	        46: [10.7, 12.1, 13.7, 15.7, 18.1, 20.9, 24.5],
+	        47: [10.8, 12.2, 13.9, 15.9, 18.3, 21.2, 24.8],
+	        48: [10.9, 12.3, 14.0, 16.1, 18.5, 21.5, 25.2],
+	        49: [11.0, 12.4, 14.2, 16.3, 18.8, 21.8, 25.5],
+	        50: [11.1, 12.6, 14.3, 16.4, 19.0, 22.1, 25.9],
+	        51: [11.2, 12.7, 14.5, 16.6, 19.2, 22.4, 26.3],
+	        52: [11.3, 12.8, 14.6, 16.8, 19.4, 22.6, 26.6],
+	        53: [11.4, 12.9, 14.8, 17.0, 19.7, 22.9, 27],
+	        54: [11.5, 13.0, 14.9, 17.2, 19.9, 23.2, 27.4],
+	        55: [11.6, 13.2, 15.1, 17.3, 20.1, 23.5, 27.7],
+	        56: [11.7, 13.3, 15.2, 17.5, 20.3, 23.8, 28.1],
+	        57: [11.8, 13.4, 15.3, 17.7, 20.6, 24.1, 28.5],
+	        58: [11.9, 13.5, 15.5, 17.9, 20.8, 24.4, 28.8],
+	        59: [12.0, 13.6, 15.6, 18.0, 21.0, 24.6, 29.2],
+	        60: [12.1, 13.7, 15.8, 18.2, 21.2, 24.9, 29.5],
+	    };
+	
+	    // command to produce the body of the map:
+	    // curl https://www.who.int/childgrowth/standards/wfa_boys_0_5_zscores.txt | awk  '{print $1 ": [ " $5 ", " $6 ", " $7 ", " $8 ", " $9 ", " $10 ", " ($11+0) " ]," }'
+	    var maleMap = {
+	        0: [2.1, 2.5, 2.9, 3.3, 3.9, 4.4, 5],
+	        1: [2.9, 3.4, 3.9, 4.5, 5.1, 5.8, 6.6],
+	        2: [3.8, 4.3, 4.9, 5.6, 6.3, 7.1, 8],
+	        3: [4.4, 5.0, 5.7, 6.4, 7.2, 8.0, 9],
+	        4: [4.9, 5.6, 6.2, 7.0, 7.8, 8.7, 9.7],
+	        5: [5.3, 6.0, 6.7, 7.5, 8.4, 9.3, 10.4],
+	        6: [5.7, 6.4, 7.1, 7.9, 8.8, 9.8, 10.9],
+	        7: [5.9, 6.7, 7.4, 8.3, 9.2, 10.3, 11.4],
+	        8: [6.2, 6.9, 7.7, 8.6, 9.6, 10.7, 11.9],
+	        9: [6.4, 7.1, 8.0, 8.9, 9.9, 11.0, 12.3],
+	        10: [6.6, 7.4, 8.2, 9.2, 10.2, 11.4, 12.7],
+	        11: [6.8, 7.6, 8.4, 9.4, 10.5, 11.7, 13],
+	        12: [6.9, 7.7, 8.6, 9.6, 10.8, 12.0, 13.3],
+	        13: [7.1, 7.9, 8.8, 9.9, 11.0, 12.3, 13.7],
+	        14: [7.2, 8.1, 9.0, 10.1, 11.3, 12.6, 14],
+	        15: [7.4, 8.3, 9.2, 10.3, 11.5, 12.8, 14.3],
+	        16: [7.5, 8.4, 9.4, 10.5, 11.7, 13.1, 14.6],
+	        17: [7.7, 8.6, 9.6, 10.7, 12.0, 13.4, 14.9],
+	        18: [7.8, 8.8, 9.8, 10.9, 12.2, 13.7, 15.3],
+	        19: [8.0, 8.9, 10.0, 11.1, 12.5, 13.9, 15.6],
+	        20: [8.1, 9.1, 10.1, 11.3, 12.7, 14.2, 15.9],
+	        21: [8.2, 9.2, 10.3, 11.5, 12.9, 14.5, 16.2],
+	        22: [8.4, 9.4, 10.5, 11.8, 13.2, 14.7, 16.5],
+	        23: [8.5, 9.5, 10.7, 12.0, 13.4, 15.0, 16.8],
+	        24: [8.6, 9.7, 10.8, 12.2, 13.6, 15.3, 17.1],
+	        25: [8.8, 9.8, 11.0, 12.4, 13.9, 15.5, 17.5],
+	        26: [8.9, 10.0, 11.2, 12.5, 14.1, 15.8, 17.8],
+	        27: [9.0, 10.1, 11.3, 12.7, 14.3, 16.1, 18.1],
+	        28: [9.1, 10.2, 11.5, 12.9, 14.5, 16.3, 18.4],
+	        29: [9.2, 10.4, 11.7, 13.1, 14.8, 16.6, 18.7],
+	        30: [9.4, 10.5, 11.8, 13.3, 15.0, 16.9, 19],
+	        31: [9.5, 10.7, 12.0, 13.5, 15.2, 17.1, 19.3],
+	        32: [9.6, 10.8, 12.1, 13.7, 15.4, 17.4, 19.6],
+	        33: [9.7, 10.9, 12.3, 13.8, 15.6, 17.6, 19.9],
+	        34: [9.8, 11.0, 12.4, 14.0, 15.8, 17.8, 20.2],
+	        35: [9.9, 11.2, 12.6, 14.2, 16.0, 18.1, 20.4],
+	        36: [10.0, 11.3, 12.7, 14.3, 16.2, 18.3, 20.7],
+	        37: [10.1, 11.4, 12.9, 14.5, 16.4, 18.6, 21],
+	        38: [10.2, 11.5, 13.0, 14.7, 16.6, 18.8, 21.3],
+	        39: [10.3, 11.6, 13.1, 14.8, 16.8, 19.0, 21.6],
+	        40: [10.4, 11.8, 13.3, 15.0, 17.0, 19.3, 21.9],
+	        41: [10.5, 11.9, 13.4, 15.2, 17.2, 19.5, 22.1],
+	        42: [10.6, 12.0, 13.6, 15.3, 17.4, 19.7, 22.4],
+	        43: [10.7, 12.1, 13.7, 15.5, 17.6, 20.0, 22.7],
+	        44: [10.8, 12.2, 13.8, 15.7, 17.8, 20.2, 23],
+	        45: [10.9, 12.4, 14.0, 15.8, 18.0, 20.5, 23.3],
+	        46: [11.0, 12.5, 14.1, 16.0, 18.2, 20.7, 23.6],
+	        47: [11.1, 12.6, 14.3, 16.2, 18.4, 20.9, 23.9],
+	        48: [11.2, 12.7, 14.4, 16.3, 18.6, 21.2, 24.2],
+	        49: [11.3, 12.8, 14.5, 16.5, 18.8, 21.4, 24.5],
+	        50: [11.4, 12.9, 14.7, 16.7, 19.0, 21.7, 24.8],
+	        51: [11.5, 13.1, 14.8, 16.8, 19.2, 21.9, 25.1],
+	        52: [11.6, 13.2, 15.0, 17.0, 19.4, 22.2, 25.4],
+	        53: [11.7, 13.3, 15.1, 17.2, 19.6, 22.4, 25.7],
+	        54: [11.8, 13.4, 15.2, 17.3, 19.8, 22.7, 26],
+	        55: [11.9, 13.5, 15.4, 17.5, 20.0, 22.9, 26.3],
+	        56: [12.0, 13.6, 15.5, 17.7, 20.2, 23.2, 26.6],
+	        57: [12.1, 13.7, 15.6, 17.8, 20.4, 23.4, 26.9],
+	        58: [12.2, 13.8, 15.8, 18.0, 20.6, 23.7, 27.2],
+	        59: [12.3, 14.0, 15.9, 18.2, 20.8, 23.9, 27.6],
+	        60: [12.4, 14.1, 16.0, 18.3, 21.0, 24.2, 27.9],
+	    };
+	
+	    function findDeviationLimits(weight, sdArray) {
+	        var lowerLimitIn;
+	        var higherLimitIn;
+	        // find the standard deviation interval
+	        for (var i = 0; i < 7; i++) {
+	            if (weight >= sdArray[i]) {
+	                lowerLimitIn = i;
+	
+	                if (weight > sdArray[i]) {
+	                    // eslint-disable-next-line no-continue
+	                    continue;
+	                }
+	            }
+	
+	            higherLimitIn = i;
+	            break;
+	        }
+	        return { lowerLimitIn, higherLimitIn };
+	    }
+	
+	
+	    function getZScoreWFA(ageInMonths, weight, gender) {
+	        var map = femaleMap;
+	
+	        if (maleCodes[gender] === 1) {
+	            map = maleMap;
+	        }
+	
+	        var sdArray = map[Number(ageInMonths)];
+	
+	        if (weight < sdArray[0]) { return -3.5; }
+	        if (weight > sdArray[6]) { return 3.5; }
+	
+	        var deviationLimits = findDeviationLimits(weight, sdArray);
+	        var higherLimitIn = deviationLimits.higherLimitIn;
+	        var lowerLimitIn = deviationLimits.lowerLimitIn;
+	
+	        // Find the distance between the two SDs in kilos.
+	        var distance = sdArray[higherLimitIn] - sdArray[lowerLimitIn];
+	
+	        // The gap from the intervals top limit down to the actual weight:
+	        var gap = sdArray[higherLimitIn] - weight;
+	
+	        // The decimal places this gap represent from the higher SD
+	        var decimalSubtraction = distance > 0 ? gap / distance : 0;
+	
+	        return (higherLimitIn - 3 - decimalSubtraction).toFixed(2);
+	    }
+	
 	    var runDhisFunctions = function(expression, variablesHash, flag, selectedOrgUnit){
 	        //Called from "runExpression". Only proceed with this logic in case there seems to be dhis function calls: "d2:" is present.
 	        if(angular.isDefined(expression) && expression.indexOf("d2:") !== -1){
@@ -2537,6 +2745,7 @@
 	                {name:"d2:right",parameters:2},
 	                {name:"d2:substring",parameters:3},
 	                {name:"d2:split",parameters:3},
+	                {name:"d2:zScoreWFA",parameters:3},
 	                {name:"d2:length",parameters:1},
 	                {name:"d2:inOrgUnitGroup",parameters:1},
 	                {name:"d2:condition",parameters:3}];
@@ -2940,6 +3149,10 @@
 	                            }
 	                            returnPart = VariableService.processValue(returnPart, 'TEXT');
 	                            expression = expression.replace(callToThisFunction, returnPart);
+	                            expressionUpdated = true;
+	                        }
+	                        else if(dhisFunction.name === "d2:zScoreWFA") {
+	                            expression = expression.replace(callToThisFunction, getZScoreWFA(parameters[0],parameters[1],parameters[2]));
 	                            expressionUpdated = true;
 	                        }
 	                        else if(dhisFunction.name === "d2:length") {
@@ -4881,6 +5094,100 @@
 				};
 	        }
 	
+	    };
+	})
+	
+	.directive('d2AssignUsersInput', function(){
+	    return {
+	        restrict: 'E',
+	        templateUrl: './templates/assign-user-input.html',
+	        scope: {
+	            d2Model: '=',
+	            d2Disabled: '=',
+	            d2SaveMethod: '&',
+	            d2Saved: '='
+	            
+	        },
+	        link: function (scope, element, attrs) {
+	            scope.optionListOpen = false;
+	            scope.searchText = '';
+	            var onClickOutside = function(event){
+	                var isClickedElementChildOfPopup = element
+	                    .find(event.target)
+	                    .length > 0;
+	        
+	                if (isClickedElementChildOfPopup)
+	                    return;
+	        
+	                scope.$applyAsync(function(){
+	                    scope.closeOptionList();
+	                });
+	            }
+	
+	            scope.toggleOptionList = function(){
+	                if(scope.optionListOpen) {
+	                    scope.closeOptionList();
+	                    return;
+	                }
+	                scope.openOptionList();
+	            }
+	
+	            scope.closeOptionList = function(){
+	                scope.optionListOpen = false;
+	                $(document).unbind('click', onClickOutside);
+	            }
+	
+	            scope.openOptionList = function(){
+	                scope.optionListOpen = true;
+	                scope.search('');
+	                $(document).bind('click', onClickOutside);
+	            }
+	        },
+	        controller: function($scope, UsersService, OrgUnitFactory) {
+	            $scope.displayOptions = [];       
+	            $scope.userDisplayName = "";
+	
+	            $scope.getNameForUserOject = function(userObject){
+	                return userObject.firstName + " " + userObject.lastName +
+	                    " (" + userObject.username + ")";
+	            }
+	
+	            UsersService.getByQuery('').then(function(users){
+	                $scope.displayOptions = users;
+	            });
+	
+	            if( $scope.d2Model.assignedUser ) {
+	                UsersService.getByUid($scope.d2Model.assignedUser).then(function(user){
+	                    $scope.selectedUserObject = user;
+	                    $scope.userDisplayName = $scope.getNameForUserOject(user);
+	                });
+	            }
+	
+	            $scope.saveOption = function() {
+	                $scope.d2SaveMethod()();
+	            };
+	
+	            $scope.search = function(searchParam){
+	                UsersService.getByQuery(searchParam).then(function(users){
+	                    $scope.displayOptions = users;
+	                });
+	            }
+	
+	            $scope.selectOption = function(option){
+	                $scope.d2Model.assignedUser = option.userid;
+	                $scope.selectedUserObject = option;
+	                $scope.userDisplayName =  $scope.getNameForUserOject(option);
+	                $scope.closeOptionList();
+	                $scope.d2SaveMethod()();
+	            }
+	
+	            $scope.removeSelectedOption = function(event){
+	                event.stopPropagation();
+	                $scope.d2Model.assignedUser = null;
+	                $scope.selectedUserDisplayString = null;
+	                $scope.d2SaveMethod()();
+	            }
+	        }
 	    };
 	})
 	
@@ -7518,6 +7825,7 @@
 /***/ function(module, exports) {
 
 	angular.module('d2Templates', []).run(['$templateCache', function($templateCache) {$templateCache.put('./templates/age-input.html','<div ng-form="ageForm">\n    <div class="input-group" style="width: 100%; padding-top: 5px;">\n        <input type="text" \n               d2-date name="dob" \n               d2-date-validator\n               ng-model="age.dob"\n               blur-or-change="saveDOB()"\n               ng-required="d2Required"\n               ng-disabled="d2Disabled"\n               ng-attr-placeholder="{{\'dob\'| translate}}" \n               ng-attr-title="{{\'dob\'| translate}}" \n               class="form-control no-right-radius"\n               ng-class="{\'input-success\': d2AgeSaved}"/>\n        <span class="input-group-btn empty-span"></span>\n        <span class="has-float-label">\n            <input type="number" \n                   name="years"\n                   ng-model="age.years" \n                   ng-model-options="{updateOn: \'blur\'}"\n                   ng-change="saveAge()"\n                   ng-disabled="d2Disabled"\n                   d2-number-validator\n                   number-type="INTEGER_ZERO_OR_POSITIVE"\n                   ng-attr-placeholder="{{\'years\'| translate}}"\n                   ng-attr-title="{{\'years\'| translate}}" \n                   class="form-control no-right-radius no-left-radius"\n                   ng-class="{\'input-success\': d2AgeSaved}"\n                   id="year"/>\n            <label for="year">{{\'years\'| translate}}</label>\n        </span>\n        <span class="input-group-btn empty-span"></span>\n        <span class="has-float-label">\n            <input type="number" \n                   name="months"\n                   ng-model="age.months" \n                   ng-model-options="{updateOn: \'blur\'}"\n                   ng-change="saveAge()"\n                   ng-disabled="d2Disabled"\n                   d2-number-validator\n                   number-type="INTEGER_ZERO_OR_POSITIVE"\n                   ng-attr-placeholder="{{\'months\'| translate}}"\n                   ng-attr-title="{{\'months\'| translate}}" \n                   class="form-control no-right-radius no-left-radius"\n                   ng-class="{\'input-success\': d2AgeSaved}"\n                   id="month"/>\n            <label for="month">{{\'months\'| translate}}</label>\n        </span>\n        <span class="input-group-btn empty-span"></span>\n        <span class="has-float-label">\n            <input type="number" \n                   name="days"\n                   ng-model="age.days" \n                   ng-model-options="{updateOn: \'blur\'}"\n                   ng-change="saveAge()"\n                   ng-disabled="d2Disabled"\n                   d2-number-validator\n                   number-type="INTEGER_ZERO_OR_POSITIVE"\n                   ng-attr-placeholder="{{\'days\'| translate}}"\n                   ng-attr-title="{{\'days\'| translate}}" \n                   class="form-control no-left-radius no-right-radius"\n                   ng-class="{\'input-success\': d2AgeSaved}"\n                   id="day"/>\n            <label for="day">{{\'days\'| translate}}</label>\n        </span>\n        <span class="input-group-btn"> \n            <button class="btn btn-danger hideInPrint trim" type="button" ng-attr-title="{{\'remove\'| translate}}" ng-click="removeAge()" ng-disabled="!age.dob || d2Disabled"> \n                <i class="fa fa-trash-o"></i> \n            </button>\n        </span>\n    </div>\n    <div ng-messages="ageForm.dob.$error" ng-if="ageInteracted(ageForm.dob, outerDataEntryForm)" class="required" ng-messages-include="./templates/error-messages.html"></div>\n    <div ng-messages="ageForm.years.$error" ng-if="ageInteracted(ageForm.years, outerDataEntryForm)" class="required" ng-messages-include="./templates/error-messages.html"></div>\n    <div ng-messages="ageForm.months.$error" ng-if="ageInteracted(ageForm.months, outerDataEntryForm)" class="required" ng-messages-include="./templates/error-messages.html"></div>\n    <div ng-messages="ageForm.days.$error" ng-if="ageInteracted(ageForm.days, outerDataEntryForm)" class="required" ng-messages-include="./templates/error-messages.html"></div>\n</div>');
+	$templateCache.put('./templates/assign-user-input.html','<div class="optionListContainerAssignUser">\n    <div ng-if="d2Disabled"><input class="form-control" ng-model="d2Model.assignedUserUsername" disabled></div>\n    <div ng-click="toggleOptionList()" ng-if="!d2Disabled" class="optionListInput" ng-class="{ \'optionListInputOpen\': optionListOpen, \'input-success\': d2Saved }">\n        <div class="optionListInputText" >\n            <span ng-if="d2Model.assignedUser">{{userDisplayName}}</span>\n            <span ng-if="!d2Model.assignedUser" class="optionListInputTextPlaceholder">{{\'select_or_search\' | translate}}</span>\n        </div>\n        <div class="optionListInputDelete" ng-click="removeSelectedOption($event)"><i class="fa fa-times" ng-if="d2Model.assignedUser"></i></div>\n        <div class="optionListInputToggle"><i class="fa fa-caret-up" ng-show="optionListOpen"></i><i class="fa fa-caret-down" ng-hide="optionListOpen"></i></div>\n    </div>\n    <div ng-if="optionListOpen" class="optionListPopup">\n        <div class="optionListSearchInputContainer">\n            <input type="text" class="form-control" ng-model="searchText" ng-change="search(searchText)" ng-model-options="{ debounce: 600 }" placeholder="Search..."/>\n        </div>\n        <div vs-repeat class="optionListVsRepeater">\n            <div ng-repeat="option in displayOptions track by option.userid" class="optionListItem" ng-click="selectOption(option)" ng-class="{ \'optionListItemSelected\': (option.userid===d2Model.assignedUser)}">\n                {{getNameForUserOject(option)}}\n            </div>\n        </div>\n    </div>\n</div>\n');
 	$templateCache.put('./templates/audit-history.html','<div class="modal-header">\n    <h2>{{\'audit_history\'| translate}}</h2>\n</div>\n<div class="modal-body page" ng-class="{\'waiting-box\':model.showStatus === \'waiting\'}">\n    <div ng-if="model.showStatus === \'data_available\'">\n        <span class="row">\n            <input class="form-control col-md-7" ng-model="model.searchText" ng-attr-placeholder="{{model.searchPlaceholder}}" type="search" />\n        </span>\n        <div class="scroll">\n            <table class="listTable dhis2-table-striped-border">\n                <thead>\n                    <tr>\n                        <th ng-repeat="col in model.auditColumns">\n                            <span ng-switch="col">\n                                <span ng-switch-when="name">\n                                    {{model.name}}\n                                </span>\n                                <span ng-switch-default>\n                                \t{{col | translate}}\n                                </span>                                    \n                            </span>\n                        </th>\n                    </tr>\n                </thead>\n                <tbody ng-repeat="row in model.uniqueRows">\n                    <tr ng-repeat="item in model.itemList | orderBy: \'created\':reverse | filter: {name: row} | filter: {name: model.searchText}" ng-init="rowIndex = $index">\n                        <td ng-repeat="col in model.auditColumns"\n                            rowspan="{{(model.itemList | filter: {name: row} | filter: model.searchText).length}}"\n                            ng-if="col === \'name\' && rowIndex === 0">\n                            {{item[col]}}\n                        </td>\n                        <td class="wrap-text" ng-repeat="col in model.auditColumns" ng-if="col !== \'name\'">\n                        \t<span ng-if="col === \'value\'">\n                        \t\t<span ng-switch="item.valueType">\n\t\t\t\t                    <span ng-switch-when="BOOLEAN">\n\t\t\t\t                        <span ng-if="item[col] === \'true\'">{{\'yes\'| translate}}</span>\n\t\t\t\t                        <span ng-if="item[col] === \'false\'">{{ \'no\' | translate}}</span>\n\t\t\t\t                    </span>\n\t\t\t\t                    <span ng-switch-when="TRUE_ONLY">\n\t\t\t\t                        <span ng-if="item[col]">\n\t\t\t\t                            <i class="fa fa-check"></i>\n\t\t\t\t                        </span>\n\t\t\t\t                    </span>\n\t\t\t\t                    <span ng-switch-default>{{item[col]}}</span>\n\t\t\t\t                </span>\n                        \t</span>\n                        \t<span ng-if="col !== \'value\'">\n                        \t\t{{item[col]}}\n                        \t</span>\n                        \t                            \n                        </td>\n                    </tr>\n                </tbody>\n            </table>\n        </div>\n    </div>\n    <div ng-if="model.showStatus === \'data_unavailable\'">\n        <div class="alert alert-warning">{{\'audit_history_unavailable\'| translate}}</div>\n    </div>\n    <div ng-if="model.showStatus === \'waiting\'">\n        <i class="fa fa-spinner fa-spin audit-spinner"></i>\n        <div class="loading-audit-data">{{\'loading-audit-data\' | translate}}</div>\n    </div>\n</div>\n<div class="modal-footer" ng-if="model.showStatus !== \'waiting\'">\n    <button type="button" class="btn btn-default" data-ng-click="close()">{{\'close\'| translate}}</button>\n</div>');
 	$templateCache.put('./templates/coordinate-input.html','<div  ng-form="coordinateForm">\n    <div class="input-group">\n        <input type="number" \n               ng-model="coordinateObject.coordinate.latitude" \n               ng-attr-placeholder="{{\'latitude\'| translate}}"\n               ng-class="{\'input-success\': d2LatSaved}"\n               name="latitude" \n               d2-coordinate-validator\n               ng-required="d2Required"\n               ng-disabled="d2Disabled"\n               ng-blur="saveD2Coordinate()"\n               class="form-control no-right-radius"/>\n        <span class="input-group-btn empty-span"></span>\n        <input type="number" \n               ng-model="coordinateObject.coordinate.longitude" \n               ng-attr-placeholder="{{\'longitude\'| translate}}"\n               ng-class="{\'input-success\': d2LngSaved}"\n               name="longitude" \n               d2-coordinate-validator\n               ng-required="d2Required"\n               ng-disabled="d2Disabled"\n               ng-blur="saveD2Coordinate()"\n               class="form-control no-left-radius no-right-radius"/>\n        <span class="input-group-btn hideInPrint">\n            <button class="btn btn-grp trim hideInPrint" \n                    type="button"\n                    ng-disabled="{{d2Disabled}}"\n                    ng-attr-title="{{\'get_from_map\'| translate}}"\n                    ng-click="showMap(coordinateObject)"> \n                <i class="fa fa-map-marker"></i>                             \n            </button>\n        </span>    \n    </div>\n    <div ng-messages="coordinateForm.latitude.$error" ng-if="coordinateInteracted(coordinateForm.latitude)" class="required" ng-messages-include="./templates/error-messages.html"></div>\n    <div ng-messages="coordinateForm.longitude.$error" ng-if="coordinateInteracted(coordinateForm.longitude)" class="required" ng-messages-include="./templates/error-messages.html"></div>\n</div>');
 	$templateCache.put('./templates/custom-dataentry-form.html','<d2-custom-data-entry-form custom-data-entry-form="customDataEntryForm"></d2-custom-data-entry-form>');
@@ -7574,7 +7882,7 @@
 	
 	
 	// module
-	exports.push([module.id, "\n.optionListContainer {\n    position: relative;\n}\n\n.optionListInput {\n    width: 100%;\n    height: 34px;\n    display: flex;\n    border-radius: 4px;\n    border: 1px solid #aaa;\n    background-color: white;\n    cursor: pointer;\n}\n.optionListInputTextPlaceholder {\n    color: grey;\n}\n.optionListInputOpen {\n    border-bottom-left-radius: 0px;\n    border-bottom-right-radius: 0px;\n}\n.optionListInputText {\n    flex-grow: 1;\n    line-height: 34px;\n    padding-left: 5px;\n    font-size: 14px;\n    overflow: hidden;\n    white-space: nowrap;\n    text-overflow: ellipsis;\n}\n.optionListInputDelete {\n    padding-right: 5px;\n    padding-left: 5px;\n    line-height: 34px;\n}\n.optionListInputToggle {\n    background-color: #ccc;\n    border-left: 1px solid #aaa;\n    width:18px;\n    line-height: 34px;\n    padding-left: 4px;\n}\n.optionListPopup {\n    position: absolute;\n    background-color:white;\n    border:1px solid #aaa;\n    border-top: none;\n    border-bottom-left-radius: 4px;\n    border-bottom-right-radius: 4px;\n    z-index: 100;\n    width: 100%;\n    box-shadow: 0px 0px 2px 0px #aaa;\n    user-select: none;\n}\n.optionListSearchInputContainer {\n    padding:5px;\n}\n.optionListItem {\n    height:30px;\n    line-height:30px;\n    padding-left:5px;\n    padding-right: 5px;\n    width: 100%;\n    overflow: hidden;\n    white-space: nowrap;\n    text-overflow: ellipsis;\n    cursor: pointer;\n}\n.optionListItemSelected {\n    background-color: lightgray;\n}\n.optionListItem:hover {\n    background-color: lightgray;\n}\n.optionListVsRepeater {\n    max-height:200px;\n    width: 100%;\n    overflow: auto;\n}\n\n.inputDnD .form-control-file {\n    position: relative;\n    width: 100%;\n    height: 100%;\n    min-height: 6em;\n    outline: none;\n    visibility: hidden;\n    cursor: pointer;\n    background-color: #c61c23;\n    box-shadow: 0 0 5px solid currentColor;\n}\n.inputDnD .form-control-file:before {\n    content: attr(data-title);\n    position: absolute;\n    top: 0.5em;\n    left: 0;\n    width: 100%;\n    min-height: 6em;\n    line-height: 2em;\n    padding-top: 1.5em;\n    opacity: 1;\n    visibility: visible;\n    text-align: center;\n    border: 0.15em dashed currentColor;\n    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);\n    overflow: hidden;\n    border-top-left-radius: 15px;\n    border-top-right-radius: 15px;\n    border-bottom-left-radius: 15px;\n    border-bottom-right-radius: 15px;\n}\n.inputDnD .form-control-file:hover:before {\n    border-style: solid;\n    box-shadow: inset 0px 0px 0px 0.05em currentColor;\n    border-bottom-right-radius: 15px;\n    border-top-right-radius: 15px;\n    border-bottom-left-radius: 15px;\n    border-top-left-radius: 15px;\n}\n\n.has-float-label {\n    position: relative;\n}\n.has-float-label label {\n    position: absolute;\n    cursor: text;\n    font-size: 75%;\n    opacity: 1;\n    -webkit-transition: all .2s;\n    transition: all .2s;\n    top: -.5em;\n    left: 5px;\n    z-index: 3;\n    line-height: 1;\n    padding: 0 1px;\n}\n.has-float-label label::after {\n    content: \" \";\n    display: block;\n    position: absolute;\n    height: 2px;\n    top: 50%;\n    left: -.2em;\n    right: -.2em;\n    z-index: -1;\n}\n.has-float-label .form-control::-webkit-input-placeholder {\n    opacity: 1;\n    -webkit-transition: all .2s;\n    transition: all .2s;\n}\n.has-float-label .form-control:placeholder-shown:not(:focus)::-webkit-input-placeholder {\n    opacity: 1;\n}\n.has-float-label .form-control:placeholder-shown:not(:focus)+label {\n    pointer-events: none;\n    font-size: 14px;\n    opacity: 0;\n    top: 1em;\n    font-weight: 400;\n}\n.input-group .has-float-label {\n    display: table-cell;\n}\n.input-group .has-float-label .form-control {\n    border-radius: 4px;\n}\n.input-group .has-float-label:not(:last-child) .form-control {\n    border-bottom-right-radius: 0;\n    border-top-right-radius: 0;\n}\n.input-group .has-float-label:not(:first-child) .form-control {\n    border-bottom-left-radius: 0;\n    border-top-left-radius: 0;\n    margin-left: -1px;\n}", ""]);
+	exports.push([module.id, "\n.optionListContainer {\n    position: relative;\n}\n\n.optionListContainerAssignUser {\n    position: relative;\n    margin: 5px 0px;\n}\n\n.optionListInput {\n    width: 100%;\n    height: 34px;\n    display: flex;\n    border-radius: 4px;\n    border: 1px solid #aaa;\n    background-color: white;\n    cursor: pointer;\n}\n.optionListInputTextPlaceholder {\n    color: grey;\n}\n.optionListInputOpen {\n    border-bottom-left-radius: 0px;\n    border-bottom-right-radius: 0px;\n}\n.optionListInputText {\n    flex-grow: 1;\n    line-height: 34px;\n    padding-left: 5px;\n    font-size: 14px;\n    overflow: hidden;\n    white-space: nowrap;\n    text-overflow: ellipsis;\n}\n.optionListInputDelete {\n    padding-right: 5px;\n    padding-left: 5px;\n    line-height: 34px;\n}\n.optionListInputToggle {\n    background-color: #ccc;\n    border-left: 1px solid #aaa;\n    width:18px;\n    line-height: 34px;\n    padding-left: 4px;\n}\n.optionListPopup {\n    position: absolute;\n    background-color:white;\n    border:1px solid #aaa;\n    border-top: none;\n    border-bottom-left-radius: 4px;\n    border-bottom-right-radius: 4px;\n    z-index: 100;\n    width: 100%;\n    box-shadow: 0px 0px 2px 0px #aaa;\n    user-select: none;\n}\n.optionListSearchInputContainer {\n    padding:5px;\n}\n.optionListItem {\n    height:30px;\n    line-height:30px;\n    padding-left:5px;\n    padding-right: 5px;\n    width: 100%;\n    overflow: hidden;\n    white-space: nowrap;\n    text-overflow: ellipsis;\n    cursor: pointer;\n}\n.optionListItemSelected {\n    background-color: lightgray;\n}\n.optionListItem:hover {\n    background-color: lightgray;\n}\n.optionListVsRepeater {\n    max-height:200px;\n    width: 100%;\n    overflow: auto;\n}\n\n.inputDnD .form-control-file {\n    position: relative;\n    width: 100%;\n    height: 100%;\n    min-height: 6em;\n    outline: none;\n    visibility: hidden;\n    cursor: pointer;\n    background-color: #c61c23;\n    box-shadow: 0 0 5px solid currentColor;\n}\n.inputDnD .form-control-file:before {\n    content: attr(data-title);\n    position: absolute;\n    top: 0.5em;\n    left: 0;\n    width: 100%;\n    min-height: 6em;\n    line-height: 2em;\n    padding-top: 1.5em;\n    opacity: 1;\n    visibility: visible;\n    text-align: center;\n    border: 0.15em dashed currentColor;\n    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);\n    overflow: hidden;\n    border-top-left-radius: 15px;\n    border-top-right-radius: 15px;\n    border-bottom-left-radius: 15px;\n    border-bottom-right-radius: 15px;\n}\n.inputDnD .form-control-file:hover:before {\n    border-style: solid;\n    box-shadow: inset 0px 0px 0px 0.05em currentColor;\n    border-bottom-right-radius: 15px;\n    border-top-right-radius: 15px;\n    border-bottom-left-radius: 15px;\n    border-top-left-radius: 15px;\n}\n\n.has-float-label {\n    position: relative;\n}\n.has-float-label label {\n    position: absolute;\n    cursor: text;\n    font-size: 75%;\n    opacity: 1;\n    -webkit-transition: all .2s;\n    transition: all .2s;\n    top: -.5em;\n    left: 5px;\n    z-index: 3;\n    line-height: 1;\n    padding: 0 1px;\n}\n.has-float-label label::after {\n    content: \" \";\n    display: block;\n    position: absolute;\n    height: 2px;\n    top: 50%;\n    left: -.2em;\n    right: -.2em;\n    z-index: -1;\n}\n.has-float-label .form-control::-webkit-input-placeholder {\n    opacity: 1;\n    -webkit-transition: all .2s;\n    transition: all .2s;\n}\n.has-float-label .form-control:placeholder-shown:not(:focus)::-webkit-input-placeholder {\n    opacity: 1;\n}\n.has-float-label .form-control:placeholder-shown:not(:focus)+label {\n    pointer-events: none;\n    font-size: 14px;\n    opacity: 0;\n    top: 1em;\n    font-weight: 400;\n}\n.input-group .has-float-label {\n    display: table-cell;\n}\n.input-group .has-float-label .form-control {\n    border-radius: 4px;\n}\n.input-group .has-float-label:not(:last-child) .form-control {\n    border-bottom-right-radius: 0;\n    border-top-right-radius: 0;\n}\n.input-group .has-float-label:not(:first-child) .form-control {\n    border-bottom-left-radius: 0;\n    border-top-left-radius: 0;\n    margin-left: -1px;\n}", ""]);
 	
 	// exports
 
@@ -38509,4 +38817,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-f6c0ead8f4add83c5593.js.map
+//# sourceMappingURL=app-05c744a318b998453ad8.js.map
