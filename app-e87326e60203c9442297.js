@@ -21967,6 +21967,16 @@
 	                customConfig.programUrl += "&programStatus=" + $scope.customWorkingListValues.programStatus;
 	            }
 	        }
+	
+	        customConfig.assignUrl = "";
+	        if ($scope.customWorkingListValues.assignedUserMode) {
+	            customConfig.assignUrl += "&assignedUserMode=" + $scope.customWorkingListValues.assignedUserMode;
+	        }
+	        if (!$scope.customWorkingListValues.assignedUserMode || $scope.customWorkingListValues.assignedUserMode == "PROVIDED" && $scope.customWorkingListValues.assignedUsers) {
+	            if (customConfig.assignUrl) customConfig.assignUrl += "&";
+	            customConfig.assignUrl += "assignedUser=" + $scope.customWorkingListValues.assignedUsers;
+	        }
+	
 	        customConfig.attributeUrl = EntityQueryFactory.getAttributesQuery($scope.customWorkingListValues.attributes, $scope.customWorkingListValues.enrollment);
 	
 	        setCurrentTrackedEntityList($scope.trackedEntityListTypes.CUSTOM, customConfig, null);
@@ -21993,6 +22003,10 @@
 	            var order = '&order=' + sortColumn.id + ':' + sortColumn.direction;
 	            customConfig.queryAndSortUrl = customConfig.queryAndSortUrl.concat(order);
 	        }
+	        if (customConfig.assignUrl) {
+	            customConfig.queryAndSortUrl = customConfig.queryAndSortUrl.concat(customConfig.assignUrl);
+	        }
+	
 	        TEIService.search(customConfig.orgUnit.id, customConfig.ouMode.name, customConfig.queryAndSortUrl, customConfig.programUrl, customConfig.attributeUrl.url, $scope.pager, true).then(setCurrentTrackedEntityListData);
 	    };
 	
@@ -38906,4 +38920,4 @@
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=app-90e9a5cc96658f14e538.js.map
+//# sourceMappingURL=app-e87326e60203c9442297.js.map
