@@ -87,4 +87,6 @@
         <div class="row" ng-if="!selectedProgram || (selectedProgram && hasProgramTetAccess())">
             <div ng-repeat="view in views" ng-class="view.class" ng-include="view.template" ng-if="(view.name === currentView.name && view.shouldReset) || (!view.shouldReset && view.loaded)" ng-show="view.name === currentView.name && ((view.loaded && !view.shouldReset) || view.shouldReset)"></div>
         </div>
-</div>
+</div>           
+
+
