@@ -20529,11 +20529,23 @@
 	        }
 	    }
 	
+	    var validConstraintForTei = function validConstraintForTei(tei, constraint) {
+	        return constraint.relationshipEntity === "TRACKED_ENTITY_INSTANCE" && tei.trackedEntityType === constraint.trackedEntityType.id;
+	    };
+	
 	    //watch for selection of relationship
 	    $scope.$watch('relationship.selected', function () {
 	        if (angular.isObject($scope.relationship.selected)) {
-	            $scope.selectedConstraints.currentTei = "fromConstraint";
-	            $scope.selectedConstraints.related = "toConstraint";
+	            if (validConstraintForTei($scope.mainTei, $scope.relationship.selected.fromConstraint)) {
+	                $scope.selectedConstraints.currentTei = "fromConstraint";
+	                $scope.selectedConstraints.related = "toConstraint";
+	            } else if (validConstraintForTei($scope.mainTei, $scope.relationship.selected.toConstraint)) {
+	                $scope.selectedConstraints.currentTei = "toConstraint";
+	                $scope.selectedConstraints.related = "fromConstraint";
+	            } else {
+	                $log.warn("Tracked entity instance selected(" + $scope.mainTei.trackedEntityType + ") does not match any side of the relationship type " + $scope.relationship.selected.id);
+	            }
+	
 	            $scope.resetRelatedView();
 	        }
 	    });
@@ -38920,4 +38932,4 @@
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=app-e87326e60203c9442297.js.map
+//# sourceMappingURL=app-5cb7c2d7dd56ada2b0ee.js.map
