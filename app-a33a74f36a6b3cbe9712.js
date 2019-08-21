@@ -9209,6 +9209,12 @@
 	            });
 	            return promise;
 	        },
+	        markPotentialDuplicate: function markPotentialDuplicate(tei) {
+	            var promise = $http.post(DHIS2URL + '/potentialDuplicates/', { teiA: tei.id }).then(function (response) {
+	                return response.data;
+	            });
+	            return promise;
+	        },
 	        delete: function _delete(entityUid) {
 	            var promise = $http.delete(DHIS2URL + '/trackedEntityInstances/' + entityUid).then(function (response) {
 	                return response.data;
@@ -11961,7 +11967,8 @@
 	            sortColumn: "=?teiSortColumn",
 	            gridColumns: "=?teiGridColumns",
 	            refetchData: "&teiRefetchData",
-	            onTeiClicked: "&onTeiClicked"
+	            onTeiClicked: "&onTeiClicked",
+	            onMarkDuplicate: "&onMarkDuplicate"
 	        },
 	
 	        controller: ["$scope", "Paginator", "TEIGridService", "CurrentSelection", function controller($scope, Paginator, TEIGridService, CurrentSelection) {
@@ -12010,6 +12017,10 @@
 	
 	            $scope.onTeiClickedInternal = function (tei) {
 	                $scope.onTeiClicked({ tei: tei });
+	            };
+	
+	            $scope.onMarkDuplicateInternal = function (tei) {
+	                $scope.onMarkDuplicate({ tei: tei });
 	            };
 	
 	            $scope.getPage = function (page) {
@@ -22440,6 +22451,10 @@
 	
 	                $scope.openRegistration = function (tei) {
 	                    $modalInstance.close({ action: "OPENREGISTRATION" });
+	                };
+	
+	                $scope.markPotentialDuplicate = function (tei) {
+	                    TEIService.markPotentialDuplicate(tei);
 	                };
 	
 	                $scope.openTei = function (tei) {
@@ -38932,4 +38947,4 @@
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=app-5cb7c2d7dd56ada2b0ee.js.map
+//# sourceMappingURL=app-a33a74f36a6b3cbe9712.js.map
