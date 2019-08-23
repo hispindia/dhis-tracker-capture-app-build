@@ -1159,21 +1159,23 @@
 	                                                            <a href ng-click="downloadFile(null, \'' + fieldId + '\', null)" ng-attr-title="fileNames[currentEvent.event][' + fieldId + ']" >{{fileNames[currentEvent.event][' + fieldId + '].length > 20 ? fileNames[currentEvent.event][' + fieldId + '].substring(0,20).concat(\'...\') : fileNames[currentEvent.event][' + fieldId + ']}}</a>\n\
 	                                                        </span>\n\
 	                                                        <span class="input-group-btn">\n\
-	                                                            <span class="btn btn-grp btn-file">\n\
-	                                                                <span ng-if="currentEvent.' + fieldId + '" ng-attr-title="{{\'delete\' | translate}}" d2-file-input-name="fileNames[currentEvent.event][' + fieldId + ']" d2-file-input-delete="currentEvent.' + fieldId + '">\n\
-	                                                                    <a href ng-click="deleteFile(\'' + fieldId + '\')"><i class="fa fa-trash alert-danger"></i></a>\n\
-	                                                                </span>\n\
-	                                                                <span ng-if="!currentEvent.' + fieldId + '" ng-attr-title="{{\'upload\' | translate}}" >\n\
-	                                                                    <i class="fa fa-upload"></i>\n\
-	                                                                    <input  type="file" \n\
-	                                                                            ' + this.getAttributesAsString(attributes) + '\n\
-	                                                                            input-field-id="' + fieldId + '"\n\
-	                                                                            d2-file-input-ps="currentStage"\n\
-	                                                                            d2-file-input="currentEvent"\n\
-	                                                                            d2-file-input-current-name="currentFileNames"\n\
-	                                                                            d2-file-input-name="fileNames">\n\
+	                                                            <span class="btn btn-grp btn-file" ng-click="deleteFile(currentEvent, \'' + fieldId + '\')" ng-if="currentEvent.' + fieldId + '">\n\
+	                                                                <i class="fa fa-trash alert-danger"></i>\n\
+	                                                                <span ng-attr-title="{{\'delete\' | translate}}" d2-file-input-name="fileNames[currentEvent.event][' + fieldId + ']" d2-file-input-delete="currentEvent.' + fieldId + '">\n\
 	                                                                </span>\n\
 	                                                            </span>\n\
+	                                                            <span class="btn btn-grp btn-file" ng-if="!currentEvent.' + fieldId + '"> \n\
+	                                                                <span ng-attr-title="{{\'upload\' | translate}}" >\n\
+	                                                                        <i class="fa fa-upload"></i>\n\
+	                                                                        <input  type="file" \n\
+	                                                                                ' + this.getAttributesAsString(attributes) + '\n\
+	                                                                                input-field-id="' + fieldId + '"\n\
+	                                                                                d2-file-input-ps="currentStage"\n\
+	                                                                                d2-file-input="currentEvent"\n\
+	                                                                                d2-file-input-current-name="currentFileNames"\n\
+	                                                                                d2-file-input-name="fileNames">\n\
+	                                                                </span>\n\
+	                                                            </span> \n\
 	                                                        </span>\n\
 	                                                    </span>' 
 	                                                    '<span class="not-for-screen">' +
@@ -2296,14 +2298,6 @@
 	                }
 	                else if(programVariable.programRuleVariableSourceType === "CALCULATED_VALUE"){
 	                    //We won't assign the calculated variables at this step. The rules execution will calculate and assign the variable.
-	                }
-	                else {
-	                    //If the rules was executed without events, we ended up in this else clause as expected, as most of the variables require an event to be mapped
-	                    if(evs)
-	                    {
-	                        //If the rules was executed and events was supplied, we should have found an if clause for the the source type, and not ended up in this dead end else.
-	                        $log.warn("Unknown programRuleVariableSourceType:" + programVariable.programRuleVariableSourceType);
-	                    }
 	                }
 	
 	
@@ -37117,4 +37111,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-9e203e1225678679257d.js.map
+//# sourceMappingURL=app-e13cb263769263c73971.js.map
