@@ -2349,22 +2349,6 @@
 	                else if(programVariable.programRuleVariableSourceType === "CALCULATED_VALUE"){
 	                    //We won't assign the calculated variables at this step. The rules execution will calculate and assign the variable.
 	                }
-	                else {
-	                    //If the rules was executed without events, we ended up in this else clause as expected, as most of the variables require an event to be mapped
-	                    if(evs && allDes)
-	                    {
-	                        //If the rules was executed and events and dataelements was supplied, we should have found an if clause for the the source type, and not ended up in this dead end else.
-	
-	                        if(programVariable.dataElement && programVariable.dataElement.id){
-	                            $log.warn("Unknown programRuleVariableSourceType or dataelement does not exist. sourceType: " + programVariable.programRuleVariableSourceType+", dataelement: "+programVariable.dataElement.id);
-	
-	                        }else{
-	                        $log.warn("Unknown programRuleVariableSourceType: " + programVariable.programRuleVariableSourceType);
-	                        }
-	
-	                    }
-	                }
-	
 	
 	                if(!valueFound){
 	                    //If there is still no value found, assign default value:
@@ -38932,4 +38916,4 @@
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=app-5cb7c2d7dd56ada2b0ee.js.map
+//# sourceMappingURL=app-3fbcad1bb3a30727c7c2.js.map
