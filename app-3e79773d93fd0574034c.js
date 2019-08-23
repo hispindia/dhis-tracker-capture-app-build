@@ -14582,9 +14582,13 @@
 	        $window.open('../api/trackedEntityInstances/' + tei.trackedEntityInstance + '/' + attributeId + '/image', '_blank', '');
 	    };
 	
-	    $scope.setDateOnFocus = function (currentValue) {
+	    $scope.setDateOnFocus = function (currentValue, date) {
 	        if (!currentValue) {
-	            $scope.currentEvent.eventDate = DateUtils.getToday();
+	            if (date) {
+	                $scope.currentEvent.eventDate = date;
+	            } else {
+	                $scope.currentEvent.eventDate = DateUtils.getToday();
+	            }
 	        }
 	    };
 	
@@ -38947,4 +38951,4 @@
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=app-a33a74f36a6b3cbe9712.js.map
+//# sourceMappingURL=app-3e79773d93fd0574034c.js.map
