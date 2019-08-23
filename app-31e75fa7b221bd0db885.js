@@ -2331,22 +2331,6 @@
 	                else if(programVariable.programRuleVariableSourceType === "CALCULATED_VALUE"){
 	                    //We won't assign the calculated variables at this step. The rules execution will calculate and assign the variable.
 	                }
-	                else {
-	                    //If the rules was executed without events, we ended up in this else clause as expected, as most of the variables require an event to be mapped
-	                    if(evs && allDes)
-	                    {
-	                        //If the rules was executed and events and dataelements was supplied, we should have found an if clause for the the source type, and not ended up in this dead end else.
-	
-	                        if(programVariable.dataElement && programVariable.dataElement.id){
-	                            $log.warn("Unknown programRuleVariableSourceType or dataelement does not exist. sourceType: " + programVariable.programRuleVariableSourceType+", dataelement: "+programVariable.dataElement.id);
-	
-	                        }else{
-	                        $log.warn("Unknown programRuleVariableSourceType: " + programVariable.programRuleVariableSourceType);
-	                        }
-	
-	                    }
-	                }
-	
 	
 	                if(!valueFound){
 	                    //If there is still no value found, assign default value:
@@ -2420,10 +2404,17 @@
 	    var replaceVariables = function(expression, variablesHash){
 	        //replaces the variables in an expression with actual variable values.
 	
+	        //First, check if the special cases like d2:hasValue(#{variableName}) is present. If it is, we need to replace with:
+	        //d2:hasValue('variableName') to avoid the further replacement, and make sure the correct input is fed into d2:hasValue.
+	        var avoidReplacementFunctions = ['d2:hasValue','d2:lastEventDate', 'd2:count', 'd2:countIfZeroPos', 'd2:countIfValue'];
+	        avoidReplacementFunctions.forEach(avoidReplaceFunction => {
+	            expression = expression.replace( new RegExp("(" + avoidReplaceFunction + "\\() *[A#CV]\\{([\\w \\-\\_\\.]+)\\}(.*)\\)" ), "$1'$2'$3\)");
+	        });
+	
 	        //Check if the expression contains program rule variables at all(any curly braces):
 	        if(expression.indexOf('{') !== -1) {
 	            //Find every variable name in the expression;
-	            var variablespresent = expression.match(/[A#CV]\{[\w -_.]+}/g);
+	            var variablespresent = expression.match(/[A#CV]\{[\w \-\_\.]+\}/g);
 	            //Replace each matched variable:
 	            angular.forEach(variablespresent, function(variablepresent) {
 	                //First strip away any prefix and postfix signs from the variable name:
@@ -38422,4 +38413,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-48a1d27ffbf903285974.js.map
+//# sourceMappingURL=app-31e75fa7b221bd0db885.js.map
