@@ -2349,22 +2349,6 @@
 	                else if(programVariable.programRuleVariableSourceType === "CALCULATED_VALUE"){
 	                    //We won't assign the calculated variables at this step. The rules execution will calculate and assign the variable.
 	                }
-	                else {
-	                    //If the rules was executed without events, we ended up in this else clause as expected, as most of the variables require an event to be mapped
-	                    if(evs && allDes)
-	                    {
-	                        //If the rules was executed and events and dataelements was supplied, we should have found an if clause for the the source type, and not ended up in this dead end else.
-	
-	                        if(programVariable.dataElement && programVariable.dataElement.id){
-	                            $log.warn("Unknown programRuleVariableSourceType or dataelement does not exist. sourceType: " + programVariable.programRuleVariableSourceType+", dataelement: "+programVariable.dataElement.id);
-	
-	                        }else{
-	                        $log.warn("Unknown programRuleVariableSourceType: " + programVariable.programRuleVariableSourceType);
-	                        }
-	
-	                    }
-	                }
-	
 	
 	                if(!valueFound){
 	                    //If there is still no value found, assign default value:
@@ -9209,8 +9193,34 @@
 	            });
 	            return promise;
 	        },
+	        getPotentialDuplicates: function getPotentialDuplicates(uidList) {
+	            var uidUrl = "";
+	            if (uidList.length > 0) {
+	                uidUrl += "?teis=";
+	                for (var i = 0; i < uidList.length; i++) {
+	                    if (i > 0) uidUrl += ",";
+	                    uidUrl += uidList[i];
+	                }
+	            }
+	            var promise = $http.get(DHIS2URL + '/potentialDuplicates' + uidUrl).then(function (response) {
+	                return response.data;
+	            });
+	            return promise;
+	        },
+	        getPotentialDuplicatesForTei: function getPotentialDuplicatesForTei(uid) {
+	            var promise = $http.get(DHIS2URL + '/potentialDuplicates?teis=' + uid).then(function (response) {
+	                return response.data;
+	            });
+	            return promise;
+	        },
 	        markPotentialDuplicate: function markPotentialDuplicate(tei) {
 	            var promise = $http.post(DHIS2URL + '/potentialDuplicates/', { teiA: tei.id }).then(function (response) {
+	                return response.data;
+	            });
+	            return promise;
+	        },
+	        deletePotentialDuplicate: function deletePotentialDuplicate(duplicate) {
+	            var promise = $http.delete(DHIS2URL + '/potentialDuplicates/' + duplicate.id).then(function (response) {
 	                return response.data;
 	            });
 	            return promise;
@@ -11968,7 +11978,10 @@
 	            gridColumns: "=?teiGridColumns",
 	            refetchData: "&teiRefetchData",
 	            onTeiClicked: "&onTeiClicked",
-	            onMarkDuplicate: "&onMarkDuplicate"
+	            allowFlagDuplicates: "=allowFlagDuplicates",
+	            onMarkDuplicate: "&onMarkDuplicate",
+	            onUnMarkDuplicate: "&onUnMarkDuplicate",
+	            onGetDuplicate: "&onGetDuplicate"
 	        },
 	
 	        controller: ["$scope", "Paginator", "TEIGridService", "CurrentSelection", function controller($scope, Paginator, TEIGridService, CurrentSelection) {
@@ -12021,6 +12034,19 @@
 	
 	            $scope.onMarkDuplicateInternal = function (tei) {
 	                $scope.onMarkDuplicate({ tei: tei });
+	            };
+	
+	            $scope.onUnMarkDuplicateInternal = function (tei) {
+	                $scope.onUnMarkDuplicate({ tei: tei });
+	            };
+	
+	            $scope.onGetDuplicateInternal = function (tei) {
+	                var dupe = $scope.onGetDuplicate({ tei: tei });
+	                if (dupe) {
+	                    return true;
+	                } else {
+	                    return false;
+	                }
 	            };
 	
 	            $scope.getPage = function (page) {
@@ -12705,6 +12731,8 @@
 	            window.location.reload();
 	        }
 	    });
+	
+	    $scope.duplicateExists = false;
 	    $rootScope.hasAccess = false;
 	    $scope.APIURL = DHIS2URL;
 	    //selections
@@ -12802,6 +12830,11 @@
 	            });
 	
 	            if ($scope.selectedTeiId) {
+	
+	                TEIService.getPotentialDuplicatesForTei($scope.selectedTeiId).then(function (duplicates) {
+	                    $scope.potentialDuplicates = duplicates.identifiableObjects;
+	                    $scope.duplicateExists = $scope.potentialDuplicates.length > 0 ? true : false;
+	                });
 	
 	                //get option sets
 	                $scope.optionSets = [];
@@ -22199,7 +22232,7 @@
 	
 	var trackerCapture = angular.module('trackerCapture');
 	
-	trackerCapture.controller('SearchController', ["$rootScope", "$scope", "$modal", "$location", "$filter", "$translate", "$timeout", "$q", "Paginator", "MetaDataFactory", "DateUtils", "OrgUnitFactory", "ProgramFactory", "AttributesFactory", "EntityQueryFactory", "CurrentSelection", "TEService", "SearchGroupService", "OperatorFactory", "TEIGridService", "AccessUtils", "TCOrgUnitService", function ($rootScope, $scope, $modal, $location, $filter, $translate, $timeout, $q, Paginator, MetaDataFactory, DateUtils, OrgUnitFactory, ProgramFactory, AttributesFactory, EntityQueryFactory, CurrentSelection, TEService, SearchGroupService, OperatorFactory, TEIGridService, AccessUtils, TCOrgUnitService) {
+	trackerCapture.controller('SearchController', ["$rootScope", "$scope", "$modal", "$location", "$filter", "$translate", "$timeout", "$q", "Paginator", "MetaDataFactory", "DateUtils", "OrgUnitFactory", "ProgramFactory", "AttributesFactory", "EntityQueryFactory", "CurrentSelection", "TEService", "SearchGroupService", "OperatorFactory", "TEIGridService", "TEIService", "AccessUtils", "TCOrgUnitService", function ($rootScope, $scope, $modal, $location, $filter, $translate, $timeout, $q, Paginator, MetaDataFactory, DateUtils, OrgUnitFactory, ProgramFactory, AttributesFactory, EntityQueryFactory, CurrentSelection, TEService, SearchGroupService, OperatorFactory, TEIGridService, TEIService, AccessUtils, TCOrgUnitService) {
 	    var searchScopes = SearchGroupService.getSearchScopes();
 	    var currentSearchScope = searchScopes.TRACKEDENTITYTYPE;
 	    $scope.trackedEntityTypes = {};
@@ -22319,19 +22352,36 @@
 	
 	        return promise.then(function (res) {
 	            //If only one tei found and in selectedOrgUnit, go straight to dashboard
-	            if (res && res.data && res.data.rows && res.data.rows.length === 1) {
-	                var gridData = TEIGridService.format($scope.selectedOrgUnit.id, res.data, false, $scope.base.optionSets, null);
+	            if (res && res.data && res.data.rows) {
+	                if (res.data.rows.length === 1) {
+	                    var gridData = TEIGridService.format($scope.selectedOrgUnit.id, res.data, false, $scope.base.optionSets, null);
 	
-	                //Open TEI if unique and in same search scope and in selected org unit
-	                if (gridData.rows.own.length === 1 && res.callingScope === res.resultScope && searchGroup.uniqueGroup) {
-	                    searching = false;
-	                    openTei(gridData.rows.own[0]);
-	                    return;
+	                    //Open TEI if unique and in same search scope and in selected org unit
+	                    if (gridData.rows.own.length === 1 && res.callingScope === res.resultScope && searchGroup.uniqueGroup) {
+	                        searching = false;
+	                        openTei(gridData.rows.own[0]);
+	                        return;
+	                    }
+	                }
+	
+	                if (res.data.rows.length > 0) {
+	                    var teiList = [];
+	
+	                    angular.forEach(res.data.rows.own, function (ownTei) {
+	                        teiList.push(ownTei.id);
+	                    });
+	                    angular.forEach(res.data.rows.own, function (ownTei) {
+	                        teiList.push(ownTei.id);
+	                    });
+	
+	                    var potentialDuplicatesPromise = TEIService.getPotentialDuplicates(teiList);
+	                    return potentialDuplicatesPromise.then(function (duplicates) {
+	                        return showResultModal(res, searchGroup, duplicates.identifiableObjects ? duplicates.identifiableObjects : []).then(function () {
+	                            searching = false;
+	                        });
+	                    });
 	                }
 	            }
-	            return showResultModal(res, searchGroup).then(function () {
-	                searching = false;
-	            });
 	        });
 	    };
 	
@@ -22402,12 +22452,14 @@
 	        return false;
 	    };
 	
-	    var showResultModal = function showResultModal(_res, searchGroup) {
+	    var showResultModal = function showResultModal(_res, searchGroup, existingDuplicates) {
 	        var _internalService = {
 	            translateWithOULevelName: translateWithOULevelName,
 	            translateWithTETName: translateWithTETName,
 	            base: $scope.base
 	        };
+	
+	        _res.existingDuplicates = existingDuplicates;
 	
 	        var refetch;
 	        if (currentSearchScope === searchScopes.PROGRAM) {
@@ -22424,6 +22476,7 @@
 	        return $modal.open({
 	            templateUrl: 'components/home/search/result-modal.html',
 	            controller: ["$scope", "$modalInstance", "TEIGridService", "OrgUnitFactory", "orgUnit", "res", "refetchDataFn", "internalService", "canOpenRegistration", "TEIService", "NotificationService", function controller($scope, $modalInstance, TEIGridService, OrgUnitFactory, orgUnit, res, refetchDataFn, internalService, canOpenRegistration, TEIService, NotificationService) {
+	                $scope.existingDuplicates = res.existingDuplicates;
 	                $scope.gridData = null;
 	                $scope.isUnique = false;
 	                $scope.canOpenRegistration = canOpenRegistration;
@@ -22458,7 +22511,30 @@
 	                };
 	
 	                $scope.markPotentialDuplicate = function (tei) {
-	                    TEIService.markPotentialDuplicate(tei);
+	                    TEIService.markPotentialDuplicate(tei).then(function (duplicate) {
+	                        $scope.existingDuplicates.push(duplicate);
+	                    });
+	                };
+	
+	                $scope.unMarkPotentialDuplicate = function (tei) {
+	                    var newExistingDuplicatesList = [];
+	                    angular.forEach($scope.existingDuplicates, function (duplicate) {
+	                        if (duplicate.teiA != tei.id && duplicate.teiB != tei.id) {
+	                            newExistingDuplicatesList.push(duplicate);
+	                        }
+	                    });
+	                    TEIService.deletePotentialDuplicate(tei);
+	                    $scope.existingDuplicates = newExistingDuplicatesList;
+	                };
+	
+	                $scope.getPotentialDuplicate = function (tei) {
+	                    var returnDuplicate = null;
+	                    angular.forEach($scope.existingDuplicates, function (duplicate) {
+	                        if (duplicate.teiA == tei.id || duplicate.teiB == tei.id) {
+	                            returnDuplicate = duplicate;
+	                        }
+	                    });
+	                    return returnDuplicate;
 	                };
 	
 	                $scope.openTei = function (tei) {
@@ -38951,4 +39027,4 @@
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=app-3e79773d93fd0574034c.js.map
+//# sourceMappingURL=app-f3b654c0d83ebbf2930f.js.map
