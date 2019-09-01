@@ -18448,7 +18448,7 @@
 	/* global trackerCapture, angular */
 	
 	var trackerCapture = angular.module('trackerCapture');
-	trackerCapture.controller('EventCreationController', ["$scope", "$modalInstance", "$timeout", "$translate", "$filter", "removeFuturePeriodFilter", "DateUtils", "DHIS2EventFactory", "OrgUnitFactory", "NotificationService", "EventCreationService", "eventsByStage", "stage", "stages", "writableStages", "allStages", "tei", "program", "orgUnit", "enrollment", "eventCreationAction", "autoCreate", "EventUtils", "events", "selectedCategories", "PeriodService", "ModalService", "CurrentSelection", "TEIService", "TCOrgUnitService", function ($scope, $modalInstance, $timeout, $translate, $filter, removeFuturePeriodFilter, DateUtils, DHIS2EventFactory, OrgUnitFactory, NotificationService, EventCreationService, eventsByStage, stage, stages, writableStages, allStages, tei, program, orgUnit, enrollment, eventCreationAction, autoCreate, EventUtils, events, selectedCategories, PeriodService, ModalService, CurrentSelection, TEIService, TCOrgUnitService) {
+	trackerCapture.controller('EventCreationController', ["$scope", "$rootScope", "$modalInstance", "$timeout", "$translate", "$filter", "removeFuturePeriodFilter", "DateUtils", "DHIS2EventFactory", "OrgUnitFactory", "NotificationService", "EventCreationService", "eventsByStage", "stage", "stages", "writableStages", "allStages", "tei", "program", "orgUnit", "enrollment", "eventCreationAction", "autoCreate", "EventUtils", "events", "selectedCategories", "PeriodService", "ModalService", "CurrentSelection", "TEIService", "TCOrgUnitService", function ($scope, $rootScope, $modalInstance, $timeout, $translate, $filter, removeFuturePeriodFilter, DateUtils, DHIS2EventFactory, OrgUnitFactory, NotificationService, EventCreationService, eventsByStage, stage, stages, writableStages, allStages, tei, program, orgUnit, enrollment, eventCreationAction, autoCreate, EventUtils, events, selectedCategories, PeriodService, ModalService, CurrentSelection, TEIService, TCOrgUnitService) {
 	    $scope.selectedOrgUnit = orgUnit;
 	    $scope.selectedEnrollment = enrollment;
 	    $scope.stages = stages;
@@ -18747,6 +18747,7 @@
 	
 	            TEIService.changeTeiProgramOwner($scope.tei.trackedEntityInstance, $scope.selectedProgram.id, dummyEvent.orgUnit).then(function (response) {
 	                $scope.save();
+	                $rootScope.$broadcast('selectedItems', { programExists: true });
 	            });
 	        });
 	    };
@@ -38768,4 +38769,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-6e3c76f0b93cd82d165d.js.map
+//# sourceMappingURL=app-a69ba6cf068fb2abc86c.js.map
