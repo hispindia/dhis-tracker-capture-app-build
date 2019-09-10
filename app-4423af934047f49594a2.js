@@ -14679,6 +14679,18 @@
 	            $scope.enrollmentGeometryState.geometry = $scope.selectedEnrollment.geometry;
 	        }
 	    };
+	
+	    var setOwnerOrgUnit = function setOwnerOrgUnit() {
+	        var owningOrgUnitId = CurrentSelection.currentSelection.tei.programOwnersById[$scope.selectedProgram.id];
+	        OrgUnitFactory.getFromStoreOrServer(owningOrgUnitId).then(function (orgUnit) {
+	            $scope.owningOrgUnitName = orgUnit.displayName;
+	        });
+	    };
+	
+	    $scope.$on('ownerUpdated', function (event, args) {
+	        setOwnerOrgUnit();
+	    });
+	
 	    //listen for the selected items
 	    $scope.$on('selectedItems', function (event, args) {
 	        currentReportDate = null;
@@ -14725,10 +14737,7 @@
 	                $scope.stagesById[stage.id] = stage;
 	            });
 	
-	            var owningOrgUnitId = $scope.selectedTei.programOwnersById[$scope.selectedProgram.id];
-	            OrgUnitFactory.getFromStoreOrServer(owningOrgUnitId).then(function (orgUnit) {
-	                $scope.owningOrgUnitName = orgUnit.displayName;
-	            });
+	            setOwnerOrgUnit();
 	
 	            angular.forEach($scope.enrollments, function (enrollment) {
 	                if (enrollment.program === $scope.selectedProgram.id) {
@@ -18870,7 +18879,7 @@
 	
 	            TEIService.changeTeiProgramOwner($scope.tei.trackedEntityInstance, $scope.selectedProgram.id, dummyEvent.orgUnit).then(function (response) {
 	                $scope.save();
-	                $rootScope.$broadcast('selectedItems', { programExists: true });
+	                $rootScope.$broadcast('ownerUpdated', { programExists: true });
 	            });
 	        });
 	    };
@@ -38993,4 +39002,4 @@
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=app-ac325bdc67196ad1f5f2.js.map
+//# sourceMappingURL=app-4423af934047f49594a2.js.map
