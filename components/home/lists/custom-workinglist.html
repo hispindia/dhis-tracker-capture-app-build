@@ -1,7 +1,7 @@
 <table class="table dhis2-list-table-striped dhis2-table-hover">
     <tr>
         <td>{{'ou_search_scope'| translate}}</td>
-        <td>                    
+        <td>
             <label><input type="radio" ng-model="customWorkingListValues.ouMode.name" name="selected" ng-attr-value="SELECTED"> {{'SELECTED'| translate}}</label><br/>
             <label><input type="radio" ng-model="customWorkingListValues.ouMode.name" name="children" ng-attr-value="CHILDREN"> {{'CHILDREN'| translate}}</label><br/>
             <label><input type="radio" ng-model="customWorkingListValues.ouMode.name" name="descendants" ng-attr-value="DESCENDANTS"> {{'DESCENDANTS'| translate}}</label><br/>
@@ -127,5 +127,5 @@
         class="btn btn-primary dropdown-toggle"
         ng-click="setCustomWorkingList()" data-toggle="dropdown">
     {{'search'| translate}}
-</button>        
+</button>
 </div>
