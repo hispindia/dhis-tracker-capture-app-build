@@ -22495,12 +22495,17 @@
 	
 	                $scope.unMarkPotentialDuplicate = function (tei) {
 	                    var newExistingDuplicatesList = [];
+	                    var duplicateToDelete = {};
 	                    angular.forEach($scope.existingDuplicates, function (duplicate) {
 	                        if (duplicate.teiA != tei.id && duplicate.teiB != tei.id) {
 	                            newExistingDuplicatesList.push(duplicate);
+	                        } else {
+	                            duplicateToDelete = duplicate;
 	                        }
 	                    });
-	                    TEIService.deletePotentialDuplicate(tei);
+	                    if (duplicateToDelete) {
+	                        TEIService.deletePotentialDuplicate(duplicateToDelete);
+	                    }
 	                    $scope.existingDuplicates = newExistingDuplicatesList;
 	                };
 	
@@ -39004,4 +39009,4 @@
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=app-09fdde7e539895c793d8.js.map
+//# sourceMappingURL=app-76cbff8388b49bc6c409.js.map
