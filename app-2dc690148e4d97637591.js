@@ -10766,26 +10766,28 @@
 	    };
 	    var getEventUrl = function getEventUrl(eventFilter) {
 	        var eventUrl = "";
-	        if (eventFilter.eventStatus) eventUrl = "eventStatus=" + eventFilter.eventStatus;
-	        if (eventFilter.eventCreatedPeriod) {
-	            if (eventUrl) eventUrl += "&";
-	            eventUrl += "eventStartDate=" + getPeriodDate(eventFilter.eventCreatedPeriod.periodFrom);
-	            eventUrl += "&eventEndDate=" + getPeriodDate(eventFilter.eventCreatedPeriod.periodTo);
-	        }
-	        if (eventFilter.programStage) {
-	            if (eventUrl) eventUrl += "&";
-	            eventUrl += "programStage=" + eventFilter.programStage;
-	        }
-	        if (eventFilter.assignedUserMode) {
-	            if (eventUrl) eventUrl += "&";
-	            eventUrl += "assignedUserMode=" + eventFilter.assignedUserMode;
-	        }
-	        if (!eventFilter.assignedUserMode || eventFilter.assignedUserMode == "PROVIDED" && eventFilter.assignedUsers && eventFilter.assignedUsers.length > 0) {
-	            if (eventUrl) eventUrl += "&";
-	            eventUrl += "assignedUser=";
-	            for (var i = 0; i < eventFilter.assignedUsers.length; i++) {
-	                if (i > 0) eventUrl += ";";
-	                eventUrl += eventFilter.assignedUsers[i];
+	        if (eventFilter) {
+	            if (eventFilter.eventStatus) eventUrl = "eventStatus=" + eventFilter.eventStatus;
+	            if (eventFilter.eventCreatedPeriod) {
+	                if (eventUrl) eventUrl += "&";
+	                eventUrl += "eventStartDate=" + getPeriodDate(eventFilter.eventCreatedPeriod.periodFrom);
+	                eventUrl += "&eventEndDate=" + getPeriodDate(eventFilter.eventCreatedPeriod.periodTo);
+	            }
+	            if (eventFilter.programStage) {
+	                if (eventUrl) eventUrl += "&";
+	                eventUrl += "programStage=" + eventFilter.programStage;
+	            }
+	            if (eventFilter.assignedUserMode) {
+	                if (eventUrl) eventUrl += "&";
+	                eventUrl += "assignedUserMode=" + eventFilter.assignedUserMode;
+	            }
+	            if (!eventFilter.assignedUserMode || eventFilter.assignedUserMode == "PROVIDED" && eventFilter.assignedUsers && eventFilter.assignedUsers.length > 0) {
+	                if (eventUrl) eventUrl += "&";
+	                eventUrl += "assignedUser=";
+	                for (var i = 0; i < eventFilter.assignedUsers.length; i++) {
+	                    if (i > 0) eventUrl += ";";
+	                    eventUrl += eventFilter.assignedUsers[i];
+	                }
 	            }
 	        }
 	        return eventUrl;
@@ -39009,4 +39011,4 @@
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=app-76cbff8388b49bc6c409.js.map
+//# sourceMappingURL=app-2dc690148e4d97637591.js.map
