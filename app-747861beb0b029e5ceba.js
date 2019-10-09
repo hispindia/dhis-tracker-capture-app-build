@@ -10731,15 +10731,17 @@
 	    };
 	    var getEventUrl = function getEventUrl(eventFilter) {
 	        var eventUrl = null;
-	        if (eventFilter.eventStatus) eventUrl = "eventStatus=" + eventFilter.eventStatus;
-	        if (eventFilter.eventCreatedPeriod) {
-	            if (eventUrl) eventUrl += "&";
-	            eventUrl += "eventStartDate=" + getPeriodDate(eventFilter.eventCreatedPeriod.periodFrom);
-	            eventUrl += "&eventEndDate=" + getPeriodDate(eventFilter.eventCreatedPeriod.periodTo);
-	        }
-	        if (eventFilter.programStage) {
-	            if (eventUrl) eventUrl += "&";
-	            eventUrl += "programStage=" + eventFilter.programStage;
+	        if (eventFilter) {
+	            if (eventFilter.eventStatus) eventUrl = "eventStatus=" + eventFilter.eventStatus;
+	            if (eventFilter.eventCreatedPeriod) {
+	                if (eventUrl) eventUrl += "&";
+	                eventUrl += "eventStartDate=" + getPeriodDate(eventFilter.eventCreatedPeriod.periodFrom);
+	                eventUrl += "&eventEndDate=" + getPeriodDate(eventFilter.eventCreatedPeriod.periodTo);
+	            }
+	            if (eventFilter.programStage) {
+	                if (eventUrl) eventUrl += "&";
+	                eventUrl += "programStage=" + eventFilter.programStage;
+	            }
 	        }
 	        return eventUrl;
 	    };
@@ -23381,7 +23383,12 @@
 	
 	                TEIService.update(tei, $scope.optionSets, $scope.attributesById).then(function (response) {
 	                    var relationshipResponse = response && response.response && response.response.relationships;
-	                    var importSummary = relationshipResponse && relationshipResponse.importSummaries && relationshipResponse.importSummaries[0];
+	                    var importSummary = null;
+	                    angular.forEach(relationshipResponse.importSummaries, function (importSummaryCandidate) {
+	                        if (importSummaryCandidate.status === "SUCCESS" && importSummaryCandidate.importCount.imported === 1) {
+	                            importSummary = importSummaryCandidate;
+	                        }
+	                    });
 	                    if (!importSummary) {
 	                        NotificationService.showNotifcationDialog($translate.instant("unknown_error"), $translate.instant("unknown_error"));
 	                        return;
@@ -23389,10 +23396,7 @@
 	                    if (importSummary && importSummary.status !== 'SUCCESS') {
 	                        //update has failed
 	                        var message = $translate.instant("saving_relationship_failed_conflicts");
-	                        var conflictMessage = importSummary.conflicts.reduce(function (msg, conflict) {
-	                            msg += "[" + conflict.value + "] ";
-	                            return msg;
-	                        }, "");
+	                        var conflictMessage = importSummary.description;
 	                        NotificationService.showNotifcationDialog($translate.instant("saving_relationship_failed"), message + ": " + conflictMessage);
 	                        return;
 	                    }
@@ -42197,4 +42201,4 @@
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=app-a8e0f503da5831dce453.js.map
+//# sourceMappingURL=app-747861beb0b029e5ceba.js.map
