@@ -10449,15 +10449,17 @@
 	    };
 	    var getEventUrl = function getEventUrl(eventFilter) {
 	        var eventUrl = null;
-	        if (eventFilter.eventStatus) eventUrl = "eventStatus=" + eventFilter.eventStatus;
-	        if (eventFilter.eventCreatedPeriod) {
-	            if (eventUrl) eventUrl += "&";
-	            eventUrl += "eventStartDate=" + getPeriodDate(eventFilter.eventCreatedPeriod.periodFrom);
-	            eventUrl += "&eventEndDate=" + getPeriodDate(eventFilter.eventCreatedPeriod.periodTo);
-	        }
-	        if (eventFilter.programStage) {
-	            if (eventUrl) eventUrl += "&";
-	            eventUrl += "programStage=" + eventFilter.programStage;
+	        if (eventFilter) {
+	            if (eventFilter.eventStatus) eventUrl = "eventStatus=" + eventFilter.eventStatus;
+	            if (eventFilter.eventCreatedPeriod) {
+	                if (eventUrl) eventUrl += "&";
+	                eventUrl += "eventStartDate=" + getPeriodDate(eventFilter.eventCreatedPeriod.periodFrom);
+	                eventUrl += "&eventEndDate=" + getPeriodDate(eventFilter.eventCreatedPeriod.periodTo);
+	            }
+	            if (eventFilter.programStage) {
+	                if (eventUrl) eventUrl += "&";
+	                eventUrl += "programStage=" + eventFilter.programStage;
+	            }
 	        }
 	        return eventUrl;
 	    };
@@ -38413,4 +38415,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-31e75fa7b221bd0db885.js.map
+//# sourceMappingURL=app-4e858374de9fba056a12.js.map
