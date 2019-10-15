@@ -20201,7 +20201,7 @@
 	                        relationshipType = $scope.relationshipTypes.find(function (relType) {
 	                            return relType.id === rel.relationshipType;
 	                        });
-	                        var relName = relationshipType.bidirectional ? relationshipType.toFromName : relationshipType.displayName;
+	                        var relName = relationshipType.fromToName;
 	
 	                        if (relationshipType && teiTypes.filter(function (teiType) {
 	                            return teiType.id === tei.trackedEntityType;
@@ -20235,7 +20235,7 @@
 	                        relationshipType = $scope.relationshipTypes.find(function (relType) {
 	                            return relType.id === rel.relationshipType;
 	                        });
-	                        var relName = relationshipType.fromToName;
+	                        var relName = relationshipType.toFromName;
 	
 	                        if (relationshipType && teiTypes.filter(function (teiType) {
 	                            return teiType.id === tei.trackedEntityType;
@@ -20271,7 +20271,7 @@
 	                        relationshipType = $scope.relationshipTypes.find(function (relType) {
 	                            return relType.id === rel.relationshipType;
 	                        });
-	                        var relName = relationshipType.fromToName;
+	                        var relName = relationshipType.toFromName;
 	
 	                        relationshipProgram = relationshipType.fromConstraint.program;
 	
@@ -39011,4 +39011,4 @@
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=app-2dc690148e4d97637591.js.map
+//# sourceMappingURL=app-10ad4a7bbed9a5a2aa89.js.map
