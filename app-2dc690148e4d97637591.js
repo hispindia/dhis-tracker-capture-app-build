@@ -20835,7 +20835,12 @@
 	
 	                TEIService.update(tei, $scope.optionSets, $scope.attributesById).then(function (response) {
 	                    var relationshipResponse = response && response.response && response.response.relationships;
-	                    var importSummary = relationshipResponse && relationshipResponse.importSummaries && relationshipResponse.importSummaries[0];
+	                    var importSummary = null;
+	                    angular.forEach(relationshipResponse.importSummaries, function (importSummaryCandidate) {
+	                        if (importSummaryCandidate.status === "SUCCESS" && importSummaryCandidate.importCount.imported === 1) {
+	                            importSummary = importSummaryCandidate;
+	                        }
+	                    });
 	                    if (!importSummary) {
 	                        NotificationService.showNotifcationDialog($translate.instant("unknown_error"), $translate.instant("unknown_error"));
 	                        return;
@@ -20843,10 +20848,7 @@
 	                    if (importSummary && importSummary.status !== 'SUCCESS') {
 	                        //update has failed
 	                        var message = $translate.instant("saving_relationship_failed_conflicts");
-	                        var conflictMessage = importSummary.conflicts.reduce(function (msg, conflict) {
-	                            msg += "[" + conflict.value + "] ";
-	                            return msg;
-	                        }, "");
+	                        var conflictMessage = importSummary.description;
 	                        NotificationService.showNotifcationDialog($translate.instant("saving_relationship_failed"), message + ": " + conflictMessage);
 	                        return;
 	                    }
@@ -39009,4 +39011,4 @@
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=app-57dba943259037d61f32.js.map
+//# sourceMappingURL=app-2dc690148e4d97637591.js.map
