@@ -13383,8 +13383,19 @@
 	    }
 	
 	    $scope.isDisabled = function (attribute) {
+	        // update for PLAN for disable attribute patient_identifier
+	        if (attribute.code === 'patient_identifier') {
+	            return true;
+	        } else {
+	            return attribute.generated || $scope.assignedFields[attribute.id] || $scope.editingDisabled;
+	        }
+	    };
+	
+	    /*
+	    $scope.isDisabled = function(attribute) {
 	        return attribute.generated || $scope.assignedFields[attribute.id] || $scope.editingDisabled;
 	    };
+	    */
 	
 	    $scope.selectedEnrollment = {
 	        enrollmentDate: $scope.today,
@@ -23145,7 +23156,7 @@
 	            url3 += "var=programUid:" + programUid;
 	            $.get(url3, function (data) {
 	
-	                def.resolve(data);
+	                def.resolve(data.listGrid);
 	            });
 	            return def.promise;
 	            //  $http.get('../api/trackedEntityInstances.json?fields=trackedEntityInstance&program=' + programUid + "&ouMode=ALL&skipPaging=true").then(function (response) {
@@ -23188,7 +23199,7 @@
 	                contentType: "application/json",
 	                url: '../api/sqlViews/' + sqlViewUID + "/data?" + param + "&paging=false",
 	                success: function success(data) {
-	                    def.resolve(data);
+	                    def.resolve(data.listGrid);
 	                }
 	            });
 	            return def;
@@ -42740,4 +42751,4 @@
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=app-07bcf95cf8e9343c13e2.js.map
+//# sourceMappingURL=app-f0ecfd5f9df7bf6906b8.js.map
