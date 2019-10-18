@@ -8530,7 +8530,8 @@
 	}])
 	
 	/* Factory to fetch relationships */
-	.factory('RelationshipFactory', ["$q", "$rootScope", "TCStorageService", function ($q, $rootScope, TCStorageService) {
+	.factory('RelationshipFactory', ["$q", "$http", "$rootScope", "$translate", "TCStorageService", "NotificationService", function ($q, $http, $rootScope, $translate, TCStorageService, NotificationService) {
+	    var errorHeader = $translate.instant("error");
 	    return {
 	        getAll: function getAll() {
 	
@@ -8558,6 +8559,21 @@
 	                });
 	            });
 	            return def.promise;
+	        },
+	        delete: function _delete(uid) {
+	            var promise = $http.delete(DHIS2URL + '/relationships/' + uid).then(function (response) {
+	                if (!response || !response.data || response.data.status !== 'OK') {
+	                    var errorBody = $translate.instant('failed_to_delete_relationship');
+	                    NotificationService.showNotifcationDialog(errorHeader, errorBody);
+	                    return $q.reject(errorBody);
+	                }
+	                return response && response.data;
+	            }, function (error) {
+	                var errorBody = $translate.instant('failed_to_delete_relationship');
+	                NotificationService.showNotifcationDialog(errorHeader, errorBody);
+	                return $q.reject(error);
+	            });
+	            return promise;
 	        }
 	    };
 	}])
@@ -8586,9 +8602,10 @@
 	            } else {
 	                TCStorageService.currentStore.open().done(function () {
 	                    TCStorageService.currentStore.getAll('programAccess').done(function (programAccess) {
-	                        access = { programsById: {}, programStagesById: {} };
+	                        access = { programsById: {}, programStagesById: {}, programIdNameMap: {} };
 	                        angular.forEach(programAccess, function (program) {
 	                            access.programsById[program.id] = program.access;
+	                            access.programIdNameMap[program.id] = program.displayName;
 	                            angular.forEach(program.programStages, function (programStage) {
 	                                access.programStagesById[programStage.id] = programStage.access;
 	                            });
@@ -9633,6 +9650,18 @@
 	                    var errorBody = $translate.instant('failed_to_fetch_events');
 	                    NotificationService.showNotifcationDialog(errorHeader, errorBody, response);
 	                }
+	            });
+	            return promise;
+	        },
+	        getEventWithoutRegistration: function getEventWithoutRegistration(eventId) {
+	            var url = DHIS2URL + '/events/' + eventId;
+	
+	            var promise = $http.get(url).then(function (response) {
+	                return response.data;
+	            }, function (response) {
+	                var errorBody = $translate.instant('failed_to_update_event');
+	                NotificationService.showNotifcationDialog(errorHeader, errorBody, response);
+	                return null;
 	            });
 	            return promise;
 	        },
@@ -19943,7 +19972,7 @@
 	/* global trackerCapture, angular */
 	
 	var trackerCapture = angular.module('trackerCapture');
-	trackerCapture.controller('RelationshipController', ["$scope", "$rootScope", "$modal", "$location", "TEIService", "AttributesFactory", "CurrentSelection", "RelationshipFactory", "OrgUnitFactory", "ProgramFactory", "EnrollmentService", "ModalService", "CommonUtils", "TEService", function ($scope, $rootScope, $modal, $location, TEIService, AttributesFactory, CurrentSelection, RelationshipFactory, OrgUnitFactory, ProgramFactory, EnrollmentService, ModalService, CommonUtils, TEService) {
+	trackerCapture.controller('RelationshipController', ["$scope", "$rootScope", "$modal", "$location", "TEIService", "AttributesFactory", "CurrentSelection", "RelationshipFactory", "OrgUnitFactory", "ProgramFactory", "EnrollmentService", "ModalService", "CommonUtils", "TEService", "DHIS2EventFactory", "DateUtils", function ($scope, $rootScope, $modal, $location, TEIService, AttributesFactory, CurrentSelection, RelationshipFactory, OrgUnitFactory, ProgramFactory, EnrollmentService, ModalService, CommonUtils, TEService, DHIS2EventFactory, DateUtils) {
 	    $rootScope.showAddRelationshipDiv = false;
 	    $scope.relatedProgramRelationship = false;
 	    var ENTITYNAME = "TRACKED_ENTITY_INSTANCE";
@@ -19977,6 +20006,11 @@
 	        $scope.selectedProgram = $scope.selections.pr;
 	        $scope.programs = $scope.selections.prs;
 	        $scope.programsById = {};
+	        $scope.allProgramNames = {};
+	        ProgramFactory.getAllAccesses().then(function (data) {
+	            $scope.allProgramNames = data.programIdNameMap;
+	            $scope.accessByProgramId = data.programsById;
+	        });
 	        angular.forEach($scope.programs, function (program) {
 	            $scope.programsById[program.id] = program;
 	        });
@@ -20062,17 +20096,11 @@
 	            }
 	
 	            if (index !== -1) {
-	                $scope.selectedTei.relationships.splice(index, 1);
-	                var trimmedTei = angular.copy($scope.selectedTei);
-	                angular.forEach(trimmedTei.relationships, function (rel) {
-	                    delete rel.relative;
-	                });
-	                TEIService.update(trimmedTei, $scope.optionSets, $scope.attributesById).then(function (response) {
-	                    if (!response || response.response && response.response.status !== 'SUCCESS') {
-	                        //update has failed
-	                        return;
-	                    }
+	                var relationshipToDelete = $scope.selectedTei.relationships.splice(index, 1);
+	                RelationshipFactory.delete(rel.relId).then(function (response) {
 	                    setRelationships();
+	                }, function (error) {
+	                    $scope.selectedTei.relationships.splice(index, 0, relationshipToDelete[0]);
 	                });
 	            }
 	        });
@@ -20082,8 +20110,13 @@
 	        $location.path('/dashboard').search({ tei: teiId, program: program, ou: $scope.selectedOrgUnit.id });
 	    };
 	
+	    $scope.showEventInCaptureApp = function (eventId) {
+	        location.href = '../dhis-web-capture/index.html#/viewEvent/' + eventId;
+	    };
+	
 	    var setRelationships = function setRelationships() {
 	        $scope.relatedTeis = [];
+	        $scope.relatedEvents = [];
 	        $scope.relationshipPrograms = [];
 	        $scope.relationshipAttributes = [];
 	        var relationshipProgram = {};
@@ -20098,7 +20131,7 @@
 	                        relationshipType = $scope.relationshipTypes.find(function (relType) {
 	                            return relType.id === rel.relationshipType;
 	                        });
-	                        var relName = relationshipType.bidirectional ? relationshipType.toFromName : relationshipType.displayName;
+	                        var relName = relationshipType.fromToName;
 	
 	                        if (relationshipType && teiTypes.filter(function (teiType) {
 	                            return teiType.id === tei.trackedEntityType;
@@ -20132,7 +20165,7 @@
 	                        relationshipType = $scope.relationshipTypes.find(function (relType) {
 	                            return relType.id === rel.relationshipType;
 	                        });
-	                        var relName = relationshipType.fromToName;
+	                        var relName = relationshipType.toFromName;
 	
 	                        if (relationshipType && teiTypes.filter(function (teiType) {
 	                            return teiType.id === tei.trackedEntityType;
@@ -20159,6 +20192,41 @@
 	
 	                        var relative = { trackedEntityInstance: teiId, relName: relName, relId: rel.relationship, attributes: getRelativeAttributes(tei.attributes), relationshipProgramConstraint: relationshipProgram, relationshipType: relationshipType };
 	                        $scope.relatedTeis.push(relative);
+	                    });
+	                } else if (rel.from && rel.bidirectional && rel.from.event && rel.from.event.event) {
+	                    var event = null;
+	                    DHIS2EventFactory.getEventWithoutRegistration(rel.from.event.event).then(function (e) {
+	                        event = e;
+	
+	                        relationshipType = $scope.relationshipTypes.find(function (relType) {
+	                            return relType.id === rel.relationshipType;
+	                        });
+	                        var relName = relationshipType.toFromName;
+	
+	                        relationshipProgram = relationshipType.fromConstraint.program;
+	
+	                        if (!relationshipProgram && $scope.selectedProgram) {
+	                            relationshipProgram = { id: $scope.selectedProgram.id };
+	                        }
+	
+	                        var convertedEventDate = DateUtils.formatFromApiToUser(event.eventDate);
+	
+	                        var isDeleteable = !$scope.selectedTei.inactive && relationshipType.access.data.write && $scope.trackedEntityType.access.data.write && $scope.accessByProgramId[event.program].data.write;
+	
+	                        var eventToDisplay = {
+	                            eventId: rel.from.event.event,
+	                            eventDate: convertedEventDate,
+	                            program: $scope.allProgramNames[event.program],
+	                            status: event.status,
+	                            orgUnit: event.orgUnitName,
+	                            relName: relName,
+	                            relId: rel.relationship,
+	                            relationshipProgramConstraint: relationshipProgram,
+	                            relationshipType: relationshipType,
+	                            isDeleteable: isDeleteable
+	                        };
+	
+	                        $scope.relatedEvents.push(eventToDisplay);
 	                    });
 	                }
 	            });
@@ -38821,4 +38889,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-71b14ddf09c324157823.js.map
+//# sourceMappingURL=app-e01bd8e35f521e01e6aa.js.map
