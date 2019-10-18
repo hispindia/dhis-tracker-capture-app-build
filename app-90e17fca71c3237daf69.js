@@ -20292,7 +20292,6 @@
 	
 	                        var convertedEventDate = DateUtils.formatFromApiToUser(event.eventDate);
 	
-	                        debugger;
 	                        var isDeleteable = !$scope.selectedTei.inactive && relationshipType.access.data.write && $scope.trackedEntityType.access.data.write && $scope.accessByProgramId[event.program].data.write;
 	
 	                        var eventToDisplay = {
@@ -39036,4 +39035,4 @@
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=app-b72e88c63b751047f48b.js.map
+//# sourceMappingURL=app-90e17fca71c3237daf69.js.map
