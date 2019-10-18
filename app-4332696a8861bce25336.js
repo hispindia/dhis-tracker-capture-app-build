@@ -20088,8 +20088,9 @@
 	        $scope.programs = $scope.selections.prs;
 	        $scope.programsById = {};
 	        $scope.allProgramNames = {};
-	        ProgramFactory.getAllAccesses().then(function (programs) {
-	            $scope.allProgramNames = programs.programIdNameMap;
+	        ProgramFactory.getAllAccesses().then(function (data) {
+	            $scope.allProgramNames = data.programIdNameMap;
+	            $scope.accessByProgramId = data.programsById;
 	        });
 	        angular.forEach($scope.programs, function (program) {
 	            $scope.programsById[program.id] = program;
@@ -20291,7 +20292,21 @@
 	
 	                        var convertedEventDate = DateUtils.formatFromApiToUser(event.eventDate);
 	
-	                        var eventToDisplay = { eventId: rel.from.event.event, eventDate: convertedEventDate, program: $scope.allProgramNames[event.program], status: event.status, orgUnit: event.orgUnitName, relName: relName, relId: rel.relationship, relationshipProgramConstraint: relationshipProgram, relationshipType: relationshipType };
+	                        debugger;
+	                        var isDeleteable = !$scope.selectedTei.inactive && relationshipType.access.data.write && $scope.trackedEntityType.access.data.write && $scope.accessByProgramId[event.program].data.write;
+	
+	                        var eventToDisplay = {
+	                            eventId: rel.from.event.event,
+	                            eventDate: convertedEventDate,
+	                            program: $scope.allProgramNames[event.program],
+	                            status: event.status,
+	                            orgUnit: event.orgUnitName,
+	                            relName: relName,
+	                            relId: rel.relationship,
+	                            relationshipProgramConstraint: relationshipProgram,
+	                            relationshipType: relationshipType,
+	                            isDeleteable: isDeleteable
+	                        };
 	                        $scope.relatedEvents.push(eventToDisplay);
 	                    });
 	                }
@@ -39021,4 +39036,4 @@
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=app-9fb96d563bd428d84d45.js.map
+//# sourceMappingURL=app-4332696a8861bce25336.js.map
