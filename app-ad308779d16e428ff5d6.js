@@ -8530,7 +8530,8 @@
 	}])
 	
 	/* Factory to fetch relationships */
-	.factory('RelationshipFactory', ["$q", "$rootScope", "TCStorageService", function ($q, $rootScope, TCStorageService) {
+	.factory('RelationshipFactory', ["$q", "$http", "$rootScope", "$translate", "TCStorageService", "NotificationService", function ($q, $http, $rootScope, $translate, TCStorageService, NotificationService) {
+	    var errorHeader = $translate.instant("error");
 	    return {
 	        getAll: function getAll() {
 	
@@ -8558,6 +8559,21 @@
 	                });
 	            });
 	            return def.promise;
+	        },
+	        delete: function _delete(uid) {
+	            var promise = $http.delete(DHIS2URL + '/relationships/' + uid).then(function (response) {
+	                if (!response || !response.data || response.data.status !== 'OK') {
+	                    var errorBody = $translate.instant('failed_to_delete_relationship');
+	                    NotificationService.showNotifcationDialog(errorHeader, errorBody);
+	                    return $q.reject(errorBody);
+	                }
+	                return response && response.data;
+	            }, function (error) {
+	                var errorBody = $translate.instant('failed_to_delete_relationship');
+	                NotificationService.showNotifcationDialog(errorHeader, errorBody);
+	                return $q.reject(error);
+	            });
+	            return promise;
 	        }
 	    };
 	}])
@@ -20072,8 +20088,9 @@
 	        $scope.programs = $scope.selections.prs;
 	        $scope.programsById = {};
 	        $scope.allProgramNames = {};
-	        ProgramFactory.getAllAccesses().then(function (programs) {
-	            $scope.allProgramNames = programs.programIdNameMap;
+	        ProgramFactory.getAllAccesses().then(function (data) {
+	            $scope.allProgramNames = data.programIdNameMap;
+	            $scope.accessByProgramId = data.programsById;
 	        });
 	        angular.forEach($scope.programs, function (program) {
 	            $scope.programsById[program.id] = program;
@@ -20160,17 +20177,11 @@
 	            }
 	
 	            if (index !== -1) {
-	                $scope.selectedTei.relationships.splice(index, 1);
-	                var trimmedTei = angular.copy($scope.selectedTei);
-	                angular.forEach(trimmedTei.relationships, function (rel) {
-	                    delete rel.relative;
-	                });
-	                TEIService.update(trimmedTei, $scope.optionSets, $scope.attributesById).then(function (response) {
-	                    if (!response || response.response && response.response.status !== 'SUCCESS') {
-	                        //update has failed
-	                        return;
-	                    }
+	                var relationshipToDelete = $scope.selectedTei.relationships.splice(index, 1);
+	                RelationshipFactory.delete(rel.relId).then(function (response) {
 	                    setRelationships();
+	                }, function (error) {
+	                    $scope.selectedTei.relationships.splice(index, 0, relationshipToDelete[0]);
 	                });
 	            }
 	        });
@@ -20201,7 +20212,7 @@
 	                        relationshipType = $scope.relationshipTypes.find(function (relType) {
 	                            return relType.id === rel.relationshipType;
 	                        });
-	                        var relName = relationshipType.bidirectional ? relationshipType.toFromName : relationshipType.displayName;
+	                        var relName = relationshipType.fromToName;
 	
 	                        if (relationshipType && teiTypes.filter(function (teiType) {
 	                            return teiType.id === tei.trackedEntityType;
@@ -20235,7 +20246,7 @@
 	                        relationshipType = $scope.relationshipTypes.find(function (relType) {
 	                            return relType.id === rel.relationshipType;
 	                        });
-	                        var relName = relationshipType.fromToName;
+	                        var relName = relationshipType.toFromName;
 	
 	                        if (relationshipType && teiTypes.filter(function (teiType) {
 	                            return teiType.id === tei.trackedEntityType;
@@ -20271,7 +20282,7 @@
 	                        relationshipType = $scope.relationshipTypes.find(function (relType) {
 	                            return relType.id === rel.relationshipType;
 	                        });
-	                        var relName = relationshipType.fromToName;
+	                        var relName = relationshipType.toFromName;
 	
 	                        relationshipProgram = relationshipType.fromConstraint.program;
 	
@@ -20281,7 +20292,20 @@
 	
 	                        var convertedEventDate = DateUtils.formatFromApiToUser(event.eventDate);
 	
-	                        var eventToDisplay = { eventId: rel.from.event.event, eventDate: convertedEventDate, program: $scope.allProgramNames[event.program], status: event.status, orgUnit: event.orgUnitName, relName: relName, relId: rel.relationship, relationshipProgramConstraint: relationshipProgram, relationshipType: relationshipType };
+	                        var isDeleteable = !$scope.selectedTei.inactive && relationshipType.access.data.write && $scope.trackedEntityType.access.data.write && $scope.accessByProgramId[event.program].data.write;
+	
+	                        var eventToDisplay = {
+	                            eventId: rel.from.event.event,
+	                            eventDate: convertedEventDate,
+	                            program: $scope.allProgramNames[event.program],
+	                            status: event.status,
+	                            orgUnit: event.orgUnitName,
+	                            relName: relName,
+	                            relId: rel.relationship,
+	                            relationshipProgramConstraint: relationshipProgram,
+	                            relationshipType: relationshipType,
+	                            isDeleteable: isDeleteable
+	                        };
 	                        $scope.relatedEvents.push(eventToDisplay);
 	                    });
 	                }
@@ -39011,4 +39035,4 @@
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=app-2dc690148e4d97637591.js.map
+//# sourceMappingURL=app-ad308779d16e428ff5d6.js.map
