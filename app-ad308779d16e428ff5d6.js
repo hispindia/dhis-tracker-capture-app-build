@@ -20212,7 +20212,7 @@
 	                        relationshipType = $scope.relationshipTypes.find(function (relType) {
 	                            return relType.id === rel.relationshipType;
 	                        });
-	                        var relName = relationshipType.bidirectional ? relationshipType.toFromName : relationshipType.displayName;
+	                        var relName = relationshipType.fromToName;
 	
 	                        if (relationshipType && teiTypes.filter(function (teiType) {
 	                            return teiType.id === tei.trackedEntityType;
@@ -20246,7 +20246,7 @@
 	                        relationshipType = $scope.relationshipTypes.find(function (relType) {
 	                            return relType.id === rel.relationshipType;
 	                        });
-	                        var relName = relationshipType.fromToName;
+	                        var relName = relationshipType.toFromName;
 	
 	                        if (relationshipType && teiTypes.filter(function (teiType) {
 	                            return teiType.id === tei.trackedEntityType;
@@ -20282,7 +20282,7 @@
 	                        relationshipType = $scope.relationshipTypes.find(function (relType) {
 	                            return relType.id === rel.relationshipType;
 	                        });
-	                        var relName = relationshipType.fromToName;
+	                        var relName = relationshipType.toFromName;
 	
 	                        relationshipProgram = relationshipType.fromConstraint.program;
 	
@@ -39035,4 +39035,4 @@
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=app-90e17fca71c3237daf69.js.map
+//# sourceMappingURL=app-ad308779d16e428ff5d6.js.map
