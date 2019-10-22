@@ -227,7 +227,7 @@ function getOrgUnits()
         if(res.length > 0){
             return;
         }
-        return dhis2.tracker.getTrackerObjects('organisationUnits', 'organisationUnits', DHIS2URL + '/organisationUnits.json', 'paging=false&fields=id,displayName,path', 'idb', dhis2.tc.store);        
+        return dhis2.tracker.getTrackerObjects('organisationUnits', 'organisationUnits', DHIS2URL + '/organisationUnits.json', 'paging=false&fields=id,displayName,code,path', 'idb', dhis2.tc.store);
     });    
 }
 
@@ -649,7 +649,7 @@ function getTrackedEntityTypesWithAccess()
 }
 
 function getProgramAccess(){
-    return dhis2.tracker.getTrackerObjects('programAccess','programs', DHIS2URL+'/programs.json', 'paging=false&fields=id,access[data[read,write]],programStages[access[data[read,write]]]','temp', dhis2.tc.store).then(function(programAccesses){
+    return dhis2.tracker.getTrackerObjects('programAccess','programs', DHIS2URL+'/programs.json', 'paging=false&fields=id,displayName,access[data[read,write]],programStages[access[data[read,write]]]','temp', dhis2.tc.store).then(function(programAccesses){
         var programAccessesById = {};
         _.each(_.values(programAccesses), function(programAccess){
             if(hasAllAccess) programAccess.access.data = {read: true, write: true };

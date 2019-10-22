@@ -169,11 +169,8 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	delete _leaflet2.default.Icon.Default.prototype._getIconUrl;
-	// add for nepali Calendar end
-	
 	
 	// App files
-	// add for nepali Calendar start
 	
 	
 	// Tracker core
@@ -201,6 +198,12 @@
 	    }).when('/report-types', {
 	        templateUrl: 'views/report-types.html',
 	        controller: 'ReportTypesController'
+	    }).when('/dueperson', {
+	        templateUrl: 'views/dueperson.html',
+	        controller: 'duepersonController'
+	    }).when('/waitingqueue', {
+	        templateUrl: 'views/waitingqueue.html',
+	        controller: 'waitingqueueController'
 	    }).when('/program-summary', {
 	        templateUrl: 'components/report/program-summary.html',
 	        controller: 'ProgramSummaryController'
@@ -8190,1012 +8193,6 @@
 /* 14 */
 /***/ (function(module, exports) {
 
-	"use strict";
-	
-	/*
-	
-		Author : hisp-india
-		Website: https://hispindia.org/
-	
-	*/
-	
-	function DateConverter() {
-	    this.englishMonths = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-	    this.englishLeapMonths = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-	
-	    this.nepaliMonths = [[30, 32, 31, 32, 31, 30, 30, 30, 29, 30, 29, 31], //2000
-	    [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30], //2001
-	    [31, 31, 32, 32, 31, 30, 30, 29, 30, 29, 30, 30], [31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 31], [30, 32, 31, 32, 31, 30, 30, 30, 29, 30, 29, 31], [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30], [31, 31, 32, 32, 31, 30, 30, 29, 30, 29, 30, 30], [31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 31], [31, 31, 31, 32, 31, 31, 29, 30, 30, 29, 29, 31], [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30], [31, 31, 32, 32, 31, 30, 30, 29, 30, 29, 30, 30], [31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 31], [31, 31, 31, 32, 31, 31, 29, 30, 30, 29, 30, 30], [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30], [31, 31, 32, 32, 31, 30, 30, 29, 30, 29, 30, 30], [31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 31], [31, 31, 31, 32, 31, 31, 29, 30, 30, 29, 30, 30], [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30], [31, 32, 31, 32, 31, 30, 30, 29, 30, 29, 30, 30], [31, 32, 31, 32, 31, 30, 30, 30, 29, 30, 29, 31], [31, 31, 31, 32, 31, 31, 30, 29, 30, 29, 30, 30], [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30], [31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 30], [31, 32, 31, 32, 31, 30, 30, 30, 29, 30, 29, 31], [31, 31, 31, 32, 31, 31, 30, 29, 30, 29, 30, 30], [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30], [31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 31], [30, 32, 31, 32, 31, 30, 30, 30, 29, 30, 29, 31], [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30], [31, 31, 32, 31, 32, 30, 30, 29, 30, 29, 30, 30], [31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 31], [30, 32, 31, 32, 31, 30, 30, 30, 29, 30, 29, 31], [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30], [31, 31, 32, 32, 31, 30, 30, 29, 30, 29, 30, 30], [31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 31], [30, 32, 31, 32, 31, 31, 29, 30, 30, 29, 29, 31], [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30], [31, 31, 32, 32, 31, 30, 30, 29, 30, 29, 30, 30], [31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 31], [31, 31, 31, 32, 31, 31, 29, 30, 30, 29, 30, 30], [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30], [31, 31, 32, 32, 31, 30, 30, 29, 30, 29, 30, 30], [31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 31], [31, 31, 31, 32, 31, 31, 29, 30, 30, 29, 30, 30], [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30], [31, 32, 31, 32, 31, 30, 30, 29, 30, 29, 30, 30], [31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 31], [31, 31, 31, 32, 31, 31, 30, 29, 30, 29, 30, 30], [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30], [31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 30], [31, 32, 31, 32, 31, 30, 30, 30, 29, 30, 29, 31], [31, 31, 31, 32, 31, 31, 30, 29, 30, 29, 30, 30], [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30], [31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 30], [31, 32, 31, 32, 31, 30, 30, 30, 29, 30, 29, 31], [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30], [31, 31, 32, 31, 32, 30, 30, 29, 30, 29, 30, 30], [31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 31], [30, 32, 31, 32, 31, 30, 30, 30, 29, 30, 29, 31], [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30], [31, 31, 32, 32, 31, 30, 30, 29, 30, 29, 30, 30], [31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 31], [30, 32, 31, 32, 31, 31, 29, 30, 29, 30, 29, 31], [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30], [31, 31, 32, 32, 31, 30, 30, 29, 30, 29, 30, 30], [31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 31], [31, 31, 31, 32, 31, 31, 29, 30, 30, 29, 29, 31], [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30], [31, 31, 32, 32, 31, 30, 30, 29, 30, 29, 30, 30], [31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 31], [31, 31, 31, 32, 31, 31, 29, 30, 30, 29, 30, 30], [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30], //2071
-	    [31, 32, 31, 32, 31, 30, 30, 29, 30, 29, 30, 30], //2072
-	    [31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 31], //2073
-	    [31, 31, 31, 32, 31, 31, 30, 29, 30, 29, 30, 30], [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30], [31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 30], [31, 32, 31, 32, 31, 30, 30, 30, 29, 30, 29, 31], [31, 31, 31, 32, 31, 31, 30, 29, 30, 29, 30, 30], [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30], [31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 30], [31, 31, 32, 32, 31, 30, 30, 30, 29, 30, 30, 30], [30, 32, 31, 32, 31, 30, 30, 30, 29, 30, 30, 30], [31, 31, 32, 31, 31, 30, 30, 30, 29, 30, 30, 30], [31, 31, 32, 31, 31, 30, 30, 30, 29, 30, 30, 30], [31, 32, 31, 32, 30, 31, 30, 30, 29, 30, 30, 30], [30, 32, 31, 32, 31, 30, 30, 30, 29, 30, 30, 30], [31, 31, 32, 31, 31, 31, 30, 30, 29, 30, 30, 30], [30, 31, 32, 32, 30, 31, 30, 30, 29, 30, 30, 30], [30, 32, 31, 32, 31, 30, 30, 30, 29, 30, 30, 30], [30, 32, 31, 32, 31, 30, 30, 30, 29, 30, 30, 30], //2090
-	    [31, 31, 32, 31, 31, 31, 30, 30, 29, 30, 30, 30], [30, 31, 32, 32, 31, 30, 30, 30, 29, 30, 30, 30], [30, 32, 31, 32, 31, 30, 30, 30, 29, 30, 30, 30], [31, 31, 32, 31, 31, 30, 30, 30, 29, 30, 30, 30], [31, 31, 32, 31, 31, 31, 30, 29, 30, 30, 30, 30], [30, 31, 32, 32, 31, 30, 30, 29, 30, 29, 30, 30], [31, 32, 31, 32, 31, 30, 30, 30, 29, 30, 30, 30], [31, 31, 32, 31, 31, 31, 29, 30, 29, 30, 29, 31], [31, 31, 32, 31, 31, 31, 30, 29, 29, 30, 30, 30] //2099
-	    ];
-	
-	    this.setCurrentDate = function () {
-	        var d = new Date();
-	        this.setEnglishDate(d.getFullYear(), d.getMonth() + 1, d.getDate());
-	    };
-	
-	    //English to Nepali date conversion
-	
-	    this.setEnglishDate = function (year, month, date) {
-	        if (!this.isEnglishRange(year, month, date)) throw new Exception("Invalid date format.");
-	
-	        this.englishYear = year;
-	        this.englishMonth = month;
-	        this.englishDate = date;
-	
-	        //Setting nepali reference to 2000/1/1 with english date 1943/4/14
-	        this.nepaliYear = 2000;
-	        this.nepaliMonth = 1;
-	        this.nepaliDate = 1;
-	
-	        var difference = this.getEnglishDateDifference(1943, 4, 14);
-	
-	        //Getting nepali year untill the difference remains less than 365
-	        var index = 0;
-	        while (difference >= this.nepaliYearDays(index)) {
-	            this.nepaliYear++;
-	            difference = difference - this.nepaliYearDays(index);
-	            index++;
-	        }
-	
-	        //Getting nepali month untill the difference remains less than 31
-	        var i = 0;
-	        while (difference >= this.nepaliMonths[index][i]) {
-	            difference = difference - this.nepaliMonths[index][i];
-	            this.nepaliMonth++;
-	            i++;
-	        }
-	
-	        //Remaning days is the date;
-	        this.nepaliDate = this.nepaliDate + difference;
-	
-	        this.getDay();
-	    };
-	
-	    this.toEnglishString = function (format) {
-	        if (typeof format === 'undefined') format = "-";
-	        return this.englishYear + format + this.englishMonth + format + this.englishDate;
-	    };
-	
-	    this.getEnglishDateDifference = function (year, month, date) {
-	
-	        //Getting difference from the current date with the date provided
-	        var difference = this.countTotalEnglishDays(this.englishYear, this.englishMonth, this.englishDate) - this.countTotalEnglishDays(year, month, date);
-	        return difference < 0 ? -difference : difference;
-	    };
-	
-	    this.countTotalEnglishDays = function (year, month, date) {
-	        var totalDays = year * 365 + date;
-	
-	        for (var i = 0; i < month - 1; i++) {
-	            totalDays = totalDays + this.englishMonths[i];
-	        }totalDays = totalDays + this.countleap(year, month);
-	        return totalDays;
-	    };
-	
-	    this.countleap = function (year, month) {
-	        if (month <= 2) year--;
-	
-	        return Math.floor(year / 4) - Math.floor(year / 100) + Math.floor(year / 400);
-	    };
-	
-	    this.isEnglishRange = function (year, month, date) {
-	        if (year < 1944 || year > 2042) return false;
-	
-	        if (month < 1 || month > 12) return false;
-	
-	        if (date < 1 || date > 31) return false;
-	
-	        return true;
-	    };
-	
-	    this.isLeapYear = function (year) {
-	        if (year % 4 === 0) {
-	            return year % 100 === 0 ? year % 400 === 0 : true;
-	        } else return false;
-	    };
-	
-	    //Nepali to English conversion
-	
-	    this.setNepaliDate = function (year, month, date) {
-	        if (!this.isNepaliRange(year, month, date)) throw new Exception("Invalid date format.");
-	
-	        this.nepaliYear = year;
-	        this.nepaliMonth = month;
-	        this.nepaliDate = date;
-	
-	        //Setting english reference to 1944/1/1 with nepali date 2000/9/17
-	        this.englishYear = 1944;
-	        this.englishMonth = 1;
-	        this.englishDate = 1;
-	
-	        var difference = this.getNepaliDateDifference(2000, 9, 17);
-	
-	        //Getting english year untill the difference remains less than 365
-	        while (difference >= (this.isLeapYear(this.englishYear) ? 366 : 365)) {
-	            difference = difference - (this.isLeapYear(this.englishYear) ? 366 : 365);
-	            this.englishYear++;
-	        }
-	
-	        //Getting english month untill the difference remains less than 31
-	        var monthDays = this.isLeapYear(this.englishYear) ? this.englishLeapMonths : this.englishMonths;
-	        var i = 0;
-	        while (difference >= monthDays[i]) {
-	            this.englishMonth++;
-	            difference = difference - monthDays[i];
-	            i++;
-	        }
-	
-	        //Remaning days is the date;
-	        this.englishDate = this.englishDate + difference;
-	
-	        this.getDay();
-	    };
-	
-	    this.toNepaliString = function (format) {
-	        if (typeof format === 'undefined') format = "-";
-	        return this.nepaliYear + format + this.nepaliMonth + format + this.nepaliDate;
-	    };
-	
-	    this.getNepaliDateDifference = function (year, month, date) {
-	
-	        //Getting difference from the current date with the date provided
-	        var difference = this.countTotalNepaliDays(this.nepaliYear, this.nepaliMonth, this.nepaliDate) - this.countTotalNepaliDays(year, month, date);
-	        return difference < 0 ? -difference : difference;
-	    };
-	
-	    this.countTotalNepaliDays = function (year, month, date) {
-	        var total = 0;
-	        if (year < 2000) return 0;
-	
-	        total = total + (date - 1);
-	
-	        var yearIndex = year - 2000;
-	        for (var i = 0; i < month - 1; i++) {
-	            total = total + this.nepaliMonths[yearIndex][i];
-	        }for (var i = 0; i < yearIndex; i++) {
-	            total = total + this.nepaliYearDays(i);
-	        }return total;
-	    };
-	
-	    this.nepaliYearDays = function (index) {
-	        var total = 0;
-	
-	        for (var i = 0; i < 12; i++) {
-	            total += this.nepaliMonths[index][i];
-	        }return total;
-	    };
-	
-	    this.isNepaliRange = function (year, month, date) {
-	        if (year < 2000 || year > 2098) return false;
-	
-	        if (month < 1 || month > 12) return false;
-	
-	        if (date < 1 || date > this.nepaliMonths[year - 2000][month - 1]) return false;
-	
-	        return true;
-	    };
-	
-	    //Class Regular methods
-	
-	    this.getDay = function () {
-	
-	        //Reference date 1943/4/14 Wednesday 
-	        var difference = this.getEnglishDateDifference(1943, 4, 14);
-	        this.weekDay = (3 + difference % 7) % 7 + 1;
-	        return this.weekDay;
-	    };
-	
-	    this.getEnglishYear = function () {
-	        return this.englishYear;
-	    };
-	
-	    this.getEnglishMonth = function () {
-	        return this.englishMonth;
-	    };
-	
-	    this.getEnglishDate = function () {
-	        return this.englishDate;
-	    };
-	
-	    this.getNepaliYear = function () {
-	        return this.nepaliYear;
-	    };
-	
-	    this.getNepaliMonth = function () {
-	        return this.nepaliMonth;
-	    };
-	
-	    this.getNepaliDate = function () {
-	        return this.nepaliDate;
-	    };
-	}
-
-/***/ }),
-/* 15 */
-/***/ (function(module, exports) {
-
-	"use strict";
-	
-	/*
-	 * @fileOverview NepaliDatePicker - jQuery Plugin
-	 * @version 1.0.2
-	 *
-	 * @author hisp-india
-	 * @see https://github.com/hispindia/
-	 */
-	var calenderFunctions = {};
-	(function ($) {
-	    var calenderData = {
-	        bsMonths: ["बैशाख", "जेठ", "असार", "सावन", "भदौ", "असोज", "कार्तिक", "मंसिर", "पौष", "माघ", "फागुन", "चैत"],
-	        bsDays: ["आईत", "सोम", "मंगल", "बुध", "बिही", "शुक्र", "शनि"],
-	        nepaliNumbers: ["०", "१", "२", "३", "४", "५", "६", "७", "८", "९"],
-	        bsMonthUpperDays: [[30, 31], [31, 32], [31, 32], [31, 32], [31, 32], [30, 31], [29, 30], [29, 30], [29, 30], [29, 30], [29, 30], [30, 31]],
-	        extractedBsMonthData: [[1, 3, 1, 22, 1, 3, 1, 3, 1, 22, 1, 3, 1, 19, 1, 3, 1, 1, 3], [0, 1, 2, 2, 2, 1, 3, 1, 3, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 3, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 3, 1, 2, 2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 2], [1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 3, 1, 3, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 3, 1, 3, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 3, 1, 3, 1, 1, 1, 1, 2, 2, 2, 2], [0, 1, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 2, 2, 2, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 2, 2, 2, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 2, 2, 1, 3], [29, 1, 26, 1, 28, 1, 2, 1, 2], [1, 1, 3, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 3, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 3, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 5, 1, 1, 2, 2], [0, 8, 1, 3, 1, 3, 1, 18, 1, 3, 1, 3, 1, 18, 1, 3, 1, 3, 1, 20], [0, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 11], [1, 2, 2, 2, 1, 3, 1, 3, 1, 3, 1, 2, 2, 2, 2, 2, 2, 2, 1, 3, 1, 3, 1, 3, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 3, 1, 3, 1, 2, 2, 2, 11], [0, 1, 3, 1, 14, 1, 3, 1, 3, 1, 3, 1, 18, 1, 3, 1, 3, 1, 3, 1, 14, 1, 3, 10], [1, 3, 1, 3, 1, 10, 1, 3, 1, 3, 1, 3, 1, 3, 1, 14, 1, 3, 1, 3, 1, 3, 1, 3, 1, 10, 1, 13], [0, 1, 2, 2, 2, 2, 2, 1, 3, 1, 3, 1, 3, 1, 2, 2, 2, 2, 2, 2, 2, 1, 3, 1, 3, 1, 3, 1, 3, 1, 2, 2, 2, 2, 2, 2, 2, 1, 3, 1, 3, 1, 13]],
-	        minBsYear: 2000,
-	        maxBsYear: 2090,
-	        minAdDateEqBsDate: {
-	            "ad": {
-	                "year": 1943, "month": 3, "date": 14
-	            },
-	            "bs": {
-	                "year": 2000, "month": 1, "date": 1
-	            }
-	        }
-	    };
-	
-	    var validationFunctions = {
-	        validateRequiredParameters: function validateRequiredParameters(requiredParameters) {
-	            $.each(requiredParameters, function (key, value) {
-	                if (typeof value === "undefined" || value === null) {
-	                    throw new ReferenceError("Missing required parameters: " + Object.keys(requiredParameters).join(", "));
-	                }
-	            });
-	        },
-	        validateBsYear: function validateBsYear(bsYear) {
-	            if (typeof bsYear !== "number" || bsYear === null) {
-	                throw new TypeError("Invalid parameter bsYear value");
-	            } else if (bsYear < calenderData.minBsYear || bsYear > calenderData.maxBsYear) {
-	                throw new RangeError("Parameter bsYear value should be in range of " + calenderData.minBsYear + " to " + calenderData.maxBsYear);
-	            }
-	        },
-	        validateBsMonth: function validateBsMonth(bsMonth) {
-	            if (typeof bsMonth !== "number" || bsMonth === null) {
-	                throw new TypeError("Invalid parameter bsMonth value");
-	            } else if (bsMonth < 0 || bsMonth > 11) {
-	                throw new RangeError("Parameter bsMonth value should be in range of 0 to 11");
-	            }
-	        },
-	        validateBsDate: function validateBsDate(bsDate) {
-	            if (typeof bsDate !== "number" || bsDate === null) {
-	                throw new TypeError("Invalid parameter bsDate value");
-	            } else if (bsDate < 1 || bsDate > 32) {
-	                throw new RangeError("Parameter bsDate value should be in range of 1 to 32");
-	            }
-	        },
-	        validatePositiveNumber: function validatePositiveNumber(numberParameters) {
-	            $.each(numberParameters, function (key, value) {
-	                if (typeof value !== "number" || value === null || value < 0) {
-	                    throw new ReferenceError("Invalid parameters: " + Object.keys(numberParameters).join(", "));
-	                } else if (key === "yearDiff" && value > calenderData.maxBsYear - calenderData.minBsYear + 1) {
-	                    throw new RangeError("Parameter yearDiff value should be in range of 0 to " + (calenderData.maxBsYear - calenderData.minBsYear + 1));
-	                }
-	            });
-	        }
-	    };
-	
-	    $.extend(calenderFunctions, {
-	        /**
-	         * Return equivalent number in nepaliNumber
-	         * @param {Integer} number
-	         * @returns {String} nepaliNumber
-	         */
-	        getNepaliNumber: function getNepaliNumber(number) {
-	            if (typeof number === "undefined") {
-	                throw new Error("Parameter number is required");
-	            } else if (typeof number != "number" || number < 0) {
-	                throw new Error("Number should be positive integer");
-	            }
-	
-	            var prefixNum = Math.floor(number / 10);
-	            var suffixNum = number % 10;
-	            if (prefixNum !== 0) {
-	                return calenderFunctions.getNepaliNumber(prefixNum) + calenderData.nepaliNumbers[suffixNum];
-	            } else {
-	                return calenderData.nepaliNumbers[suffixNum];
-	            }
-	        },
-	        /**
-	         * Return equivalent number from nepaliNumber
-	         * @param {String} nepaliNumber
-	         * @returns {Integer} number
-	         */
-	        getNumberByNepaliNumber: function getNumberByNepaliNumber(nepaliNumber) {
-	            if (typeof nepaliNumber === "undefined") {
-	                throw new Error("Parameter nepaliNumber is required");
-	            } else if (typeof nepaliNumber !== "string") {
-	                throw new Error("Parameter nepaliNumber should be in string");
-	            }
-	
-	            var number = 0;
-	            for (var i = 0; i < nepaliNumber.length; i++) {
-	                var numIndex = calenderData.nepaliNumbers.indexOf(nepaliNumber.charAt(i));
-	                if (numIndex === -1) {
-	                    throw new Error("Invalid nepali number");
-	                }
-	                number = number * 10 + numIndex;
-	            }
-	
-	            return number;
-	        },
-	        getBsMonthInfoByBsDate: function getBsMonthInfoByBsDate(bsYear, bsMonth, bsDate, dateFormatPattern) {
-	            validationFunctions.validateRequiredParameters({ "bsYear": bsYear, "bsMonth": bsMonth, "bsDate": bsDate });
-	            validationFunctions.validateBsYear(bsYear);
-	            validationFunctions.validateBsMonth(bsMonth);
-	            validationFunctions.validateBsDate(bsDate);
-	            if (dateFormatPattern === null) {
-	                dateFormatPattern = "%D, %M %d, %y";
-	            } else if (typeof dateFormatPattern != "string") {
-	                throw new TypeError("Invalid parameter dateFormatPattern value");
-	            }
-	
-	            var daysNumFromMinBsYear = calenderFunctions.getTotalDaysNumFromMinBsYear(bsYear, bsMonth, bsDate);
-	            var adDate = new Date(calenderData.minAdDateEqBsDate.ad.year, calenderData.minAdDateEqBsDate.ad.month, calenderData.minAdDateEqBsDate.ad.date - 1);
-	            adDate.setDate(adDate.getDate() + daysNumFromMinBsYear);
-	
-	            var bsMonthFirstAdDate = calenderFunctions.getAdDateByBsDate(bsYear, bsMonth, 1);
-	            var bsMonthDays = calenderFunctions.getBsMonthDays(bsYear, bsMonth);
-	            bsDate = bsDate > bsMonthDays ? bsMonthDays : bsDate;
-	            var eqAdDate = calenderFunctions.getAdDateByBsDate(bsYear, bsMonth, bsDate);
-	            var weekDay = eqAdDate.getDay();
-	            var formattedDate = calenderFunctions.bsDateFormat(dateFormatPattern, bsYear, bsMonth, bsDate, weekDay);
-	            return {
-	                bsYear: bsYear,
-	                bsMonth: bsMonth,
-	                bsDate: bsDate,
-	                weekDay: weekDay,
-	                formattedDate: formattedDate,
-	                adDate: eqAdDate,
-	                bsMonthFirstAdDate: bsMonthFirstAdDate,
-	                bsMonthDays: bsMonthDays
-	            };
-	        },
-	        getAdDateByBsDate: function getAdDateByBsDate(bsYear, bsMonth, BsDate) {
-	            var daysNumFromMinBsYear = calenderFunctions.getTotalDaysNumFromMinBsYear(bsYear, bsMonth, BsDate);
-	            var adDate = new Date(calenderData.minAdDateEqBsDate.ad.year, calenderData.minAdDateEqBsDate.ad.month, calenderData.minAdDateEqBsDate.ad.date - 1);
-	            adDate.setDate(adDate.getDate() + daysNumFromMinBsYear);
-	            return adDate;
-	        },
-	        getTotalDaysNumFromMinBsYear: function getTotalDaysNumFromMinBsYear(bsYear, bsMonth, bsDate) {
-	            if (bsYear < calenderData.minBsYear || bsYear > calenderData.maxBsYear) {
-	                return null;
-	            }
-	
-	            var daysNumFromMinBsYear = 0;
-	            var diffYears = bsYear - calenderData.minBsYear;
-	            for (var monthIndex = 0; monthIndex < 12; monthIndex++) {
-	                if (monthIndex < bsMonth) {
-	                    daysNumFromMinBsYear += calenderFunctions.getMonthDaysNumFormMinBsYear(monthIndex, diffYears + 1);
-	                } else {
-	                    daysNumFromMinBsYear += calenderFunctions.getMonthDaysNumFormMinBsYear(monthIndex, diffYears);
-	                }
-	            }
-	
-	            if (bsYear > 2085 && bsYear < 2088) {
-	                daysNumFromMinBsYear += bsDate - 2;
-	            } else if (bsYear > 2088 && bsMonth > 4) {
-	                daysNumFromMinBsYear += bsDate - 4;
-	            } else {
-	                daysNumFromMinBsYear += bsDate;
-	            }
-	
-	            return daysNumFromMinBsYear;
-	        },
-	        /**
-	         * Return total number of bsMonth days from minYear
-	         * @param {Integer} bsMonth
-	         * @param {integer} yearDiff
-	         * @returns {number}
-	         */
-	        getMonthDaysNumFormMinBsYear: function getMonthDaysNumFormMinBsYear(bsMonth, yearDiff) {
-	            validationFunctions.validateRequiredParameters({ "bsMonth": bsMonth, "yearDiff": yearDiff });
-	            validationFunctions.validateBsMonth(bsMonth);
-	            validationFunctions.validatePositiveNumber({ "yearDiff": yearDiff });
-	
-	            var yearCount = 0;
-	            var monthDaysFromMinBsYear = 0;
-	            if (yearDiff === 0) {
-	                return 0;
-	            }
-	
-	            var bsMonthData = calenderData.extractedBsMonthData[bsMonth];
-	            for (var i = 0; i < bsMonthData.length; i++) {
-	                if (bsMonthData[i] === 0) {
-	                    continue;
-	                }
-	
-	                var bsMonthUpperDaysIndex = i % 2;
-	                if (yearDiff > yearCount + bsMonthData[i]) {
-	                    yearCount += bsMonthData[i];
-	                    monthDaysFromMinBsYear += calenderData.bsMonthUpperDays[bsMonth][bsMonthUpperDaysIndex] * bsMonthData[i];
-	                } else {
-	                    monthDaysFromMinBsYear += calenderData.bsMonthUpperDays[bsMonth][bsMonthUpperDaysIndex] * (yearDiff - yearCount);
-	                    yearCount = yearDiff - yearCount;
-	                    break;
-	                }
-	            }
-	
-	            return monthDaysFromMinBsYear;
-	        },
-	        /**
-	         * Return number of bsMonth days
-	         * @param {Integer} bsYear
-	         * @param {Integer} bsMonth
-	         * @returns {int} days
-	         */
-	        getBsMonthDays: function getBsMonthDays(bsYear, bsMonth) {
-	            validationFunctions.validateRequiredParameters({ "bsYear": bsYear, "bsMonth": bsMonth });
-	            validationFunctions.validateBsYear(bsYear);
-	            validationFunctions.validateBsMonth(bsMonth);
-	
-	            var yearCount = 0;
-	            var totalYears = bsYear + 1 - calenderData.minBsYear;
-	            var bsMonthData = calenderData.extractedBsMonthData[bsMonth];
-	            for (var i = 0; i < bsMonthData.length; i++) {
-	                if (bsMonthData[i] === 0) {
-	                    continue;
-	                }
-	
-	                var bsMonthUpperDaysIndex = i % 2;
-	                yearCount += bsMonthData[i];
-	                if (totalYears <= yearCount) {
-	                    if (bsYear == 2085 && bsMonth == 4 || bsYear == 2088 && bsMonth == 4) {
-	                        return calenderData.bsMonthUpperDays[bsMonth][bsMonthUpperDaysIndex] - 2;
-	                    } else {
-	                        return calenderData.bsMonthUpperDays[bsMonth][bsMonthUpperDaysIndex];
-	                    }
-	                }
-	            }
-	
-	            return null;
-	        },
-	        getBsDateByAdDate: function getBsDateByAdDate(adYear, adMonth, adDate) {
-	            var bsYear = adYear + 57;
-	            var bsMonth = (adMonth + 9) % 12;
-	            var bsDate = 1;
-	
-	            if (adMonth < 3) {
-	                bsYear -= 1;
-	            } else if (adMonth == 3) {
-	                var bsYearFirstAdDate = calenderFunctions.getAdDateByBsDate(bsYear, 0, 1);
-	                if (adDate < bsYearFirstAdDate.getDate()) {
-	                    bsYear -= 1;
-	                }
-	            }
-	
-	            var bsMonthFirstAdDate = calenderFunctions.getAdDateByBsDate(bsYear, bsMonth, 1);
-	            if (adDate >= 1 && adDate < bsMonthFirstAdDate.getDate()) {
-	                bsMonth = bsMonth !== 0 ? bsMonth - 1 : 11;
-	                var bsMonthDays = calenderFunctions.getBsMonthDays(bsYear, bsMonth);
-	                bsDate = bsMonthDays - (bsMonthFirstAdDate.getDate() - adDate) + 1;
-	            } else {
-	                bsDate = adDate - bsMonthFirstAdDate.getDate() + 1;
-	            }
-	
-	            return {
-	                bsYear: bsYear,
-	                bsMonth: bsMonth,
-	                bsDate: bsDate
-	            };
-	        },
-	        getBsYearByAdDate: function getBsYearByAdDate(adYear, adMonth, adDate) {
-	            var bsDate = calenderFunctions.getBsDateByAdDate(adYear, adMonth, adDate);
-	            return bsDate.bsYear;
-	        },
-	        getBsMonthByAdDate: function getBsMonthByAdDate(adYear, adMonth, adDate) {
-	            var bsDate = calenderFunctions.getBsDateByAdDate(adYear, adMonth, adDate);
-	            return bsDate.bsMonth;
-	        },
-	        bsDateFormat: function bsDateFormat(dateFormatPattern, bsYear, bsMonth, bsDate, day) {
-	            var formattedDate = dateFormatPattern;
-	            formattedDate = formattedDate.replace(/%d/g, calenderFunctions.getNepaliNumber(bsDate));
-	            formattedDate = formattedDate.replace(/%y/g, calenderFunctions.getNepaliNumber(bsYear));
-	            formattedDate = formattedDate.replace(/%m/g, calenderFunctions.getNepaliNumber(bsMonth + 1));
-	            formattedDate = formattedDate.replace(/%M/g, calenderData.bsMonths[bsMonth]);
-	            formattedDate = formattedDate.replace(/%D/g, calenderData.bsDays[day]);
-	            return formattedDate;
-	        },
-	        parseFormattedBsDate: function parseFormattedBsDate(dateFormat, dateFormattedText) {
-	            var diffTextNum = 0;
-	            var extractedFormattedBsDate = {
-	                "bsYear": null,
-	                "bsMonth": null,
-	                "bsDate": null,
-	                "bsDay": null
-	            };
-	
-	            for (var i = 0; i < dateFormat.length; i++) {
-	                if (dateFormat.charAt(i) == '%') {
-	                    var valueOf = dateFormat.substring(i, i + 2);
-	                    var endChar = dateFormat.charAt(i + 2);
-	                    var tempText = dateFormattedText.substring(i + diffTextNum);
-	                    var endIndex = endChar !== '' ? tempText.indexOf(endChar) : tempText.length;
-	                    var value = tempText.substring(0, endIndex);
-	
-	                    if (valueOf == "%y") {
-	                        extractedFormattedBsDate.bsYear = calenderFunctions.getNumberByNepaliNumber(value);
-	                        diffTextNum += value.length - 2;
-	                    } else if (valueOf == "%d") {
-	                        extractedFormattedBsDate.bsDate = calenderFunctions.getNumberByNepaliNumber(value);
-	                        diffTextNum += value.length - 2;
-	                    } else if (valueOf == "%D") {
-	                        extractedFormattedBsDate.bsDay = calenderData.bsDays.indexOf(value);
-	                        diffTextNum += value.length - 2;
-	                    } else if (valueOf == "%m") {
-	                        extractedFormattedBsDate.bsMonth = calenderFunctions.getNumberByNepaliNumber(value);
-	                        diffTextNum += value.length - 2;
-	                    } else if (valueOf == "%M") {
-	                        extractedFormattedBsDate.bsMonth = calenderData.bsMonths.indexOf(value);
-	                        diffTextNum += value.length - 2;
-	                    }
-	                }
-	            }
-	
-	            return extractedFormattedBsDate;
-	        }
-	    });
-	
-	    $.fn.nepaliDatePicker = function (options) {
-	        var datePickerPlugin = {
-	            options: $.extend({
-	                dateFormat: "%D, %M %d, %y",
-	                closeOnDateSelect: true,
-	                defaultDate: "",
-	                minDate: null,
-	                maxDate: null,
-	                yearStart: calenderData.minBsYear,
-	                yearEnd: calenderData.maxBsYear
-	            }, options),
-	            init: function init($element) {
-	                $element.prop("readonly", true);
-	                var $nepaliDatePicker = $('<div class="nepali-date-picker">');
-	                $('body').append($nepaliDatePicker);
-	                if ($element.val() !== '') {
-	                    datePickerPlugin.renderFormattedSpecificDateCalender($nepaliDatePicker, datePickerPlugin.options.dateFormat, $element.val());
-	                } else {
-	                    datePickerPlugin.renderCurrentMonthCalender($nepaliDatePicker);
-	                }
-	                datePickerPlugin.addEventHandler($element, $nepaliDatePicker);
-	                datePickerPlugin.addCommonEventHandler($nepaliDatePicker);
-	            },
-	            addCommonEventHandler: function addCommonEventHandler() {
-	                var $datePickerWrapper = $(".nepali-date-picker");
-	                $(document).click(function (event) {
-	                    var $targetElement = $(event.target);
-	                    if (!$targetElement.is($(".nepali-date-picker"))) {
-	                        $datePickerWrapper.hide();
-	                        $datePickerWrapper.find(".drop-down-content").hide();
-	                    }
-	                });
-	            },
-	            addEventHandler: function addEventHandler($element, $nepaliDatePicker) {
-	                $element.click(function () {
-	                    if ($(".nepali-date-picker").is(":visible")) {
-	                        $(".nepali-date-picker").hide();
-	                        return;
-	                    }
-	
-	                    var inputFieldPosition = $(this).offset();
-	                    $nepaliDatePicker.css({
-	                        "top": inputFieldPosition.top + $(this).outerHeight(true),
-	                        "left": inputFieldPosition.left
-	                    });
-	
-	                    $nepaliDatePicker.show();
-	                    datePickerPlugin.eventFire($element, $nepaliDatePicker, "show");
-	
-	                    return false;
-	                });
-	
-	                $nepaliDatePicker.on("click", ".next-btn", function (event) {
-	                    event.preventDefault();
-	                    var preCalenderData = {
-	                        "bsYear": $nepaliDatePicker.data().bsYear,
-	                        "bsMonth": $nepaliDatePicker.data().bsMonth,
-	                        "bsDate": $nepaliDatePicker.data().bsDate
-	                    };
-	                    datePickerPlugin.renderNextMonthCalender($nepaliDatePicker);
-	                    datePickerPlugin.triggerChangeEvent($element, $nepaliDatePicker, preCalenderData);
-	                    $nepaliDatePicker.show();
-	
-	                    return false;
-	                });
-	
-	                $nepaliDatePicker.on("click", ".prev-btn", function (event) {
-	                    event.preventDefault();
-	                    var preCalenderData = {
-	                        "bsYear": $nepaliDatePicker.data().bsYear,
-	                        "bsMonth": $nepaliDatePicker.data().bsMonth,
-	                        "bsDate": $nepaliDatePicker.data().bsDate
-	                    };
-	                    datePickerPlugin.renderPreviousMonthCalender($nepaliDatePicker);
-	                    var calenderData = $nepaliDatePicker.data();
-	                    datePickerPlugin.triggerChangeEvent($element, $nepaliDatePicker, preCalenderData);
-	                    $nepaliDatePicker.show();
-	
-	                    return false;
-	                });
-	
-	                $nepaliDatePicker.on("click", ".today-btn", function (event) {
-	                    event.preventDefault();
-	                    var preCalenderData = {
-	                        "bsYear": $nepaliDatePicker.data().bsYear,
-	                        "bsMonth": $nepaliDatePicker.data().bsMonth,
-	                        "bsDate": $nepaliDatePicker.data().bsDate
-	                    };
-	                    datePickerPlugin.renderCurrentMonthCalender($nepaliDatePicker);
-	                    var calenderData = $nepaliDatePicker.data();
-	                    datePickerPlugin.triggerChangeEvent($element, $nepaliDatePicker, preCalenderData);
-	                    $nepaliDatePicker.show();
-	
-	                    return false;
-	                });
-	
-	                $nepaliDatePicker.on("click", ".current-year-txt, .current-month-txt", function () {
-	                    if (!$(this).find(".drop-down-content").is(":visible")) {
-	                        $nepaliDatePicker.find(".drop-down-content").hide();
-	                        $(this).find(".drop-down-content").show();
-	                        var $optionWrapper = $(this).find(".option-wrapper");
-	                        $optionWrapper.scrollTop(0);
-	                        var scrollTopTo = $optionWrapper.find(".active").position().top;
-	                        $optionWrapper.scrollTop(scrollTopTo);
-	                    } else {
-	                        $(this).find(".drop-down-content").hide();
-	                    }
-	
-	                    return false;
-	                });
-	
-	                $nepaliDatePicker.on("click", ".current-month-date", function () {
-	                    if ($(this).hasClass("disable")) {
-	                        return;
-	                    }
-	
-	                    var datePickerData = $nepaliDatePicker.data();
-	                    var bsYear = datePickerData.bsYear;
-	                    var bsMonth = datePickerData.bsMonth;
-	                    var preDate = datePickerData.bsDate;
-	                    var bsDate = $(this).data("date");
-	                    var weekDay = $(this).data("weekday");
-	                    var dateText = calenderFunctions.bsDateFormat(datePickerPlugin.options.dateFormat, bsYear, bsMonth, bsDate, weekDay);
-	                    $element.val(dateText);
-	                    datePickerPlugin.setCalenderDate($nepaliDatePicker, bsYear, bsMonth, bsDate);
-	                    datePickerPlugin.renderMonthCalender($nepaliDatePicker);
-	
-	                    datePickerPlugin.eventFire($element, $nepaliDatePicker, "select");
-	                    if (preDate != bsDate) {
-	                        datePickerPlugin.eventFire($element, $nepaliDatePicker, "dateChange");
-	                    }
-	
-	                    if (datePickerPlugin.options.closeOnDateSelect) {
-	                        $nepaliDatePicker.hide();
-	                    } else {
-	                        $nepaliDatePicker.show();
-	                    }
-	
-	                    return false;
-	                });
-	
-	                $nepaliDatePicker.on("click", ".drop-down-content li", function () {
-	                    var $dropDown = $(this).parents(".drop-down-content");
-	                    $dropDown.data("value", $(this).data("value"));
-	                    $dropDown.attr("data-value", $(this).data("value"));
-	
-	                    var preCalenderData = {
-	                        "bsYear": $nepaliDatePicker.data().bsYear,
-	                        "bsMonth": $nepaliDatePicker.data().bsMonth,
-	                        "bsDate": $nepaliDatePicker.data().bsDate
-	                    };
-	                    var bsMonth = $nepaliDatePicker.find(".month-drop-down").data("value");
-	                    var bsYear = $nepaliDatePicker.find(".year-drop-down").data("value");
-	                    var bsDate = preCalenderData.bsDate;
-	                    datePickerPlugin.setCalenderDate($nepaliDatePicker, bsYear, bsMonth, bsDate);
-	                    datePickerPlugin.renderMonthCalender($nepaliDatePicker);
-	                    var calenderData = $nepaliDatePicker.data();
-	                    datePickerPlugin.triggerChangeEvent($element, $nepaliDatePicker, preCalenderData);
-	                    $nepaliDatePicker.show();
-	
-	                    return false;
-	                });
-	            },
-	            triggerChangeEvent: function triggerChangeEvent($element, $nepaliDatePicker, preCalenderData) {
-	                var calenderData = $nepaliDatePicker.data();
-	                if (preCalenderData.bsYear != calenderData.bsYear) {
-	                    datePickerPlugin.eventFire($element, $nepaliDatePicker, "yearChange");
-	                }
-	
-	                if (preCalenderData.bsMonth != calenderData.bsMonth) {
-	                    datePickerPlugin.eventFire($element, $nepaliDatePicker, "monthChange");
-	                }
-	
-	                if (preCalenderData.bsDate != calenderData.bsDate) {
-	                    datePickerPlugin.eventFire($element, $nepaliDatePicker, "dateChange");
-	                }
-	            },
-	            eventFire: function eventFire($element, $nepaliDatePicker, eventType) {
-	                switch (eventType) {
-	                    case "generate":
-	                        $element.trigger({
-	                            type: eventType,
-	                            message: 'Nepali date picker initialize',
-	                            datePickerData: $nepaliDatePicker.data(),
-	                            time: new Date()
-	                        });
-	                        break;
-	                    case "show":
-	                        $element.trigger({
-	                            type: eventType,
-	                            message: 'Show nepali date picker',
-	                            datePickerData: $nepaliDatePicker.data(),
-	                            time: new Date()
-	                        });
-	                        break;
-	                    case "close":
-	                        $element.trigger({
-	                            type: eventType,
-	                            message: 'close nepali date picker',
-	                            datePickerData: $nepaliDatePicker.data(),
-	                            time: new Date()
-	                        });
-	                        break;
-	                    case "select":
-	                        $element.trigger({
-	                            type: eventType,
-	                            message: 'Select date',
-	                            datePickerData: $nepaliDatePicker.data(),
-	                            time: new Date()
-	                        });
-	                        break;
-	                    case "dateChange":
-	                        $element.trigger({
-	                            type: eventType,
-	                            message: 'Change date',
-	                            datePickerData: $nepaliDatePicker.data(),
-	                            time: new Date()
-	                        });
-	                        break;
-	                    case "monthChange":
-	                        $element.trigger({
-	                            type: eventType,
-	                            message: 'Change month',
-	                            datePickerData: $nepaliDatePicker.data(),
-	                            time: new Date()
-	                        });
-	                        break;
-	                    case "yearChange":
-	                        $element.trigger({
-	                            type: eventType,
-	                            message: 'Change year',
-	                            datePickerData: $nepaliDatePicker.data(),
-	                            time: new Date()
-	                        });
-	                        break;
-	                    default:
-	                        break;
-	                }
-	            },
-	            setCalenderDate: function setCalenderDate($nepaliDatePicker, bsYear, bsMonth, BsDate) {
-	                $nepaliDatePicker.data(calenderFunctions.getBsMonthInfoByBsDate(bsYear, bsMonth, BsDate, datePickerPlugin.options.dateFormat));
-	            },
-	            renderMonthCalender: function renderMonthCalender($nepaliDatePicker) {
-	                $nepaliDatePicker.find(".calender-wrapper").remove();
-	                $nepaliDatePicker.append(datePickerPlugin.getCalender($nepaliDatePicker)).hide();
-	            },
-	            getCalender: function getCalender($nepaliDatePicker) {
-	                var calenderWrapper = $('<div class="calender-wrapper">');
-	                calenderWrapper.append(datePickerPlugin.getCalenderController($nepaliDatePicker));
-	                var calenderTable = $("<table>");
-	                calenderTable.append(datePickerPlugin.getCalenderHeader());
-	                calenderTable.append(datePickerPlugin.getCalenderBody($nepaliDatePicker));
-	                calenderWrapper.append(calenderTable);
-	
-	                return calenderWrapper;
-	            },
-	            getCalenderController: function getCalenderController($nepaliDatePicker) {
-	                var calenderController = $("<div class='calender-controller'>");
-	                calenderController.append('<a href="javascript:void(0);" class="prev-btn icon" title="prev"></a>');
-	                calenderController.append('<a href="javascript:void(0);" class="today-btn icon" title=""></a>');
-	                calenderController.append(datePickerPlugin.getMonthDropOption($nepaliDatePicker));
-	                calenderController.append(datePickerPlugin.getYearDropOption($nepaliDatePicker));
-	                calenderController.append('<a href="javascript:void(0);" class="next-btn icon" title="next"></a>');
-	
-	                return calenderController;
-	            },
-	            getMonthDropOption: function getMonthDropOption($nepaliDatePicker) {
-	                var datePickerData = $nepaliDatePicker.data();
-	                var $monthSpan = $('<div class="current-month-txt">');
-	                $monthSpan.text(calenderData.bsMonths[datePickerData.bsMonth]);
-	                $monthSpan.append('<i class="icon icon-drop-down">');
-	
-	                var data = [];
-	                for (var i = 0; i < 12; i++) {
-	                    data.push({
-	                        "label": calenderData.bsMonths[i],
-	                        "value": i
-	                    });
-	                }
-	
-	                var $monthDropOption = datePickerPlugin.getCustomSelectOption(data, datePickerData.bsMonth).addClass("month-drop-down");
-	                $monthSpan.append($monthDropOption);
-	
-	                return $monthSpan;
-	            },
-	            getYearDropOption: function getYearDropOption($nepaliDatePicker) {
-	                var datePickerData = $nepaliDatePicker.data();
-	                var $yearSpan = $('<div class="current-year-txt">');
-	                $yearSpan.text(calenderFunctions.getNepaliNumber(datePickerData.bsYear));
-	                $yearSpan.append('<i class="icon icon-drop-down">');
-	                var data = [];
-	                for (var i = datePickerPlugin.options.yearStart; i <= datePickerPlugin.options.yearEnd; i++) {
-	                    data.push({
-	                        "label": calenderFunctions.getNepaliNumber(i),
-	                        "value": i
-	                    });
-	                }
-	
-	                var $yearDropOption = datePickerPlugin.getCustomSelectOption(data, datePickerData.bsYear).addClass("year-drop-down");
-	                $yearSpan.append($yearDropOption);
-	
-	                return $yearSpan;
-	            },
-	            getCustomSelectOption: function getCustomSelectOption(datas, activeValue) {
-	                var $dropDown = $('<div class="drop-down-content" data-value="' + activeValue + '">');
-	                var $dropDownWrapper = $('<div class="option-wrapper">');
-	                var $ul = $('<ul>');
-	                $.each(datas, function (index, data) {
-	                    $ul.append('<li data-value="' + data.value + '">' + data.label + '</li>');
-	                });
-	
-	                $dropDownWrapper.append($ul);
-	                $ul.find('li[data-value="' + activeValue + '"]').addClass("active");
-	                $dropDown.append($dropDownWrapper);
-	
-	                return $dropDown;
-	            },
-	            getCalenderHeader: function getCalenderHeader() {
-	                var calenderHeader = $("<thead>");
-	                var tableRow = $("<tr>");
-	                for (var i = 0; i < 7; i++) {
-	                    tableRow.append("<td>" + calenderData.bsDays[i] + "</td>");
-	                }
-	
-	                calenderHeader.append(tableRow);
-	                return calenderHeader;
-	            },
-	            getCalenderBody: function getCalenderBody($nepaliDatePicker) {
-	                var datePickerData = $nepaliDatePicker.data();
-	                var weekCoverInMonth = Math.ceil((datePickerData.bsMonthFirstAdDate.getDay() + datePickerData.bsMonthDays) / 7);
-	                var preMonth = datePickerData.bsMonth - 1 != -1 ? datePickerData.bsMonth - 1 : 11;
-	                var preYear = preMonth == 11 ? datePickerData.bsYear - 1 : datePickerData.bsYear;
-	                var preMonthDays = calenderFunctions.getBsMonthDays(preYear, preMonth);
-	                var minBsDate = null;
-	                var maxBsDate = null;
-	
-	                if (datePickerPlugin.options.minDate !== null) {
-	                    minBsDate = calenderFunctions.parseFormattedBsDate(datePickerPlugin.options.dateFormat, datePickerPlugin.options.minDate);
-	                }
-	                if (datePickerPlugin.options.maxDate !== null) {
-	                    maxBsDate = calenderFunctions.parseFormattedBsDate(datePickerPlugin.options.dateFormat, datePickerPlugin.options.maxDate);
-	                }
-	                var calenderBody = $("<tbody>");
-	                for (var i = 0; i < weekCoverInMonth; i++) {
-	                    var tableRow = $("<tr>");
-	                    for (var k = 1; k <= 7; k++) {
-	                        var calenderDate = i * 7 + k - datePickerData.bsMonthFirstAdDate.getDay();
-	                        var isCurrentMonthDate = true;
-	                        if (calenderDate <= 0) {
-	                            calenderDate = preMonthDays + calenderDate;
-	                            isCurrentMonthDate = false;
-	                        } else if (calenderDate > datePickerData.bsMonthDays) {
-	                            calenderDate = calenderDate - datePickerData.bsMonthDays;
-	                            isCurrentMonthDate = false;
-	                        }
-	
-	                        if (isCurrentMonthDate) {
-	                            var $td = $('<td class="current-month-date" data-date="' + calenderDate + '" data-weekDay="' + (k - 1) + '">' + calenderFunctions.getNepaliNumber(calenderDate) + '</td>');
-	                            if (calenderDate == datePickerData.bsDate) {
-	                                $td.addClass("active");
-	                            }
-	                            datePickerPlugin.disableIfOutOfRange($td, datePickerData, minBsDate, maxBsDate, calenderDate);
-	                            tableRow.append($td);
-	                        } else {
-	                            tableRow.append('<td class="other-month-date">' + calenderFunctions.getNepaliNumber(calenderDate) + '</td>');
-	                        }
-	                    }
-	
-	                    calenderBody.append(tableRow);
-	                }
-	
-	                return calenderBody;
-	            },
-	            disableIfOutOfRange: function disableIfOutOfRange($td, datePickerData, minBsDate, maxBsDate, calenderDate) {
-	                if (minBsDate !== null) {
-	                    if (datePickerData.bsYear < minBsDate.bsYear) {
-	                        $td.addClass("disable");
-	                    } else if (datePickerData.bsYear == minBsDate.bsYear && datePickerData.bsMonth < minBsDate.bsMonth) {
-	                        $td.addClass("disable");
-	                    } else if (datePickerData.bsYear == minBsDate.bsYear && datePickerData.bsMonth == minBsDate.bsMonth && calenderDate < minBsDate.bsDate) {
-	                        $td.addClass("disable");
-	                    }
-	                }
-	
-	                if (maxBsDate !== null) {
-	                    if (datePickerData.bsYear > maxBsDate.bsYear) {
-	                        $td.addClass("disable");
-	                    } else if (datePickerData.bsYear == maxBsDate.bsYear && datePickerData.bsMonth > maxBsDate.bsMonth) {
-	                        $td.addClass("disable");
-	                    } else if (datePickerData.bsYear == maxBsDate.bsYear && datePickerData.bsMonth == maxBsDate.bsMonth && calenderDate > maxBsDate.bsDate) {
-	                        $td.addClass("disable");
-	                    }
-	                }
-	
-	                return $td;
-	            },
-	            renderCurrentMonthCalender: function renderCurrentMonthCalender($nepaliDatePicker) {
-	                var currentDate = new Date();
-	                var currentBsDate = calenderFunctions.getBsDateByAdDate(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
-	                var bsYear = currentBsDate.bsYear;
-	                var bsMonth = currentBsDate.bsMonth;
-	                var bsDate = currentBsDate.bsDate;
-	                datePickerPlugin.setCalenderDate($nepaliDatePicker, bsYear, bsMonth, bsDate);
-	                datePickerPlugin.renderMonthCalender($nepaliDatePicker);
-	            },
-	            renderPreviousMonthCalender: function renderPreviousMonthCalender($nepaliDatePicker) {
-	                var datePickerData = $nepaliDatePicker.data();
-	                var prevMonth = datePickerData.bsMonth - 1 >= 0 ? datePickerData.bsMonth - 1 : 11;
-	                var prevYear = prevMonth != 11 ? datePickerData.bsYear : datePickerData.bsYear - 1;
-	                var prevDate = datePickerData.bsDate;
-	                if (prevYear < datePickerPlugin.options.yearStart || prevYear > datePickerPlugin.options.yearEnd) {
-	                    return null;
-	                }
-	                datePickerPlugin.setCalenderDate($nepaliDatePicker, prevYear, prevMonth, prevDate);
-	                datePickerPlugin.renderMonthCalender($nepaliDatePicker);
-	            },
-	            renderNextMonthCalender: function renderNextMonthCalender($nepaliDatePicker) {
-	                var datePickerData = $nepaliDatePicker.data();
-	                var nextMonth = datePickerData.bsMonth + 1 <= 11 ? datePickerData.bsMonth + 1 : 0;
-	                var nextYear = nextMonth !== 0 ? datePickerData.bsYear : datePickerData.bsYear + 1;
-	                var nextDate = datePickerData.bsDate;
-	                if (nextYear < datePickerPlugin.options.yearStart || nextYear > datePickerPlugin.options.yearEnd) {
-	                    return null;
-	                }
-	                datePickerPlugin.setCalenderDate($nepaliDatePicker, nextYear, nextMonth, nextDate);
-	                datePickerPlugin.renderMonthCalender($nepaliDatePicker);
-	            },
-	            renderFormattedSpecificDateCalender: function renderFormattedSpecificDateCalender($nepaliDatePicker, dateFormat, dateFormattedText) {
-	                var datePickerDate = calenderFunctions.parseFormattedBsDate(dateFormat, dateFormattedText);
-	                datePickerPlugin.setCalenderDate($nepaliDatePicker, datePickerDate.bsYear, datePickerDate.bsMonth, datePickerDate.bsDate);
-	                datePickerPlugin.renderMonthCalender($nepaliDatePicker);
-	            }
-	        };
-	
-	        this.each(function () {
-	            var $element = $(this);
-	            datePickerPlugin.init($element);
-	        });
-	
-	        datePickerPlugin.addCommonEventHandler();
-	        return this;
-	    };
-	})(jQuery, calenderFunctions);
-
-/***/ }),
-/* 16 */
-/***/ (function(module, exports) {
-
 	/* global angular, moment, dhis2 */
 	
 	'use strict';
@@ -9543,7 +8540,8 @@
 	}])
 	
 	/* Factory to fetch relationships */
-	.factory('RelationshipFactory', ["$q", "$rootScope", "TCStorageService", function ($q, $rootScope, TCStorageService) {
+	.factory('RelationshipFactory', ["$q", "$http", "$rootScope", "$translate", "TCStorageService", "NotificationService", function ($q, $http, $rootScope, $translate, TCStorageService, NotificationService) {
+	    var errorHeader = $translate.instant("error");
 	    return {
 	        getAll: function getAll() {
 	
@@ -9571,6 +8569,21 @@
 	                });
 	            });
 	            return def.promise;
+	        },
+	        delete: function _delete(uid) {
+	            var promise = $http.delete(DHIS2URL + '/relationships/' + uid).then(function (response) {
+	                if (!response || !response.data || response.data.status !== 'OK') {
+	                    var errorBody = $translate.instant('failed_to_delete_relationship');
+	                    NotificationService.showNotifcationDialog(errorHeader, errorBody);
+	                    return $q.reject(errorBody);
+	                }
+	                return response && response.data;
+	            }, function (error) {
+	                var errorBody = $translate.instant('failed_to_delete_relationship');
+	                NotificationService.showNotifcationDialog(errorHeader, errorBody);
+	                return $q.reject(error);
+	            });
+	            return promise;
 	        }
 	    };
 	}])
@@ -9599,9 +8612,10 @@
 	            } else {
 	                TCStorageService.currentStore.open().done(function () {
 	                    TCStorageService.currentStore.getAll('programAccess').done(function (programAccess) {
-	                        access = { programsById: {}, programStagesById: {} };
+	                        access = { programsById: {}, programStagesById: {}, programIdNameMap: {} };
 	                        angular.forEach(programAccess, function (program) {
 	                            access.programsById[program.id] = program.access;
+	                            access.programIdNameMap[program.id] = program.displayName;
 	                            angular.forEach(program.programStages, function (programStage) {
 	                                access.programStagesById[programStage.id] = programStage.access;
 	                            });
@@ -9768,11 +8782,20 @@
 	                return def.promise;
 	            }
 	        },
-	        processForm: function processForm(existingTei, formTei, originalTei, attributesById) {
+	        processForm: function processForm(existingTei, formTei, originalTei, attributesById, finalCustomId) {
 	            var tei = angular.copy(existingTei);
 	            tei.attributes = [];
 	            var formEmpty = true;
 	            for (var k in attributesById) {
+	
+	                // for INTPART Assign attribute value
+	                if (finalCustomId != null && finalCustomId != "") {
+	                    if (attributesById[k].code === 'family_unique_id') {
+	                        formTei[k] = finalCustomId;
+	                        console.log(" Final custom Id -- " + finalCustomId);
+	                    }
+	                }
+	
 	                if (originalTei && formTei[k] !== originalTei[k] && !formTei[k] && !originalTei[k]) {
 	                    formChanged = true;
 	                }
@@ -10646,6 +9669,18 @@
 	                    var errorBody = $translate.instant('failed_to_fetch_events');
 	                    NotificationService.showNotifcationDialog(errorHeader, errorBody, response);
 	                }
+	            });
+	            return promise;
+	        },
+	        getEventWithoutRegistration: function getEventWithoutRegistration(eventId) {
+	            var url = DHIS2URL + '/events/' + eventId;
+	
+	            var promise = $http.get(url).then(function (response) {
+	                return response.data;
+	            }, function (response) {
+	                var errorBody = $translate.instant('failed_to_update_event');
+	                NotificationService.showNotifcationDialog(errorHeader, errorBody, response);
+	                return null;
 	            });
 	            return promise;
 	        },
@@ -12334,7 +11369,7 @@
 	}]);
 
 /***/ }),
-/* 17 */
+/* 15 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -12379,7 +11414,7 @@
 	}]);
 
 /***/ }),
-/* 18 */
+/* 16 */
 /***/ (function(module, exports) {
 
 	/* global directive, selection, dhis2, angular */
@@ -12966,7 +12001,7 @@
 	});
 
 /***/ }),
-/* 19 */
+/* 17 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -12982,10 +12017,16 @@
 	    $scope.showReportTypes = function () {
 	        $location.path('/report-types').search();
 	    };
+	    $scope.showduepersonInterface = function () {
+	        $location.path('/dueperson').search();
+	    };
+	    $scope.showQueueInterface = function () {
+	        $location.path('/waitingqueue').search();
+	    };
 	}]);
 
 /***/ }),
-/* 20 */
+/* 18 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -13012,6 +12053,906 @@
 	        selection.load();
 	        $location.path('/upcoming-events').search();
 	    };
+	}]);
+
+/***/ }),
+/* 19 */
+/***/ (function(module, exports) {
+
+	'use strict';
+	
+	var trackerCaptureamesNimhans = angular.module('trackerCapture');
+	trackerCaptureamesNimhans.controller('duepersonController', ["$rootScope", "$scope", "$timeout", "$location", function ($rootScope, $scope, $timeout, $location) {
+	
+		$.ajaxSetup({
+			async: false
+		});
+		$scope.detail_house_member = [];
+		$scope.detail_house_member_anc = [];
+		$scope.detail_house_member_pnc = [];
+		$scope.detail_house_member_npcdcs = [];
+		$scope.detail_house_member_child = [];
+		$scope.countval = 0;
+		$scope.programvalue = "";
+		$scope.programvaluearray = [];
+		$scope.objtrack_anc_due = [];
+		$scope.objtrack_pnc_due = [];
+		$scope.anc_last_visit_date = [];
+		$scope.objtrack_npcdcs = [];
+		$scope.objtrack_child = [];
+		$scope.pnc_last_visit_date = [];
+		$scope.npcdcs_last_visit_date = [];
+		$scope.duedate_child = [];
+		$scope.duedate_anc = [];
+		$scope.duedate_npcdcs = [];
+		$scope.duedate_pnc = [];
+		$scope.loadQueue2 = function () {
+			//$('#loader').show();
+			var e = document.getElementById('loader');
+			if (e.style.display == 'none') e.style.display = 'block';
+			$scope.objtrack_pnc_due = [];
+			$scope.duedate_child = [];
+			$scope.npcdcs_last_visit_date = [];
+			$scope.objtrack1 = [];
+			$scope.pnc_last_visit_date = [];
+			$scope.anc_last_visit_date = [];
+			$scope.objtrack_npcdcs = [];
+			$scope.objtrack_child = [];
+			$scope.anc_date_obj = [];
+			$scope.pnc_date_obj = [];
+			$scope.npcdcs_date_obj = [];
+			$scope.duedate_npcdcs = [];
+			$scope.objtrack_anc_due = [];
+			$scope.duedate_anc = [];
+			$scope.duedate_pnc = [];
+			var housevalue = document.getElementById('searchvalue').value;
+			var use_filer_household = housevalue.substring(0, 4);
+			$.get("../api/trackedEntityInstances.json?ou=lZtSBQjZCaX&program=TcaMMqHJxK5&filter=YFjB0zhySP6:EQ:" + use_filer_household + "&skipPaging=true", function (data1) {
+	
+				$scope.trackkdata = data1;
+	
+				for (var i = 0; i < $scope.trackkdata.trackedEntityInstances.length; i++) {
+	
+					var attributepath = $scope.trackkdata.trackedEntityInstances[i].attributes;
+					for (var q = 0; q < attributepath.length; q++) {
+	
+						if (attributepath[q].attribute == "Dnm1mq6iq2d") {
+							var aa = attributepath[q].value;
+							var res = aa.split("/");
+							res = res[1];
+							if (housevalue == res) {
+	
+								var track1 = $scope.trackkdata.trackedEntityInstances[i].trackedEntityInstance;
+	
+								$scope.objtrack1.push(track1);
+							}
+						}
+					}
+				}
+	
+				$scope.detail_house_member = [];
+				$scope.programvaluearray = [];
+				$scope.detail_house_member_anc = [];
+				$scope.detail_house_member_pnc = [];
+				$scope.detail_house_member_npcdcs = [];
+				$scope.detail_house_member_child = [];
+			});
+	
+			if ($scope.objtrack1.length == 0) {
+				var resultval = "<tr   style='border:1px solid black;background-color:white;'>	<td colspan='4'> NO RECORD FOUND....</td></tr>";
+				$(".housedata").append(resultval);
+			}
+	
+			//Get the programs attached to TEI
+			for (var i = 0; i < $scope.objtrack1.length; i++) {
+				$.get("../api/trackedEntityInstances/" + $scope.objtrack1[i] + ".json?fields=enrollments[program]", function (programdata) {
+	
+					var prodata = programdata;
+					for (var j = 0; j < prodata.enrollments.length; j++) {
+						var programid = prodata.enrollments[j].program;
+						if (programid == "TcaMMqHJxK5") $scope.programvalue = $scope.programvalue + "," + "Household Member";else if (programid == "nBh6jxTPf0P") $scope.programvalue = $scope.programvalue + "," + "Eligible Couple";else if (programid == "SUCUF657zNe") $scope.programvalue = $scope.programvalue + "," + "Maternal Health";else if (programid == "JdZ3gv6cx54") $scope.programvalue = $scope.programvalue + "," + "Child Health";else if (programid == "jC8Gprj4pWV") $scope.programvalue = $scope.programvalue + "," + "NPCDCS";else if (programid == "qAeWjN7Iqi7") $scope.programvalue = $scope.programvalue + "," + "TB";
+					}
+				});
+				$scope.programvaluearray.push($scope.programvalue);
+				$scope.programvalue = "";
+			}
+	
+			for (var x = 0; x < $scope.objtrack1.length; x++) {
+				var url1 = "../api/trackedEntityInstances/" + $scope.objtrack1[x] + ".json?";
+				$.get(url1, function (data1) {
+	
+					var trackdata = data1;
+	
+					for (var q = 0; q < trackdata.attributes.length; q++) {
+						var idd = trackdata.attributes[q].attribute;
+	
+						if (trackdata.attributes[q].attribute == "xalnzkNfD77") //name of family member
+							{
+	
+								var namemember = trackdata.attributes[q].value;
+							} else if (trackdata.attributes[q].attribute == "Dnm1mq6iq2d") //family unique id
+							{
+	
+								var familyid = trackdata.attributes[q].value;
+							} else if (trackdata.attributes[q].attribute == "YFjB0zhySP6") //household
+							{
+	
+								var house = trackdata.attributes[q].value;
+							}
+					}
+	
+					$scope.memberdetail = {
+						"house": house,
+						"namemember": namemember,
+						"familyid": familyid,
+						"programvalue": $scope.programvaluearray[x]
+	
+					};
+					$scope.detail_house_member.push($scope.memberdetail);
+				});
+			}
+	
+			///  CHECK FOR PNC AND ANC VISITS....
+			for (var j = 0; j < $scope.objtrack1.length; j++) {
+				// count++;
+				$.get("../api/events.json?orgUnit=lZtSBQjZCaX&program=SUCUF657zNe&trackedEntityInstance=" + $scope.objtrack1[j] + "&order=dueDate:asc", function (data) {
+	
+					var trackdata = data;
+					console.log(trackdata);
+	
+					for (var i = 0; i < trackdata.events.length; i++) {
+						var matchevent = trackdata.events[i].programStage;
+	
+						if (matchevent == "WMnWjG8PS58" && trackdata.events[i].enrollmentStatus == "ACTIVE") {
+							// ANC SECOND VISIT
+	
+							if (trackdata.events[i].status == "SCHEDULE") {
+								var duedate = trackdata.events[i].dueDate.substring(0, 10);
+								//var repodate= new Date (duedate),dateantime=new Date();
+								//var datediff=(repodate<dateantime);
+	
+								//if(datediff==true){    
+								var track = trackdata.events[i].trackedEntityInstance;
+								$scope.duedate_anc.push(duedate);
+								$scope.objtrack_anc_due.push(track);
+								// }
+							}
+						} else if (matchevent == "DEwcVnLljOB" && trackdata.events[i].enrollmentStatus == "ACTIVE") {
+							// PNC VISIT
+	
+							if (trackdata.events[i].status == "SCHEDULE") {
+								var duedate = trackdata.events[i].dueDate.substring(0, 10);
+								//var repodate= new Date (duedate),dateantime=new Date();
+								//var datediff=(repodate<dateantime);
+	
+								//if(datediff==true){    
+								var track = trackdata.events[i].trackedEntityInstance;
+								$scope.duedate_pnc.push(duedate);
+								$scope.objtrack_pnc_due.push(track);
+								//}
+							}
+						}
+					}
+				});
+			}
+	
+			for (var j = 0; j < $scope.objtrack1.length; j++) {
+				// count++;
+				$.get("../api/events.json?orgUnit=lZtSBQjZCaX&program=jC8Gprj4pWV&trackedEntityInstance=" + $scope.objtrack1[j] + "&order=dueDate:asc", function (data) {
+	
+					var trackdata = data;
+					console.log(trackdata);
+	
+					for (var i = 0; i < trackdata.events.length; i++) {
+						var matchevent = trackdata.events[i].programStage;
+	
+						if (matchevent == "mq26ujXKHI5" && trackdata.events[i].enrollmentStatus == "ACTIVE") {
+							// npcdcs visit
+	
+							if (trackdata.events[i].status == "SCHEDULE") {
+								var duedate = trackdata.events[i].dueDate.substring(0, 10);
+								// var repodate= new Date (duedate),dateantime=new Date();
+								//var datediff=(repodate<dateantime);
+	
+								//if(datediff==true){    
+								var track = trackdata.events[i].trackedEntityInstance;
+								$scope.duedate_npcdcs.push(duedate);
+								$scope.objtrack_npcdcs.push(track);
+								// }
+							}
+						}
+					}
+				});
+			}
+	
+			for (var j = 0; j < $scope.objtrack1.length; j++) {
+				// count++;
+				$.get("../api/events.json?orgUnit=lZtSBQjZCaX&program=JdZ3gv6cx54&trackedEntityInstance=" + $scope.objtrack1[j] + "&order=dueDate:asc", function (data) {
+	
+					var trackdata = data;
+					console.log(trackdata);
+	
+					for (var i = 0; i < trackdata.events.length; i++) {
+						var matchevent = trackdata.events[i].programStage;
+	
+						if (matchevent == "Z0NnCljuPxL" && trackdata.events[i].enrollmentStatus == "ACTIVE") {
+							// ANC SECOND VISIT
+	
+							if (trackdata.events[i].status == "SCHEDULE") {
+								// var duedate=trackdata.events[i].dueDate.substring(0, 10);
+								// var repodate= new Date (duedate),dateantime=new Date();
+								var datediff = repodate < dateantime;
+	
+								//if(datediff==true){    
+								var track = trackdata.events[i].trackedEntityInstance;
+								$scope.duedate_child.push(duedate);
+								$scope.objtrack_child.push(track);
+								//}
+							}
+						}
+					}
+				});
+			}
+			// calculating last visit value for anc the due personal 
+			for (var j = 0; j < $scope.objtrack_anc_due.length; j++) {
+				$.get("../api/events.json?orgUnit=lZtSBQjZCaX&program=SUCUF657zNe&trackedEntityInstance=" + $scope.objtrack_anc_due[j] + "&order=eventDate:asc&skipPaging=true", function (data) {
+	
+					var trackdata = data;
+	
+					for (var i = 0; i < trackdata.events.length; i++) {
+						var matchevent = trackdata.events[i].programStage;
+	
+						if (matchevent == "WMnWjG8PS58") //Anc second visit
+							{
+	
+								if (trackdata.events[i].eventDate) $scope.anc_date_obj.push(trackdata.events[i].eventDate.substring(0, 10));
+							}
+					}
+				});
+				if ($scope.anc_date_obj.length == 0) {
+					$scope.anc_last_visit_date.push("No last visit");
+				} else $scope.anc_last_visit_date.push($scope.anc_date_obj[$scope.anc_date_obj.length - 1]);
+	
+				$scope.anc_date_obj = [];
+			}
+			//Calculating last value for PNC last visited value ..
+			for (var j = 0; j < $scope.objtrack_pnc_due.length; j++) {
+				$.get("../api/events.json?orgUnit=lZtSBQjZCaX&program=SUCUF657zNe&trackedEntityInstance=" + $scope.objtrack_pnc_due[j] + "&order=eventDate:asc&skipPaging=true", function (data) {
+	
+					var trackdata = data;
+	
+					for (var i = 0; i < trackdata.events.length; i++) {
+						var matchevent = trackdata.events[i].programStage;
+	
+						if (matchevent == "DEwcVnLljOB") //Pnc visit
+							{
+	
+								if (trackdata.events[i].eventDate) $scope.pnc_date_obj.push(trackdata.events[i].eventDate.substring(0, 10));
+							}
+					}
+				});
+				if ($scope.pnc_date_obj.length == 0) {
+					$scope.pnc_last_visit_date.push("No last visit");
+				} else $scope.pnc_last_visit_date.push($scope.pnc_date_obj[$scope.pnc_date_obj.length - 1]);
+	
+				$scope.pnc_date_obj = [];
+			}
+			//Calculating last value for npcdcs last visited value ..
+			for (var j = 0; j < $scope.objtrack_npcdcs.length; j++) {
+				$.get("../api/events.json?orgUnit=lZtSBQjZCaX&program=jC8Gprj4pWV&trackedEntityInstance=" + $scope.objtrack_npcdcs[j] + "&order=eventDate:asc&skipPaging=true", function (data) {
+	
+					var trackdata = data;
+	
+					for (var i = 0; i < trackdata.events.length; i++) {
+						var matchevent = trackdata.events[i].programStage;
+	
+						if (matchevent == "mq26ujXKHI5") //Pnc visit
+							{
+	
+								if (trackdata.events[i].eventDate) $scope.npcdcs_date_obj.push(trackdata.events[i].eventDate.substring(0, 10));
+							}
+					}
+				});
+				if ($scope.npcdcs_date_obj.length == 0) {
+					$scope.npcdcs_last_visit_date.push("No last visit");
+				} else $scope.npcdcs_last_visit_date.push($scope.npcdcs_date_obj[$scope.npcdcs_date_obj.length - 1]);
+	
+				$scope.npcdcs_date_obj = [];
+			}
+	
+			if ($scope.objtrack_anc_due.length > 0) $scope.loadattributevalue_anc($scope.objtrack_anc_due);else {
+				var result = "<tr   style='border:1px solid black;background-color:white;'>	<td colspan='3'> NO RECORD FOUND....</td></tr>";
+				$(".ancdata").append(result);
+			}
+			if ($scope.objtrack_pnc_due.length > 0) $scope.loadattributevalue_pnc($scope.objtrack_pnc_due);else {
+				var result = "<tr   style='border:1px solid black;background-color:white;'>	<td colspan='3'> NO RECORD FOUND....</td></tr>";
+				$(".pncdata").append(result);
+			}
+			if ($scope.objtrack_npcdcs.length > 0) $scope.loadattributevalue_npcdcs($scope.objtrack_npcdcs);else {
+				var result = "<tr   style='border:1px solid black;background-color:white;'>	<td colspan='3'> NO RECORD FOUND....</td></tr>";
+				$(".npcdcsdata").append(result);
+			}
+			if ($scope.objtrack_child.length > 0) $scope.loadattributevalue_child($scope.objtrack_child);else {
+				var result = "<tr   style='border:1px solid black;background-color:white;'>	<td colspan='3'> NO RECORD FOUND....</td></tr>";
+				$(".childdata").append(result);
+			}
+	
+			$scope.stoploader();
+		};
+	
+		// GET THE TEI ATTRIBUTES VALUE 
+		$scope.loadattributevalue_anc = function (track) {
+			$scope.objtrack = track;
+			$scope.detail_house_member_anc = [];
+			$scope.countval = 0;
+			for (var g = 0; g < $scope.objtrack.length; g++) {
+				$scope.countval++;
+	
+				$.get("../api/trackedEntityInstances/" + $scope.objtrack[g] + ".json?&skipPaging=true", function (data1) {
+					var trackdata = data1;
+	
+					for (var i = 0; i < trackdata.attributes.length; i++) {
+						var attributepath = trackdata.attributes[i].attribute;
+	
+						// $scope.objattribute.push(attributepath);
+	
+						if (attributepath == "YFjB0zhySP6") //house number
+							{
+								var aa = trackdata.attributes[i].value;
+	
+								//housenumber=aa;
+								var house = aa;
+							} else if (attributepath == "xalnzkNfD77") //Name of woman
+							{
+								var aa = trackdata.attributes[i].value;
+	
+								//nameofwoman=aa;
+								var namemember = aa;
+							} else if (attributepath == "iIf1gJ4FVdR") //age  
+							{
+								var aa = trackdata.attributes[i].value;
+	
+								var agevalue = aa;
+							}
+					}
+	
+					$scope.memberdetail_anc = {
+						"house": house,
+						"namemember": namemember,
+						"lastdate": $scope.anc_last_visit_date[g],
+						"duedate": $scope.duedate_anc[g]
+	
+					};
+					$scope.detail_house_member_anc.push($scope.memberdetail_anc);
+				});
+			}
+	
+			console.log($scope.detail_house_member);
+		};
+	
+		// GET THE TEI ATTRIBUTES VALUE 
+		$scope.loadattributevalue_pnc = function (track) {
+			$scope.objtrack = track;
+			$scope.detail_house_member_pnc = [];
+			$scope.countval = 0;
+			for (var g = 0; g < $scope.objtrack.length; g++) {
+				$scope.countval++;
+	
+				$.get("../api/trackedEntityInstances/" + $scope.objtrack[g] + ".json?&skipPaging=true", function (data1) {
+					var trackdata = data1;
+	
+					for (var i = 0; i < trackdata.attributes.length; i++) {
+						var attributepath = trackdata.attributes[i].attribute;
+	
+						// $scope.objattribute.push(attributepath);
+	
+						if (attributepath == "YFjB0zhySP6") //house number
+							{
+								var aa = trackdata.attributes[i].value;
+	
+								//housenumber=aa;
+								var house = aa;
+							} else if (attributepath == "xalnzkNfD77") //Name of woman
+							{
+								var aa = trackdata.attributes[i].value;
+	
+								//nameofwoman=aa;
+								var namemember = aa;
+							} else if (attributepath == "iIf1gJ4FVdR") //age  
+							{
+								var aa = trackdata.attributes[i].value;
+	
+								var agevalue = aa;
+							}
+					}
+	
+					$scope.memberdetail_pnc = {
+						"house": house,
+						"namemember": namemember,
+						"lastdate": $scope.pnc_last_visit_date[g],
+						"duedate": $scope.duedate_pnc[g]
+	
+					};
+					$scope.detail_house_member_pnc.push($scope.memberdetail_pnc);
+				});
+			}
+	
+			console.log($scope.detail_house_member);
+		};
+		$scope.loadattributevalue_npcdcs = function (track) {
+			$scope.objtrack = track;
+			$scope.detail_house_member_npcdcs = [];
+			$scope.countval = 0;
+			for (var g = 0; g < $scope.objtrack.length; g++) {
+				$scope.countval++;
+	
+				$.get("../api/trackedEntityInstances/" + $scope.objtrack[g] + ".json?&skipPaging=true", function (data1) {
+					var trackdata = data1;
+	
+					for (var i = 0; i < trackdata.attributes.length; i++) {
+						var attributepath = trackdata.attributes[i].attribute;
+	
+						// $scope.objattribute.push(attributepath);
+	
+						if (attributepath == "YFjB0zhySP6") //house number
+							{
+								var aa = trackdata.attributes[i].value;
+	
+								//housenumber=aa;
+								var house = aa;
+							} else if (attributepath == "xalnzkNfD77") //Name of woman
+							{
+								var aa = trackdata.attributes[i].value;
+	
+								//nameofwoman=aa;
+								var namemember = aa;
+							} else if (attributepath == "iIf1gJ4FVdR") //age  
+							{
+								var aa = trackdata.attributes[i].value;
+	
+								var agevalue = aa;
+							}
+					}
+	
+					$scope.memberdetail_npcdcs = {
+						"house": house,
+						"namemember": namemember,
+						"lastdate": $scope.npcdcs_last_visit_date[g],
+						"duedate": $scope.duedate_npcdcs[g]
+	
+					};
+					$scope.detail_house_member_npcdcs.push($scope.memberdetail_npcdcs);
+				});
+			}
+	
+			console.log($scope.detail_house_member);
+		};
+		$scope.loadattributevalue_child = function (track) {
+			$scope.objtrack = track;
+			$scope.detail_house_member_child = [];
+			$scope.countval = 0;
+			for (var g = 0; g < $scope.objtrack.length; g++) {
+				$scope.countval++;
+	
+				$.get("../api/trackedEntityInstances/" + $scope.objtrack[g] + ".json?&skipPaging=true", function (data1) {
+					var trackdata = data1;
+	
+					for (var i = 0; i < trackdata.attributes.length; i++) {
+						var attributepath = trackdata.attributes[i].attribute;
+	
+						// $scope.objattribute.push(attributepath);
+	
+						if (attributepath == "YFjB0zhySP6") //house number
+							{
+								var aa = trackdata.attributes[i].value;
+	
+								//housenumber=aa;
+								var house = aa;
+							} else if (attributepath == "xalnzkNfD77") //Name of woman
+							{
+								var aa = trackdata.attributes[i].value;
+	
+								//nameofwoman=aa;
+								var namemember = aa;
+							} else if (attributepath == "iIf1gJ4FVdR") //age  
+							{
+								var aa = trackdata.attributes[i].value;
+	
+								var agevalue = aa;
+							}
+					}
+	
+					$scope.memberdetail_child = {
+						"house": house,
+						"namemember": namemember,
+						"lastdate": $scope.duedate_child[g],
+						"duedate": $scope.duedate_child[g]
+	
+					};
+					$scope.detail_house_member_child.push($scope.memberdetail_child);
+				});
+			}
+		};
+		$scope.stoploader = function () {
+	
+			console.log($scope.detail_house_member);
+			var e = document.getElementById('loader');
+			if (e.style.display == 'block') e.style.display = 'none';
+		};
+	}]);
+
+/***/ }),
+/* 20 */
+/***/ (function(module, exports) {
+
+	'use strict';
+	
+	var trackerCaptureamesNimhans = angular.module('trackerCapture');
+	trackerCaptureamesNimhans.controller('waitingqueueController', ["$rootScope", "$scope", "$timeout", "$location", function ($rootScope, $scope, $timeout, $location) {
+	    $.ajaxSetup({
+	        async: false
+	    });
+	    $scope.objtrack_opd = [];
+	    $scope.objattribute = [];
+	    $scope.objtrack_triage = [];
+	    $scope.objtrack_pharmacy = [];
+	    $scope.objtrack_triage_value = [];
+	    $scope.objtrack_lab = [];
+	    $scope.basichouse = ["iIf1gJ4FVdR", "YFjB0zhySP6", "xalnzkNfD77", "MV4wWoZBrJS", "yDCO4KM4WVA", "Lt9ZrfgAMuw"];
+	    $scope.username;
+	    $scope.countval = 0;
+	    $scope.detail_house_member = [];
+	    $scope.global_id_array = ["xeY2hFI7J9p", "hBAATiHH0rL", "T4eGuI8Gn5P", "kkLvVNLd0Le"];
+	    $scope.registeredid = [];
+	    $scope.goToDashboard = function (evv) {
+	        evv.clicked = true;
+	        var base = location.protocol + '//' + location.host + "/dhis"; //+window.location.pathname;
+	        $location.path('/dashboard').search({ tei: evv.tei,
+	            program: "eV13Hfo7qiv",
+	            //  ou: "CPtzIhyn36z",
+	            ou: ouid2,
+	            queue: true,
+	            from: 'amesnimhans' });
+	        // $window.open(base+'/dhis-web-tracker-capture/index.html#/dashboard?tei='+ev.tei+'&program=a9cQSlDVI2n&ou=CPtzIhyn36z'+$scope.ouId, '_blank');
+	    };
+	
+	    $scope.loadQueue2 = function () {
+	
+	        // Get name of login user
+	        $.get("../api/me.json?fields=id,name,attributeValues[attribute[id,code,name]]", function (data1) {
+	            var trackdata = data1;
+	
+	            $scope.username = trackdata.name;
+	            console.log($scope.username);
+	        });
+	
+	        // map the dataelement value check if its true
+	        if ($scope.username == "Triage User") {
+	            $.get("../api/events.json?orgUnit=fMTeIPKpZbI&program=Nb2EygU6dwp&order=created:asc&skipPaging=true", function (data) {
+	
+	                var trackdata = data;
+	                console.log(trackdata);
+	
+	                for (var i = 0; i < trackdata.events.length; i++) {
+	
+	                    if (trackdata.events[i].eventDate) {
+	                        var dataval = trackdata.events[i].dataValues;
+	                        for (var q = 0; q < dataval.length; q++) {
+	                            var id = dataval[q].dataElement;
+	                            $scope.registeredid.push(id);
+	                            if (id == "hBAATiHH0rL") // registration in triage 
+	                                {
+	
+	                                    var vall = dataval[q].value;
+	                                    if (vall == "true") $scope.triagevalue_check = vall;
+	                                }
+	                        }
+	                        var array3 = $scope.global_id_array.filter(function (obj) {
+	                            return $scope.registeredid.indexOf(obj) == -1;
+	                        });
+	                        for (var t = 0; t < array3.length; t++) {
+	
+	                            /*if(array3[t]=="xeY2hFI7J9p")//Registered in OPD
+	                            {
+	                            /*if($scope.triagevalue_check=="true"){
+	                            $scope.objtrack_opd.push(trackdata.events[i].trackedEntityInstance);
+	                            }
+	                            }*/
+	                            if (array3[t] == "hBAATiHH0rL") //Registered in Triage
+	                                $scope.objtrack_triage.push(trackdata.events[i].trackedEntityInstance);
+	                            /*else if(array3[t]=="T4eGuI8Gn5P")//Registered in Pharmacy
+	                            {
+	                            if($scope.opdvalue_check=="true"){
+	                            $scope.objtrack_pharmacy.push(trackdata.events[i].trackedEntityInstance);
+	                            }
+	                            }
+	                            else if(array3[t]=="kkLvVNLd0Le")//Registered in Lab
+	                            {
+	                            if($scope.opdvalue_check=="true"){
+	                            $scope.objtrack_lab.push(trackdata.events[i].trackedEntityInstance);
+	                            }
+	                            }*/
+	                        }
+	
+	                        $scope.registeredid = [];
+	                        $scope.triagevalue_check = "";
+	                        $scope.opdvalue_check = "";
+	                    }
+	                }
+	            });
+	        }
+	
+	        //USERS OTHERS THEN TRIAGE 
+	
+	
+	        if ($scope.username == "OPD User" || $scope.username == "Pharmacy User" || $scope.username == "Laboratory User") {
+	            $.get("../api/events.json?orgUnit=fMTeIPKpZbI&program=Nb2EygU6dwp&order=lastUpdated:asc&skipPaging=true", function (data) {
+	
+	                var trackdata = data;
+	                console.log(trackdata);
+	
+	                for (var i = 0; i < trackdata.events.length; i++) {
+	
+	                    if (trackdata.events[i].eventDate) {
+	                        var dataval = trackdata.events[i].dataValues;
+	                        for (var q = 0; q < dataval.length; q++) {
+	                            var id = dataval[q].dataElement;
+	                            $scope.registeredid.push(id);
+	                            if (id == "hBAATiHH0rL") // registration in triage 
+	                                {
+	
+	                                    var vall = dataval[q].value;
+	                                    if (vall == "true") $scope.triagevalue_check = vall;
+	                                } else if (id == "xeY2hFI7J9p") // registration in opd 
+	                                {
+	
+	                                    var vall = dataval[q].value;
+	                                    if (vall == "true") $scope.opdvalue_check = vall;
+	                                } else if (id == "T4eGuI8Gn5P") // registration in pharmacy 
+	                                {
+	
+	                                    var vall = dataval[q].value;
+	                                    if (vall == "true") $scope.pharmacyvalue_check = vall;
+	                                } else if (id == "kkLvVNLd0Le") // registration in Lab 
+	                                {
+	
+	                                    var vall = dataval[q].value;
+	                                    if (vall == "true") $scope.Labvalue_check = vall;
+	                                }
+	                        }
+	                        var array3 = $scope.global_id_array.filter(function (obj) {
+	                            return $scope.registeredid.indexOf(obj) == -1;
+	                        });
+	                        for (var t = 0; t < array3.length; t++) {
+	
+	                            if (array3[t] == "xeY2hFI7J9p") //Registered in OPD
+	                                {
+	                                    if ($scope.triagevalue_check == "true") {
+	                                        $scope.objtrack_opd.push(trackdata.events[i].trackedEntityInstance);
+	                                    }
+	                                }
+	                                //else if(array3[t]=="hBAATiHH0rL")//Registered in Triage
+	                                //$scope.objtrack_triage.push(trackdata.events[i].trackedEntityInstance);
+	                            else if (array3[t] == "T4eGuI8Gn5P") //Registered in Pharmacy
+	                                    {
+	                                        if ($scope.opdvalue_check == "true") {
+	                                            $scope.objtrack_pharmacy.push(trackdata.events[i].trackedEntityInstance);
+	                                        }
+	                                    } else if (array3[t] == "kkLvVNLd0Le") //Registered in Lab
+	                                    {
+	                                        if ($scope.opdvalue_check == "true") {
+	                                            $scope.objtrack_lab.push(trackdata.events[i].trackedEntityInstance);
+	                                        }
+	                                    }
+	                        }
+	
+	                        $scope.registeredid = [];
+	                        $scope.triagevalue_check = "";
+	                        $scope.opdvalue_check = "";
+	                    }
+	                }
+	            });
+	        }
+	
+	        if ($scope.username == "Triage User") $scope.loadattributevalue($scope.objtrack_triage);else if ($scope.username == "OPD User") $scope.loadattributevalue($scope.objtrack_opd);else if ($scope.username == "Pharmacy User") $scope.loadattributevalue($scope.objtrack_pharmacy);else if ($scope.username == "Laboratory User") $scope.loadattributevalue($scope.objtrack_lab);
+	    };
+	
+	    // GET THE TEI ATTRIBUTES VALUE 
+	    $scope.loadattributevalue = function (track) {
+	        $scope.objtrack = track;
+	        $scope.detail_house_member = [];
+	        $scope.countval = 0;
+	        for (var g = 0; g < $scope.objtrack.length; g++) {
+	            $scope.countval++;
+	
+	            $.get("../api/trackedEntityInstances/" + $scope.objtrack[g] + ".json?&skipPaging=true", function (data1) {
+	                var trackdata = data1;
+	
+	                for (var i = 0; i < trackdata.attributes.length; i++) {
+	                    var attributepath = trackdata.attributes[i].attribute;
+	
+	                    $scope.objattribute.push(attributepath);
+	
+	                    if (attributepath == "YFjB0zhySP6") //house number
+	                        {
+	                            var aa = trackdata.attributes[i].value;
+	
+	                            //housenumber=aa;
+	                            var house = aa;
+	                        } else if (attributepath == "xalnzkNfD77") //Name of woman
+	                        {
+	                            var aa = trackdata.attributes[i].value;
+	
+	                            //nameofwoman=aa;
+	                            var namemember = aa;
+	                        } else if (attributepath == "iIf1gJ4FVdR") //age  
+	                        {
+	                            var aa = trackdata.attributes[i].value;
+	
+	                            //housenumber=aa;
+	                            var agevalue = aa;
+	                        } else if (attributepath == "PbEhJPnon0o") //sex    
+	                        {
+	                            var aa = trackdata.attributes[i].value;
+	
+	                            //housenumber=aa;
+	                            var sexvalue = aa;
+	                        } else if (attributepath == "Lt9ZrfgAMuw") //mobile number    
+	                        {
+	                            var aa = trackdata.attributes[i].value;
+	
+	                            //housenumber=aa;
+	                            var mobilevalue = aa;
+	                        }
+	                }
+	
+	                $scope.memberdetail = {
+	                    "house": house,
+	                    "namemember": namemember,
+	                    "agevalue": agevalue,
+	                    "sexvalue": sexvalue,
+	                    "mobilevalue": mobilevalue,
+	                    "TEI": $scope.objtrack[g],
+	
+	                    "Sno": $scope.countval
+	
+	                };
+	                $scope.detail_house_member.push($scope.memberdetail);
+	            });
+	        }
+	
+	        console.log($scope.detail_house_member);
+	    };
+	
+	    $scope.gotohome = function () {
+	
+	        var url = document.location.href = '../dhis-web-dashboard-integration/index.html';
+	    };
+	    $scope.gotoreport = function () {
+	        var url = document.location.href = '../dhis-web-reporting/displayViewReportForm.action';
+	    };
+	    $scope.gototriage = function () {
+	        $scope.objtrack_triage_value = [];
+	        $.get("../api/events.json?orgUnit=fMTeIPKpZbI&program=Nb2EygU6dwp&order=created:asc&skipPaging=true", function (data) {
+	
+	            var trackdata = data;
+	            console.log(trackdata);
+	
+	            for (var i = 0; i < trackdata.events.length; i++) {
+	
+	                if (trackdata.events[i].eventDate) {
+	                    var dataval = trackdata.events[i].dataValues;
+	                    for (var q = 0; q < dataval.length; q++) {
+	                        var id = dataval[q].dataElement;
+	                        $scope.registeredid.push(id);
+	                        if (id == "hBAATiHH0rL") // registration in triage 
+	                            {
+	
+	                                var vall = dataval[q].value;
+	                                if (vall == "true") $scope.triagevalue_check = vall;
+	                            }
+	                    }
+	                    var array3 = $scope.global_id_array.filter(function (obj) {
+	                        return $scope.registeredid.indexOf(obj) == -1;
+	                    });
+	                    for (var t = 0; t < array3.length; t++) {
+	
+	                        if (array3[t] == "hBAATiHH0rL") //Registered in Triage
+	                            $scope.objtrack_triage_value.push(trackdata.events[i].trackedEntityInstance);
+	                    }
+	
+	                    $scope.registeredid = [];
+	                    $scope.triagevalue_check = "";
+	                    $scope.opdvalue_check = "";
+	                }
+	            }
+	        });
+	        $scope.loadattributevalue($scope.objtrack_triage_value);
+	    };
+	    $scope.got_to_other_then_triage = function (userval) {
+	        $scope.uservalue = userval;
+	        $scope.objtrack_opd = [];
+	        $scope.objtrack_pharmacy = [];
+	        $scope.objtrack_lab = [];
+	        $.get("../api/events.json?orgUnit=fMTeIPKpZbI&program=Nb2EygU6dwp&order=lastUpdated:asc&skipPaging=true", function (data) {
+	
+	            var trackdata = data;
+	            console.log(trackdata);
+	
+	            for (var i = 0; i < trackdata.events.length; i++) {
+	
+	                if (trackdata.events[i].eventDate) {
+	                    var dataval = trackdata.events[i].dataValues;
+	                    for (var q = 0; q < dataval.length; q++) {
+	                        var id = dataval[q].dataElement;
+	                        $scope.registeredid.push(id);
+	                        if (id == "hBAATiHH0rL") // registration in triage 
+	                            {
+	
+	                                var vall = dataval[q].value;
+	                                if (vall == "true") $scope.triagevalue_check = vall;
+	                            } else if (id == "xeY2hFI7J9p") // registration in opd 
+	                            {
+	
+	                                var vall = dataval[q].value;
+	                                if (vall == "true") $scope.opdvalue_check = vall;
+	                            } else if (id == "T4eGuI8Gn5P") // registration in pharmacy 
+	                            {
+	
+	                                var vall = dataval[q].value;
+	                                if (vall == "true") $scope.pharmacyvalue_check = vall;
+	                            } else if (id == "kkLvVNLd0Le") // registration in Lab 
+	                            {
+	
+	                                var vall = dataval[q].value;
+	                                if (vall == "true") $scope.Labvalue_check = vall;
+	                            }
+	                    }
+	                    var array3 = $scope.global_id_array.filter(function (obj) {
+	                        return $scope.registeredid.indexOf(obj) == -1;
+	                    });
+	                    for (var t = 0; t < array3.length; t++) {
+	
+	                        if (array3[t] == "xeY2hFI7J9p") //Registered in OPD
+	                            {
+	                                if ($scope.triagevalue_check == "true") {
+	                                    $scope.objtrack_opd.push(trackdata.events[i].trackedEntityInstance);
+	                                }
+	                            }
+	                            //else if(array3[t]=="hBAATiHH0rL")//Registered in Triage
+	                            //$scope.objtrack_triage.push(trackdata.events[i].trackedEntityInstance);
+	                        else if (array3[t] == "T4eGuI8Gn5P") //Registered in Pharmacy
+	                                {
+	                                    if ($scope.opdvalue_check == "true") {
+	                                        $scope.objtrack_pharmacy.push(trackdata.events[i].trackedEntityInstance);
+	                                    }
+	                                } else if (array3[t] == "kkLvVNLd0Le") //Registered in Lab
+	                                {
+	                                    if ($scope.opdvalue_check == "true") {
+	                                        $scope.objtrack_lab.push(trackdata.events[i].trackedEntityInstance);
+	                                    }
+	                                }
+	                    }
+	
+	                    $scope.registeredid = [];
+	                    $scope.triagevalue_check = "";
+	                    $scope.opdvalue_check = "";
+	                }
+	            }
+	        });
+	
+	        if ($scope.uservalue == "OPD User") $scope.loadattributevalue($scope.objtrack_opd);else if ($scope.uservalue == "Pharmacy User") $scope.loadattributevalue($scope.objtrack_pharmacy);else if ($scope.uservalue == "Laboratory User") $scope.loadattributevalue($scope.objtrack_lab);
+	    };
+	
+	    $scope.patientdetials = function (details) {
+	        $scope.patient_detail = details;
+	        console.log($scope.patient_detail);
+	        $scope.tei = $scope.patient_detail.TEI;
+	
+	        var url = document.location.href = '../dhis-web-tracker-capture/index.html#/dashboard?tei=' + $scope.tei + '&program=Nb2EygU6dwp&ou=fMTeIPKpZbI';
+	    };
+	
+	    $scope.loadQueue2();
 	}]);
 
 /***/ }),
@@ -14207,6 +14148,1150 @@
 	        }
 	    };
 	
+	    $scope.eventmodel = function () {
+	        var addtomarque;
+	        var screen;
+	        var blood;
+	        var objbirth = [];
+	        var objfeeding = [];
+	        var objaefi = [];
+	        var objsixweeks = [];
+	        var objtenweeks = [];
+	        var objfourteenweeks = [];
+	        var objninemonth = [];
+	        var objsixteen24months = [];
+	        var sugar;
+	        var objvitamin = [];
+	        var count = 0;
+	        var Table = document.getElementById("table1");
+	        Table.innerHTML = "";
+	        var emptymarque = document.getElementById("marq");
+	        emptymarque.innerHTML = "";
+	        var url = window.location.href;
+	        var params = url.split('=');
+	        var per = params[1];
+	        var finper = per.split('&');
+	        var trackid = finper[0];
+	
+	        var perr = params[2];
+	        var finperr = perr.split('&');
+	        var programidd = finperr[0];
+	        //alert(programidd);
+	        var npcdcsid = "jC8Gprj4pWV";
+	        if (programidd == npcdcsid) {
+	            /*$.get("../api/events.json?orgUnit=lZtSBQjZCaX&program=jC8Gprj4pWV&trackedEntityInstance=" + trackid + "&order=eventDate:asc", function (data1) {
+	                var trackdata = data1;
+	                for (var j = 0; j < trackdata.events.length; j++) {
+	                        var screenoutcome = "<tr  style='border:1px solid black;background-color:white;height:30px'>  <td style='text-align:center;color:white;background-color:#5BC0DE'><b>Screening Outcome<b></td>";
+	                    var bloodpressure = "<tr  style='border:1px solid black;background-color:white;height:30px'>  <td style='text-align:center;color:white;background-color:orange'><b>Blood Pressure<b></td>";
+	                    var sugarfastning = "<tr  style='border:1px solid black;background-color:white;height:30px'>  <td style='text-align:center;color:white;background-color:#D9534F'><b>Sugar Fastning<b></td>";
+	                      // leng=eventdata.events.length;
+	                    var dateofvisit = trackdata.events[j].eventDate;  //
+	                    //  console.log(leng);
+	                    var dataval = trackdata.events[j].dataValues;
+	                    if (dataval.length > 1) {
+	                        count++;
+	                        for (var q = 0; q < dataval.length; q++) {
+	                            var id = dataval[q].dataElement;
+	                              if (id == "ObkhLek0zZf")// oral ca
+	                            {
+	                                screenoutcome = screenoutcome + "<td style='border:1px solid black;text-align:center'><b>Oral Ca<b></td>";
+	                                  // var aa="you have oral ca";
+	                                //  $(".reporttt").append(first);
+	                                // $(".report").append(name);
+	                              }
+	                            else if (id == "xFhzzBJ4Z6K")// RF
+	                            {
+	                                screenoutcome = screenoutcome + "<td style='border:1px solid black;text-align:center'><b>RF<b></td>";
+	                                  // var bb="you have RF";
+	                                  //  alert("you have RF");
+	                              }
+	                            else if (id == "C4YdSPG3Mr0")// Brease CA
+	                            {
+	                                  screenoutcome = screenoutcome + "<td style='border:1px solid black;text-align:center'><b>Breast CA<b></td>";
+	                              }
+	                            else if (id == "gpJWjauP93y")// cervical CA
+	                            {
+	                                  screenoutcome = screenoutcome + "<td style='border:1px solid black;text-align:center'><b>Cervical CA<b></td>";
+	                              }
+	                            else if (id == "Fay65bFZIkC")// CKD
+	                            {
+	                                  screenoutcome = screenoutcome + "<td style='border:1px solid black;text-align:center'><b>CKD<b></td>";
+	                              }
+	                            else if (id == "doZmhIPTR2O")// COPD
+	                            {
+	                                  screenoutcome = screenoutcome + "<td style='border:1px solid black;text-align:center'><b>COPD<b></td>";
+	                              }
+	                            else if (id == "GREEuTukX3P")// DM
+	                            {
+	                                  screenoutcome = screenoutcome + "<td style='border:1px solid black;text-align:center'><b>DM<b></td>";
+	                              }
+	                            else if (id == "FSD6mDILc7l")// HTN
+	                            {
+	                                  screenoutcome = screenoutcome + "<td style='border:1px solid black;text-align:center'><b>HTN<b></td>";
+	                              }
+	                            else if (id == "m63ulx9T3Ri")// CVD1   
+	                            {
+	                                  screenoutcome = screenoutcome + "<td style='border:1px solid black;text-align:center'><b>CVD1<b></td>";
+	                              }
+	                            else if (id == "bv7PMXbyOZD")// CA-other   
+	                            {
+	                                  screenoutcome = screenoutcome + "<td style='border:1px solid black;text-align:center'><b>CA-Other<b></td>";
+	                              }
+	                            else if (id == "HQz8UUWfvo0")// systolic blood presure  
+	                            {
+	                                var systol = dataval[q].value;
+	                                bloodpressure = bloodpressure + "<td style='border:1px solid black;text-align:center'><b>" + systol + "&nbsp&nbsp&nbspSystolic" + "<b></td>";
+	                                //  alert("hyy");
+	                            }
+	                            else if (id == "pTuKCcPRn9k")// diasitoli cblood presure
+	                            {
+	                                var diasit = dataval[q].value;
+	                                bloodpressure = bloodpressure + "<td style='border:1px solid black;text-align:center'><b>" + diasit + "&nbsp&nbspDiastolic" + "<b></td>";
+	                                // alert("hyy");
+	                            }
+	                            else if (id == "kfqBvvoWuzA")//FBS (mg/dl)
+	                            {
+	                                var fbs = dataval[q].value;
+	                                sugarfastning = sugarfastning + "<td style='border:1px solid black;text-align:center'><b>" + fbs + "&nbsp&nbspFBS(mg/dl)" + "<b></td>";
+	                                // alert("hyy");
+	                            }
+	                            else if (id == "XtI1MSP154r")// PPBS (mg/dl)
+	                            {
+	                                var ppbs = dataval[q].value;
+	                                sugarfastning = sugarfastning + "<td style='border:1px solid black;text-align:center'><b>" + ppbs + "&nbsp&nbspPPBS(mg/dl)" + "<b></td>";
+	                                // alert("hyy");
+	                            }
+	                            else if (id == "FHBrdgsPgDY")// RBS (mg/dl)
+	                            {
+	                                var rbs = dataval[q].value;
+	                                sugarfastning = sugarfastning + "<td style='border:1px solid black;text-align:center'><b>" + rbs + "&nbsp&nbspRBS(mg/dl)" + "<b></td>";
+	                                // alert("hyy");
+	                            }
+	                        }
+	                        screenoutcome = screenoutcome + "</tr>";
+	                        bloodpressure = bloodpressure + "</tr>"
+	                        sugarfastning = sugarfastning + "</tr>";
+	                        var visitnno = "<tr><td >Visit No: " + count + "</td><td>" + dateofvisit.substring(0, 10); +"</td></tr>";
+	                        var emptyRoww = "<tr class='emptyRow'><td height='35px'></td><tr>";
+	                        var blankmarque = "<td width='50px'></td>";
+	                        $(".reporttt").append(visitnno);
+	                        $(".reporttt").append(screenoutcome);
+	                        $(".reporttt").append(bloodpressure);
+	                        $(".reporttt").append(sugarfastning);
+	                        $(".reporttt").append(emptyRoww);
+	                        screen = screenoutcome;
+	                        screen = screen.slice(0, -5);
+	                        blood = bloodpressure;
+	                        blood = blood.slice(0, -5);
+	                        blood = blood.replace("<tr  style='border:1px solid black;background-color:white;height:30px'>", "");
+	                        sugarfastning = sugarfastning.replace("<tr  style='border:1px solid black;background-color:white;height:30px'>", "");
+	                        addtomarque = screen + blankmarque + blood + blankmarque + sugarfastning;
+	                    }
+	                  }
+	                    });
+	            // $("#myModal").modal();
+	            $("#myModal").modal('show');
+	            $("#myModal").on('hidden.bs.modal', function () {
+	                $("#marq").append(addtomarque);
+	                addtomarque = "";
+	            });*/
+	
+	            var message;
+	            message = {
+	                "programMessages": [{
+	                    "recipients": {
+	                        "emailAddresses": ["dilroop.singh.ds@gmail.com", "ramgopal@gmail.com"]
+	                    },
+	                    "programInstance": {
+	                        "id": "jC8Gprj4pWV"
+	                    },
+	                    "deliveryChannels": ["EMAIL"],
+	                    "subject": "Test from dhis2",
+	                    "text": "this is working fine",
+	                    "storeCopy": false
+	                }]
+	            };
+	            MessagingService.sendMessage(message);
+	        } else if (programidd == "JdZ3gv6cx54") {
+	            // alert("found you");
+	            $.get("../api/events.json?orgUnit=lZtSBQjZCaX&program=JdZ3gv6cx54&trackedEntityInstance=" + trackid + "&order=eventDate:asc", function (data1) {
+	                var trackdata = data1;
+	                for (var j = 0; j < trackdata.events.length; j++) {
+	
+	                    var Birth_Dose = "<tr  style='border:1px solid black;background-color:white;height:30px'>  <td style='text-align:center;color:white;background-color:#5BC0DE'>Birth Dose</td>";
+	                    var ChildFeeding = "<tr  style='border:1px solid black;background-color:white;height:30px'>  <td style='text-align:center;color:white;background-color:orange'><b>Breast Feeding<b></td>";
+	                    var AEFI = "<tr  style='border:1px solid black;background-color:white;height:30px'>  <td style='text-align:center;color:white;background-color:#D9534F'><b>AEFI<b></td>";
+	                    var immunistaion_at_sixweeks = "<tr  style='border:1px solid black;background-color:white;height:30px'>  <td style='text-align:center;color:white;background-color:#32CD32'><b>6 weeks<b></td>";
+	                    var immunistaion_at_tenweeks = "<tr  style='border:1px solid black;background-color:white;height:30px'>  <td style='text-align:center;color:white;background-color:#8B8682'><b>10 weeks<b></td>";
+	                    var immunistaion_at_fourteenweeks = "<tr  style='border:1px solid black;background-color:white;height:30px'>  <td style='text-align:center;color:white;background-color:#5BC0DE'><b>14 weeks<b></td>";
+	                    var immunistaion_at_ninemonths = "<tr  style='border:1px solid black;background-color:white;height:30px'>  <td style='text-align:center;color:white;background-color:orange'><b>9 months<b></td>";
+	                    var immunistaion_at_sixteen24months = "<tr  style='border:1px solid black;background-color:white;height:30px'>  <td style='text-align:center;color:white;background-color:#D9534F'><b>16-24 months<b></td>";
+	                    var vitaminss = "<tr  style='border:1px solid black;background-color:white;height:30px'>  <td style='text-align:center;color:white;background-color:#32CD32'><b>Vitamins<b></td>";
+	
+	                    var dateofvisit = trackdata.events[j].eventDate; //
+	                    //  console.log(leng);
+	                    var dataval = trackdata.events[j].dataValues;
+	                    if (dataval.length > 1) {
+	                        count++;
+	                        for (var q = 0; q < dataval.length; q++) {
+	                            var id = dataval[q].dataElement;
+	
+	                            if (id == "KO9GNZ6bsvP") // Vit K(Birth Dose)   
+	                                {
+	                                    var vall = dataval[q].value;
+	                                    if (vall == "true") {
+	                                        objbirth.push(vall);
+	                                        Birth_Dose = Birth_Dose + "<td style='border:1px solid black;text-align:center'><b>Vit K<b></td>";
+	                                    }
+	                                } else if (id == "X0LM2G9QrRq") // BCG(Birth Dose) 
+	                                {
+	                                    var vall = dataval[q].value;
+	                                    if (vall == "true") {
+	                                        objbirth.push(vall);
+	                                        Birth_Dose = Birth_Dose + "<td style='border:1px solid black;text-align:center'><b>BCG<b></td>";
+	                                    }
+	                                } else if (id == "geB0cJnqUuw") //  OPV(Birth Dose) 
+	                                {
+	                                    var vall = dataval[q].value;
+	                                    if (vall == "true") {
+	                                        objbirth.push(vall);
+	                                        Birth_Dose = Birth_Dose + "<td style='border:1px solid black;text-align:center'><b>OPV<b></td>";
+	                                    }
+	                                } else if (id == "LomeCfySW2p") //HEP B(Birth Dose) 
+	                                {
+	                                    var vall = dataval[q].value;
+	                                    if (vall == "true") {
+	                                        objbirth.push(vall);
+	                                        Birth_Dose = Birth_Dose + "<td style='border:1px solid black;text-align:center'><b>HEP B<b></td>";
+	                                    }
+	                                } else if (id == "wNBq0a4HVG2") // breastfeeding was given upto 6 months
+	                                {
+	                                    var vall = dataval[q].value;
+	                                    if (vall == "true") {
+	                                        objfeeding.push(vall);
+	                                        ChildFeeding = ChildFeeding + "<td style='border:1px solid black;text-align:center'><b> breastfeeding given upto 6 months 	<b></td>";
+	                                    }
+	                                } else if (id == "MmiNSPetHLN") // Complementary feeding after 6 months
+	                                {
+	                                    var vall = dataval[q].value;
+	                                    if (vall == "true") {
+	                                        objfeeding.push(vall);
+	                                        ChildFeeding = ChildFeeding + "<td style='border:1px solid black;text-align:center'><b>Complementary feeding after 6 months<b></td>";
+	                                    }
+	                                } else if (id == "RsXNgPyCy8O") // AEFI
+	                                {
+	                                    var vall = dataval[q].value;
+	                                    var aefivalue = vall;
+	                                    objaefi.push(aefivalue);
+	                                    AEFI = AEFI + "<td style='border:1px solid black;text-align:center'><b>" + aefivalue + "<b></td>";
+	                                } else if (id == "Y70xDmi3Y7F") // Details of Vaccine
+	                                {
+	                                    var vall = dataval[q].value;
+	                                    var aefi_detail = vall;
+	                                    objaefi.push(aefivalue);
+	                                    AEFI = AEFI + "<td style='border:1px solid black;text-align:center'><b>" + aefi_detail + "<b></td>";
+	                                } else if (id == "RiTLb8I7Ko5") // OPV 1 
+	                                {
+	                                    var vall = dataval[q].value;
+	                                    if (vall == "true") {
+	                                        objsixweeks.push(vall);
+	                                        immunistaion_at_sixweeks = immunistaion_at_sixweeks + "<td style='border:1px solid black;text-align:center'><b>OPV 1<b></td>";
+	                                    }
+	                                } else if (id == "pY9t6s0BPcx") // DPT/Penta 1 
+	                                {
+	                                    var vall = dataval[q].value;
+	                                    if (vall == "true") {
+	                                        objsixweeks.push(vall);
+	                                        immunistaion_at_sixweeks = immunistaion_at_sixweeks + "<td style='border:1px solid black;text-align:center'><b>DPT/Penta 1 <b></td>";
+	                                    }
+	                                } else if (id == "UcWvna0WpdU") // IPV 1
+	                                {
+	                                    var vall = dataval[q].value;
+	                                    if (vall == "true") {
+	                                        objsixweeks.push(vall);
+	                                        immunistaion_at_sixweeks = immunistaion_at_sixweeks + "<td style='border:1px solid black;text-align:center'><b>IPV 1<b></td>";
+	                                    }
+	                                } else if (id == "Hb9dY5gedpI") // HEP B1
+	                                {
+	                                    var vall = dataval[q].value;
+	                                    if (vall == "true") {
+	                                        objsixweeks.push(vall);
+	                                        immunistaion_at_sixweeks = immunistaion_at_sixweeks + "<td style='border:1px solid black;text-align:center'><b>HEP B1<b></td>";
+	                                    }
+	                                } else if (id == "NV6p0JaJacm") // OPV 2
+	                                {
+	                                    var vall = dataval[q].value;
+	                                    if (vall == "true") {
+	                                        objtenweeks.push(vall);
+	                                        immunistaion_at_tenweeks = immunistaion_at_tenweeks + "<td style='border:1px solid black;text-align:center'><b>OPV 2<b></td>";
+	                                    }
+	                                } else if (id == "pqBNLJWicCs") //DPT/Penta 2
+	                                {
+	                                    var vall = dataval[q].value;
+	                                    if (vall == "true") {
+	                                        objtenweeks.push(vall);
+	                                        immunistaion_at_tenweeks = immunistaion_at_tenweeks + "<td style='border:1px solid black;text-align:center'><b>DPT/Penta 2<b></td>";
+	                                    }
+	                                } else if (id == "sRN7mG6Q0ky") //HEP B2
+	                                {
+	                                    var vall = dataval[q].value;
+	                                    if (vall == "true") {
+	                                        objtenweeks.push(vall);
+	                                        immunistaion_at_tenweeks = immunistaion_at_tenweeks + "<td style='border:1px solid black;text-align:center'><b>HEP B2<b></td>";
+	                                    }
+	                                } else if (id == "OBCz2WmQ0Wr") //OPV 3
+	                                {
+	                                    var vall = dataval[q].value;
+	                                    if (vall == "true") {
+	                                        objfourteenweeks.push(vall);
+	                                        immunistaion_at_fourteenweeks = immunistaion_at_fourteenweeks + "<td style='border:1px solid black;text-align:center'><b>OPV 3<b></td>";
+	                                    }
+	                                } else if (id == "bLJEYJvjbtF") //DPT/Penta 3
+	                                {
+	                                    var vall = dataval[q].value;
+	                                    if (vall == "true") {
+	                                        objfourteenweeks.push(vall);
+	                                        immunistaion_at_fourteenweeks = immunistaion_at_fourteenweeks + "<td style='border:1px solid black;text-align:center'><b>DPT/Penta 3<b></td>";
+	                                    }
+	                                } else if (id == "eC1dIDNQbib") //IPV 2
+	                                {
+	                                    var vall = dataval[q].value;
+	                                    if (vall == "true") {
+	                                        objfourteenweeks.push(vall);
+	                                        immunistaion_at_fourteenweeks = immunistaion_at_fourteenweeks + "<td style='border:1px solid black;text-align:center'><b>IPV 2<b></td>";
+	                                    }
+	                                } else if (id == "GVx9H3VPQpb") //HEP B3
+	                                {
+	                                    var vall = dataval[q].value;
+	                                    if (vall == "true") {
+	                                        objfourteenweeks.push(vall);
+	                                        immunistaion_at_fourteenweeks = immunistaion_at_fourteenweeks + "<td style='border:1px solid black;text-align:center'><b>HEP B3<b></td>";
+	                                    }
+	                                } else if (id == "HS2ypHNwtWy") //JE (1st dose)
+	                                {
+	                                    var vall = dataval[q].value;
+	                                    if (vall == "true") {
+	                                        objninemonth.push(vall);
+	                                        immunistaion_at_ninemonths = immunistaion_at_ninemonths + "<td style='border:1px solid black;text-align:center'><b>JE(1st dose)<b></td>";
+	                                    }
+	                                } else if (id == "kq5XBCko5id") //Measles (1st dose)
+	                                {
+	                                    var vall = dataval[q].value;
+	                                    if (vall == "true") {
+	                                        objninemonth.push(vall);
+	                                        immunistaion_at_ninemonths = immunistaion_at_ninemonths + "<td style='border:1px solid black;text-align:center'><b>Measles(1st dose)<b></td>";
+	                                    }
+	                                } else if (id == "LGXWjlpx73G") //Diarrhoea (Measles)
+	                                {
+	                                    var vall = dataval[q].value;
+	                                    if (vall == "true") {
+	                                        objninemonth.push(vall);
+	                                        immunistaion_at_ninemonths = immunistaion_at_ninemonths + "<td style='border:1px solid black;text-align:center'><b>Diarrhoea(Measles)<b></td>";
+	                                    }
+	                                } else if (id == "ajpdN9HB29Q") //DPT/Penta Booster
+	                                {
+	                                    var vall = dataval[q].value;
+	                                    if (vall == "true") {
+	                                        objsixteen24months.push(vall);
+	                                        immunistaion_at_sixteen24months = immunistaion_at_sixteen24months + "<td style='border:1px solid black;text-align:center'><b>Diarrhoea(Measles)<b></td>";
+	                                    }
+	                                } else if (id == "zSd4PVzkfp5") //Diarrhoea (DPT)
+	                                {
+	                                    var vall = dataval[q].value;
+	                                    if (vall == "true") {
+	                                        objsixteen24months.push(vall);
+	                                        immunistaion_at_sixteen24months = immunistaion_at_sixteen24months + "<td style='border:1px solid black;text-align:center'><b>Diarrhoea (DPT)<b></td>";
+	                                    }
+	                                } else if (id == "mtHUBDF91KG") //Measles 2nd Dose
+	                                {
+	                                    var vall = dataval[q].value;
+	                                    if (vall == "true") {
+	                                        objsixteen24months.push(vall);
+	                                        immunistaion_at_sixteen24months = immunistaion_at_sixteen24months + "<td style='border:1px solid black;text-align:center'><b>Measles 2nd Dose<b></td>";
+	                                    }
+	                                } else if (id == "h3SbGX4562o") //OPV Booster
+	                                {
+	                                    var vall = dataval[q].value;
+	                                    if (vall == "true") {
+	                                        objsixteen24months.push(vall);
+	                                        immunistaion_at_sixteen24months = immunistaion_at_sixteen24months + "<td style='border:1px solid black;text-align:center'><b>OPV Booster<b></td>";
+	                                    }
+	                                } else if (id == "EpAqK3hd4sV") //DPT Booster 2
+	                                {
+	                                    var vall = dataval[q].value;
+	                                    if (vall == "true") {
+	                                        objsixteen24months.push(vall);
+	                                        immunistaion_at_sixteen24months = immunistaion_at_sixteen24months + "<td style='border:1px solid black;text-align:center'><b>DPT Booster 2<b></td>";
+	                                    }
+	                                } else if (id == "ffFqPgSWpsn") //JE 2nd Dose
+	                                {
+	                                    var vall = dataval[q].value;
+	                                    if (vall == "true") {
+	                                        objsixteen24months.push(vall);
+	                                        immunistaion_at_sixteen24months = immunistaion_at_sixteen24months + "<td style='border:1px solid black;text-align:center'><b>JE 2nd Dose<b></td>";
+	                                    }
+	                                } else if (id == "UjhLFpJ4ey9") //Vitamin A (1st dose)
+	                                {
+	                                    var vall = dataval[q].value;
+	                                    if (vall == "true") {
+	                                        objvitamin.push(vall);
+	                                        vitaminss = vitaminss + "<td style='border:1px solid black;text-align:center'><b>Vitamin A 1st dose<b></td>";
+	                                    }
+	                                } else if (id == "N3ZcKrrj31O") //Vitamin A 2nd Dose
+	                                {
+	                                    var vall = dataval[q].value;
+	                                    if (vall == "true") {
+	                                        objvitamin.push(vall);
+	                                        vitaminss = vitaminss + "<td style='border:1px solid black;text-align:center'><b>Vitamin A 2nd Dose<b></td>";
+	                                    }
+	                                } else if (id == "oo5ImHAJJJv") //Vitamin A 3rd Dose
+	                                {
+	                                    var vall = dataval[q].value;
+	                                    if (vall == "true") {
+	                                        objvitamin.push(vall);
+	                                        vitaminss = vitaminss + "<td style='border:1px solid black;text-align:center'><b>Vitamin A 3rd Dose<b></td>";
+	                                    }
+	                                } else if (id == "iN7e1e5kNZa") //Vitamin A 4th Dose
+	                                {
+	                                    var vall = dataval[q].value;
+	                                    if (vall == "true") {
+	                                        objvitamin.push(vall);
+	                                        vitaminss = vitaminss + "<td style='border:1px solid black;text-align:center'><b>Vitamin A 4th Dose<b></td>";
+	                                    }
+	                                } else if (id == "mAjCq0DOUA8") //Vitamin A 5th Dose
+	                                {
+	                                    var vall = dataval[q].value;
+	                                    if (vall == "true") {
+	                                        objvitamin.push(vall);
+	                                        vitaminss = vitaminss + "<td style='border:1px solid black;text-align:center'><b>Vitamin A 5th Dose<b></td>";
+	                                    }
+	                                } else if (id == "jL8ONs5GQih") //Vitamin A 6th Dose
+	                                {
+	                                    var vall = dataval[q].value;
+	                                    if (vall == "true") {
+	                                        objvitamin.push(vall);
+	                                        vitaminss = vitaminss + "<td style='border:1px solid black;text-align:center'><b>Vitamin A 6th Dose<b></td>";
+	                                    }
+	                                } else if (id == "jywcoFDCIhy") //Vitamin A 7th Dose
+	                                {
+	                                    var vall = dataval[q].value;
+	                                    if (vall == "true") {
+	                                        objvitamin.push(vall);
+	                                        vitaminss = vitaminss + "<td style='border:1px solid black;text-align:center'><b>Vitamin A 7th Dose<b></td>";
+	                                    }
+	                                } else if (id == "sQk9YvQZ8az") //Vitamin A 8th Dose
+	                                {
+	                                    var vall = dataval[q].value;
+	                                    if (vall == "true") {
+	                                        objvitamin.push(vall);
+	                                        vitaminss = vitaminss + "<td style='border:1px solid black;text-align:center'><b>Vitamin A 8th Dose<b></td>";
+	                                    }
+	                                } else if (id == "uv59WV60nJv") //Vitamin A 9th Dose
+	                                {
+	                                    var vall = dataval[q].value;
+	                                    if (vall == "true") {
+	                                        objvitamin.push(vall);
+	                                        vitaminss = vitaminss + "<td style='border:1px solid black;text-align:center'><b>Vitamin A 9th Dose<b></td>";
+	                                    }
+	                                }
+	                        }
+	                        var visitnno = "<tr><td >Visit No: " + count + "</td><td>" + dateofvisit.substring(0, 10);+"</td></tr>";
+	                        $(".reporttt").append(visitnno);
+	                        if (objbirth.length > 0) {
+	                            //  BIRTH DOSE 
+	                            var colspan = 1 + parseInt(objbirth.length);
+	                            var immunisationatbirh = "<tr  style='border:1px solid black;background-color:white;height:30px'>  <td colspan=" + colspan + " style='text-align:center;color:white;background-color:#5BC0DE'><b>Immunization at Birth<b></td></tr>";
+	                            $(".reporttt").append(immunisationatbirh);
+	                            Birth_Dose = Birth_Dose + "</tr>";
+	                            $(".reporttt").append(Birth_Dose);
+	                        }
+	
+	                        if (objfeeding.length > 0) {
+	                            // CHILD FEEDING
+	                            var colspan = 1 + parseInt(objfeeding.length);
+	                            var childfeed = "<tr  style='border:1px solid black;background-color:white;height:30px'>  <td colspan=" + colspan + " style='text-align:center;color:white;background-color:orange'><b>Child Feeding<b></td></tr>";
+	                            $(".reporttt").append(childfeed);
+	                            ChildFeeding = ChildFeeding + "</tr>";
+	                            $(".reporttt").append(ChildFeeding);
+	                        }
+	                        if (objaefi.length > 0) {
+	                            // AEFI
+	                            var colspan = 1 + parseInt(objaefi.length);
+	                            var aefii = "<tr  style='border:1px solid black;background-color:white;height:30px'>  <td colspan=" + colspan + " style='text-align:center;color:white;background-color:#D9534F'><b>AEFI<b></td></tr>";
+	                            $(".reporttt").append(aefii);
+	                            AEFI = AEFI + "</tr>";
+	                            $(".reporttt").append(AEFI);
+	                        }
+	                        if (objsixweeks.length > 0) {
+	                            // Immunization at 6 weeks
+	                            var colspan = 1 + parseInt(objsixweeks.length);
+	                            var sixweeks = "<tr  style='border:1px solid black;background-color:white;height:30px'>  <td colspan=" + colspan + " style='text-align:center;color:white;background-color:#32CD32'><b>Immunization at 6 weeks<b></td></tr>";
+	                            $(".reporttt").append(sixweeks);
+	                            immunistaion_at_sixweeks = immunistaion_at_sixweeks + "</tr>";
+	                            $(".reporttt").append(immunistaion_at_sixweeks);
+	                        }
+	                        if (objtenweeks.length > 0) {
+	                            // Immunization at 10 weeks
+	                            var colspan = 1 + parseInt(objtenweeks.length);
+	                            var tenweeks = "<tr  style='border:1px solid black;background-color:white;height:30px'>  <td colspan=" + colspan + " style='text-align:center;color:white;background-color:#8B8682'><b>Immunization at 10 weeks<b></td></tr>";
+	                            $(".reporttt").append(tenweeks);
+	                            immunistaion_at_tenweeks = immunistaion_at_tenweeks + "</tr>";
+	                            $(".reporttt").append(immunistaion_at_tenweeks);
+	                        }
+	                        if (objfourteenweeks.length > 0) {
+	                            // Immunization at 14 weeks
+	                            var colspan = 1 + parseInt(objfourteenweeks.length);
+	                            var fourteenweks = "<tr  style='border:1px solid black;background-color:white;height:30px'>  <td colspan=" + colspan + " style='text-align:center;color:white;background-color:#5BC0DE'><b>Immunization at 14 weeks<b></td></tr>";
+	                            $(".reporttt").append(fourteenweks);
+	                            immunistaion_at_fourteenweeks = immunistaion_at_fourteenweeks + "</tr>";
+	                            $(".reporttt").append(immunistaion_at_fourteenweeks);
+	                        }
+	                        if (objninemonth.length > 0) {
+	                            // Immunization at 9 months
+	                            var colspan = 1 + parseInt(objninemonth.length);
+	                            var nineemnth = "<tr  style='border:1px solid black;background-color:white;height:30px'>  <td colspan=" + colspan + " style='text-align:center;color:white;background-color:orange'><b>Immunization at 9 months<b></td></tr>";
+	                            $(".reporttt").append(nineemnth);
+	                            immunistaion_at_ninemonths = immunistaion_at_ninemonths + "</tr>";
+	                            $(".reporttt").append(immunistaion_at_ninemonths);
+	                        }
+	                        if (objsixteen24months.length > 0) {
+	                            // Immunization at 16-24 months
+	                            var colspan = 1 + parseInt(objsixteen24months.length);
+	                            var sixteen24enth = "<tr  style='border:1px solid black;background-color:white;height:30px'>  <td colspan=" + colspan + " style='text-align:center;color:white;background-color:#D9534F'><b>Immunization at 16-24 months<b></td></tr>";
+	                            $(".reporttt").append(sixteen24enth);
+	                            immunistaion_at_sixteen24months = immunistaion_at_sixteen24months + "</tr>";
+	                            $(".reporttt").append(immunistaion_at_sixteen24months);
+	                        }
+	                        if (objvitamin.length > 0) {
+	                            // vitamins
+	                            var colspan = 1 + parseInt(objvitamin.length);
+	                            var vitaamins = "<tr  style='border:1px solid black;background-color:white;height:30px'>  <td colspan=" + colspan + " style='text-align:center;color:white;background-color:#32CD32'><b>vitamin A<b></td></tr>";
+	                            $(".reporttt").append(vitaamins);
+	                            vitaminss = vitaminss + "</tr>";
+	                            $(".reporttt").append(vitaminss);
+	                        }
+	                        //var visitnno ="<tr><td >Visit No: "+count+"</td><td>"+dateofvisit.substring(0, 10);+"</td></tr>";
+	                        var emptyRoww = "<tr class='emptyRow'><td height='35px'></td><tr>";
+	                        var blankmarque = "<td width='50px'></td>";
+	
+	                        //  $(".reporttt").append(sugarfastning);
+	                        $(".reporttt").append(emptyRoww);
+	                        screen = Birth_Dose;
+	                        screen = screen.slice(0, -5);
+	                        blood = ChildFeeding;
+	                        blood = blood.slice(0, -5);
+	                        blood = blood.replace("<tr  style='border:1px solid black;background-color:white;height:30px'>", "");
+	                        AEFI = AEFI.slice(0, -5);
+	                        AEFI = AEFI.replace("<tr  style='border:1px solid black;background-color:white;height:30px'>", "");
+	                        immunistaion_at_sixweeks = immunistaion_at_sixweeks.slice(0, -5);
+	                        immunistaion_at_sixweeks = immunistaion_at_sixweeks.replace("<tr  style='border:1px solid black;background-color:white;height:30px'>", "");
+	                        immunistaion_at_tenweeks = immunistaion_at_tenweeks.slice(0, -5);
+	                        immunistaion_at_tenweeks = immunistaion_at_tenweeks.replace("<tr  style='border:1px solid black;background-color:white;height:30px'>", "");
+	                        immunistaion_at_fourteenweeks = immunistaion_at_fourteenweeks.slice(0, -5);
+	                        immunistaion_at_fourteenweeks = immunistaion_at_fourteenweeks.replace("<tr  style='border:1px solid black;background-color:white;height:30px'>", "");
+	                        immunistaion_at_ninemonths = immunistaion_at_ninemonths.slice(0, -5);
+	                        immunistaion_at_ninemonths = immunistaion_at_ninemonths.replace("<tr  style='border:1px solid black;background-color:white;height:30px'>", "");
+	                        immunistaion_at_sixteen24months = immunistaion_at_sixteen24months.slice(0, -5);
+	                        immunistaion_at_sixteen24months = immunistaion_at_sixteen24months.replace("<tr  style='border:1px solid black;background-color:white;height:30px'>", "");
+	                        vitaminss = vitaminss.replace("<tr  style='border:1px solid black;background-color:white;height:30px'>", "");
+	
+	                        addtomarque = screen + blankmarque + blood + blankmarque + AEFI + blankmarque + immunistaion_at_sixweeks + blankmarque + immunistaion_at_tenweeks + blankmarque + immunistaion_at_fourteenweeks + blankmarque + immunistaion_at_ninemonths + blankmarque + immunistaion_at_sixteen24months + blankmarque + vitaminss;
+	                        objbirth = [];
+	                        objfeeding = [];
+	                        objaefi = [];
+	                        objsixweeks = [];
+	                        objtenweeks = [];
+	                        objfourteenweeks = [];
+	                        objninemonth = [];
+	                        objsixteen24months = [];
+	                        objvitamin = [];
+	                    }
+	                }
+	            });
+	            // $("#myModal").modal();
+	            $("#myModal").modal('show');
+	            $("#myModal").on('hidden.bs.modal', function () {
+	                $("#marq").append(addtomarque);
+	                addtomarque = "";
+	            });
+	        } else {
+	            window.alert("Under Development for this program");
+	        }
+	    };
+	
+	    $scope.chartmodel = function () {
+	
+	        $.ajaxSetup({
+	            async: false
+	        });
+	        var datavalueofchart_systolic = [];
+	        var datavalueofchart_diastolic = [];
+	        var default_systolic = [];
+	        var default_diastolic = [];
+	        var orinalid = ["HQz8UUWfvo0", "pTuKCcPRn9k"];
+	        var dateofvisit = [];
+	        var objid = [];
+	        var url = window.location.href;
+	        var params = url.split('=');
+	        var per = params[1];
+	        var finper = per.split('&');
+	        var trackid = finper[0];
+	
+	        $.get("../api/events.json?orgUnit=lZtSBQjZCaX&program=jC8Gprj4pWV&trackedEntityInstance=" + trackid + "&order=eventDate:asc", function (data1) {
+	            var trackdata = data1;
+	            for (var j = 0; j < trackdata.events.length; j++) {
+	
+	                var dataval = trackdata.events[j].dataValues;
+	                if (dataval.length > 1) {
+	                    dateofvisit.push(trackdata.events[j].eventDate.substring(0, 10));
+	                    for (var q = 0; q < dataval.length; q++) {
+	                        var id = dataval[q].dataElement;
+	
+	                        objid.push(id);
+	                        if (id == "HQz8UUWfvo0") // systolic blood presure  
+	                            {
+	                                var systol = dataval[q].value;
+	                                datavalueofchart_systolic.push(systol);
+	                                default_systolic.push("140");
+	                            } else if (id == "pTuKCcPRn9k") // diasitoli cblood presure
+	                            {
+	                                var diasit = dataval[q].value;
+	                                datavalueofchart_diastolic.push(diasit);
+	                                default_diastolic.push("90");
+	                            }
+	                    }
+	                    var array3 = orinalid.filter(function (obj) {
+	                        return objid.indexOf(obj) == -1;
+	                    });
+	                    for (var t = 0; t < array3.length; t++) {
+	                        if (array3[t] == "HQz8UUWfvo0") datavalueofchart_systolic.push("0");else if (array3[t] == "pTuKCcPRn9k") datavalueofchart_diastolic.push("0");
+	                    }
+	                    objid = [];
+	                }
+	            }
+	        });
+	
+	        var ctx = document.getElementById('myChart').getContext('2d');
+	        var myLineChart = new Chart(ctx, {
+	            type: 'line',
+	            data: {
+	                labels: dateofvisit,
+	                responsive: true,
+	                datasets: [{
+	                    label: "Systolic(mmHg)",
+	                    backgroundColor: 'rgb(255, 99, 132)',
+	                    borderColor: 'rgb(255, 99, 132)',
+	                    borderDash: [5, 5],
+	                    data: datavalueofchart_systolic,
+	                    responsive: true,
+	                    fill: false,
+	                    lineTension: 0
+	                }, {
+	                    label: "Diastolic(mmHg)",
+	                    backgroundColor: '#0F75F7',
+	                    borderColor: '#0F75F7',
+	                    borderDash: [5, 5],
+	                    responsive: true,
+	                    data: datavalueofchart_diastolic,
+	                    fill: false,
+	                    lineTension: 0
+	                }, {
+	                    label: "Systolic:Cut-off",
+	                    backgroundColor: '#024204',
+	                    borderColor: '#024204',
+	                    borderWidth: '5px',
+	                    responsive: true,
+	                    data: default_systolic,
+	                    fill: false,
+	                    lineTension: 0
+	                }, {
+	                    label: "Diastolic:Cut-off",
+	                    backgroundColor: '#23B204',
+	                    borderColor: '#23B204',
+	                    borderWidth: '5px',
+	                    responsive: true,
+	                    data: default_diastolic,
+	                    fill: false,
+	                    lineTension: 0
+	                }]
+	            },
+	            options: {
+	                responsive: true,
+	
+	                tooltips: {
+	                    position: 'nearest',
+	                    mode: 'index',
+	                    intersect: false,
+	                    yPadding: 10,
+	                    xPadding: 10,
+	                    caretSize: 8,
+	                    backgroundColor: '#FAFAFA',
+	                    titleFontColor: '#000',
+	                    bodyFontColor: '#000',
+	                    borderColor: 'rgba(0,0,0,1)',
+	                    borderWidth: 4
+	                }
+	            }
+	        });
+	
+	        $("#myModalchart").modal('show');
+	    };
+	
+	    $scope.chartmodeldm = function () {
+	
+	        $.ajaxSetup({
+	            async: false
+	        });
+	        var obj_hb_gm_first = [];
+	        var reportdate_first = [];
+	        var mild = [];
+	        var moderate = [];
+	        var severe = [];
+	        var url = window.location.href;
+	        var params = url.split('=');
+	        var per = params[1];
+	        var finper = per.split('&');
+	        var trackid = finper[0];
+	
+	        $.get("../api/events.json?orgUnit=lZtSBQjZCaX&program=SUCUF657zNe&trackedEntityInstance=" + trackid + "&order=eventDate:asc", function (data) {
+	
+	            var trackdata = data;
+	            console.log(trackdata);
+	
+	            for (var i = 0; i < trackdata.events.length; i++) {
+	                var matchevent = trackdata.events[i].programStage;
+	
+	                if (matchevent == "aAmtHNAQo7g") {
+	                    //ANC First visist
+	
+	                    if (trackdata.events[i].eventDate) {
+	
+	                        var dataval = trackdata.events[i].dataValues;
+	                        for (var q = 0; q < dataval.length; q++) {
+	                            var id = dataval[q].dataElement;
+	
+	                            if (id == "yka2bblmdbM") //hb value 1st visit  
+	                                {
+	
+	                                    var vall = dataval[q].value;
+	                                    obj_hb_gm_first.push(vall);
+	                                    reportdate_first.push(trackdata.events[i].eventDate.substring(0, 10));
+	                                    mild.push("11");
+	                                    moderate.push("9");
+	                                    severe.push("7");
+	                                } else if (id == "jTyiikEB6Vm") //hb value 1st visit  
+	                                {
+	
+	                                    var vall = dataval[q].value;
+	                                    obj_hb_gm_first.push(vall);
+	                                    reportdate_first.push(trackdata.events[i].eventDate.substring(0, 10));
+	                                    mild.push("11");
+	                                    moderate.push("9");
+	                                    severe.push("7");
+	                                }
+	                        }
+	                    }
+	                } else if (matchevent == "DwoQd5oIicL") {
+	                    //Additional ANC visit
+	
+	                    if (trackdata.events[i].eventDate) {
+	
+	                        var dataval = trackdata.events[i].dataValues;
+	                        for (var q = 0; q < dataval.length; q++) {
+	                            var id = dataval[q].dataElement;
+	
+	                            if (id == "ojdgwkjVyOc") //hb value 1st visit
+	                                {
+	
+	                                    var vall = dataval[q].value;
+	                                    obj_hb_gm_first.push(vall);
+	                                    reportdate_first.push(trackdata.events[i].eventDate.substring(0, 10));
+	                                    mild.push("11");
+	                                    moderate.push("9");
+	                                    severe.push("7");
+	                                } else if (id == "jTyiikEB6Vm") //hb(gm)
+	                                {
+	
+	                                    var vall = dataval[q].value;
+	                                    obj_hb_gm_first.push(vall);
+	                                    reportdate_first.push(trackdata.events[i].eventDate.substring(0, 10));
+	                                    mild.push("11");
+	                                    moderate.push("9");
+	                                    severe.push("7");
+	                                }
+	                        }
+	                    }
+	                } else if (matchevent == "WMnWjG8PS58") {
+	                    // ANC SECOND VISIT
+	                    if (trackdata.events[i].eventDate) {
+	                        var dataval = trackdata.events[i].dataValues;
+	                        for (var q = 0; q < dataval.length; q++) {
+	                            var id = dataval[q].dataElement;
+	
+	                            if (id == "XI9R4MyF4cP") // hb value 2nd visit
+	                                {
+	                                    var vall = dataval[q].value;
+	                                    obj_hb_gm_first.push(vall);
+	                                    reportdate_first.push(trackdata.events[i].eventDate.substring(0, 10));
+	                                    mild.push("11");
+	                                    moderate.push("9");
+	                                    severe.push("7");
+	                                } else if (id == "RMGf5pzvlGN") // hb value 3rd visit
+	                                {
+	                                    var vall = dataval[q].value;
+	                                    obj_hb_gm_first.push(vall);
+	                                    reportdate_first.push(trackdata.events[i].eventDate.substring(0, 10));
+	                                    mild.push("11");
+	                                    moderate.push("9");
+	                                    severe.push("7");
+	                                } else if (id == "HkOHsdUuQSl") // hb value 4th visit
+	                                {
+	                                    var vall = dataval[q].value;
+	                                    obj_hb_gm_first.push(vall);
+	                                    reportdate_first.push(trackdata.events[i].eventDate.substring(0, 10));
+	                                    mild.push("11");
+	                                    moderate.push("9");
+	                                    severe.push("7");
+	                                } else if (id == "jTyiikEB6Vm") //hb(gm)
+	                                {
+	
+	                                    var vall = dataval[q].value;
+	                                    obj_hb_gm_first.push(vall);
+	                                    reportdate_first.push(trackdata.events[i].eventDate.substring(0, 10));
+	                                    mild.push("11");
+	                                    moderate.push("9");
+	                                    severe.push("7");
+	                                }
+	                        }
+	                    }
+	                }
+	            }
+	        });
+	
+	        var ctx = document.getElementById('myChartdm').getContext('2d');
+	        var myLineChart = new Chart(ctx, {
+	            type: 'line',
+	            data: {
+	                labels: reportdate_first,
+	                responsive: true,
+	                datasets: [{
+	                    label: "HB-Value(gm/dl)",
+	                    backgroundColor: '#0686F7',
+	                    borderColor: '#0686F7',
+	                    data: obj_hb_gm_first,
+	                    borderDash: [5, 5],
+	                    responsive: true,
+	                    fill: false,
+	                    lineTension: 0
+	                }, {
+	                    label: "HB-Mild:Cut-off",
+	                    backgroundColor: '#5BC606',
+	                    borderColor: '#5BC606',
+	                    borderWidth: '5px',
+	                    data: mild,
+	                    responsive: true,
+	                    fill: false,
+	                    lineTension: 0
+	                }, {
+	                    label: "HB-Moderate:Cut-off",
+	                    backgroundColor: '#FCA150',
+	                    borderColor: '#FCA150',
+	                    borderWidth: '5px',
+	                    data: moderate,
+	                    responsive: true,
+	                    fill: false,
+	                    lineTension: 0
+	                }, {
+	                    label: "HB-Severe:Cut-off",
+	                    backgroundColor: '#FF0000',
+	                    borderColor: '#FF0000',
+	                    borderWidth: '5px',
+	                    data: severe,
+	                    responsive: true,
+	                    fill: false,
+	                    lineTension: 0
+	                }]
+	            },
+	            options: {
+	                responsive: true,
+	
+	                tooltips: {
+	                    position: 'nearest',
+	                    mode: 'index',
+	                    intersect: false,
+	                    yPadding: 10,
+	                    xPadding: 10,
+	                    caretSize: 8,
+	                    backgroundColor: '#FAFAFA',
+	                    titleFontColor: '#000',
+	                    bodyFontColor: '#000',
+	                    borderColor: 'rgba(255,0,0)',
+	                    borderWidth: 4
+	                }
+	            }
+	        });
+	
+	        $("#myModalchartdm").modal('show');
+	    };
+	
+	    $scope.chartmodeldmm = function () {
+	
+	        $.ajaxSetup({
+	            async: false
+	        });
+	        var obj_hb_gm_first = [];
+	        var default_dm = [];
+	        var reportdate_first = [];
+	        var url = window.location.href;
+	        var params = url.split('=');
+	        var per = params[1];
+	        var finper = per.split('&');
+	        var trackid = finper[0];
+	
+	        $.get("../api/events.json?orgUnit=lZtSBQjZCaX&program=jC8Gprj4pWV&trackedEntityInstance=" + trackid + "&order=eventDate:asc", function (data) {
+	
+	            var trackdata = data;
+	            console.log(trackdata);
+	
+	            for (var i = 0; i < trackdata.events.length; i++) {
+	
+	                if (trackdata.events[i].eventDate) {
+	
+	                    var dataval = trackdata.events[i].dataValues;
+	                    for (var q = 0; q < dataval.length; q++) {
+	                        var id = dataval[q].dataElement;
+	
+	                        if (id == "FHBrdgsPgDY") //RBS (mg/dl) 
+	                            {
+	
+	                                var vall = dataval[q].value;
+	                                obj_hb_gm_first.push(vall);
+	                                reportdate_first.push(trackdata.events[i].eventDate.substring(0, 10));
+	                                default_dm.push("200");
+	                            }
+	                    }
+	                }
+	            }
+	        });
+	
+	        var ctx = document.getElementById('myChartdmm').getContext('2d');
+	        var myLineChart = new Chart(ctx, {
+	            type: 'line',
+	            data: {
+	                labels: reportdate_first,
+	                responsive: true,
+	                datasets: [{
+	                    label: "RBS mg/dl-Value",
+	                    backgroundColor: '#0B2BF5',
+	                    borderColor: '#0B2BF5',
+	                    borderDash: [5, 5],
+	                    data: obj_hb_gm_first,
+	                    responsive: true,
+	                    fill: false,
+	                    lineTension: 0
+	                }, {
+	                    label: "RBS mg/dl:Cut-off",
+	                    backgroundColor: '#FF0000',
+	                    borderColor: '#FF0000',
+	                    borderWidth: '5px',
+	                    data: default_dm,
+	                    responsive: true,
+	                    fill: false,
+	                    lineTension: 0
+	                }]
+	            },
+	            options: {
+	                responsive: true,
+	
+	                tooltips: {
+	                    position: 'nearest',
+	                    mode: 'index',
+	                    intersect: false,
+	                    yPadding: 10,
+	                    xPadding: 10,
+	                    caretSize: 8,
+	                    backgroundColor: '#FAFAFA',
+	                    titleFontColor: '#000',
+	                    bodyFontColor: '#000',
+	                    borderColor: '#0FFDD6',
+	                    borderWidth: 4
+	                }
+	            }
+	        });
+	
+	        $("#myModalchartdmm").modal('show');
+	    };
+	
+	    $scope.chartmodelchild = function () {
+	
+	        $.ajaxSetup({
+	            async: false
+	        });
+	        var dobvalue;
+	        var obj_hb_gm_first = [];
+	        var obj_default_value = [];
+	        var reportdate_first = [];
+	        var url = window.location.href;
+	        var params = url.split('=');
+	        var per = params[1];
+	        var finper = per.split('&');
+	        var trackid = finper[0];
+	
+	        $.get("../api/trackedEntityInstances/" + trackid + ".json?", function (data1) {
+	            var trackdata = data1;
+	
+	            for (var i = 0; i < trackdata.attributes.length; i++) {
+	
+	                var idd = trackdata.attributes[i].attribute;
+	
+	                if (trackdata.attributes[i].displayName == "Date of birth") {
+	                    dobvalue = trackdata.attributes[i].value;
+	                }
+	            }
+	        });
+	
+	        $.get("../api/events.json?orgUnit=lZtSBQjZCaX&program=JdZ3gv6cx54&trackedEntityInstance=" + trackid + "&order=eventDate:asc", function (data) {
+	
+	            var trackdata = data;
+	            console.log(trackdata);
+	
+	            for (var i = 0; i < trackdata.events.length; i++) {
+	
+	                if (trackdata.events[i].eventDate) {
+	
+	                    var dataval = trackdata.events[i].dataValues;
+	                    for (var q = 0; q < dataval.length; q++) {
+	                        var id = dataval[q].dataElement;
+	                        //CALCULATE AGE FROM DOB AND EVENT DATE
+	
+	                        if (id == "X0LM2G9QrRq") //BCG(Birth Dose) 
+	                            {
+	
+	                                var vall = dataval[q].value;
+	                                if (vall == "true") {
+	
+	                                    var repodate = new Date(trackdata.events[i].eventDate.substring(0, 10)),
+	                                        dateantime = new Date(dobvalue);
+	                                    var datediff = Math.abs((repodate.getTime() - dateantime.getTime()) / (1000 * 60 * 60 * 24));
+	                                    obj_hb_gm_first.push(Math.round(datediff / 7));
+	                                    reportdate_first.push("BCG(Birth Dose)");
+	                                    obj_default_value.push("0");
+	                                }
+	                            } else if (id == "pY9t6s0BPcx") //DPT/Penta 1
+	                            {
+	                                var vall = dataval[q].value;
+	                                if (vall == "true") {
+	
+	                                    var repodate = new Date(trackdata.events[i].eventDate.substring(0, 10)),
+	                                        dateantime = new Date(dobvalue);
+	                                    var datediff = Math.abs((repodate.getTime() - dateantime.getTime()) / (1000 * 60 * 60 * 24));
+	                                    obj_hb_gm_first.push(Math.round(datediff / 7));
+	                                    reportdate_first.push("DPT/Penta 1");
+	                                    obj_default_value.push("6");
+	                                }
+	                            } else if (id == "pqBNLJWicCs") //DPT/Penta 2
+	                            {
+	                                var vall = dataval[q].value;
+	                                if (vall == "true") {
+	
+	                                    var repodate = new Date(trackdata.events[i].eventDate.substring(0, 10)),
+	                                        dateantime = new Date(dobvalue);
+	                                    var datediff = Math.abs((repodate.getTime() - dateantime.getTime()) / (1000 * 60 * 60 * 24));
+	                                    obj_hb_gm_first.push(Math.round(datediff / 7));
+	                                    reportdate_first.push("DPT/Penta 2");
+	                                    obj_default_value.push("10");
+	                                }
+	                            } else if (id == "bLJEYJvjbtF") //DPT/Penta 3 
+	                            {
+	                                var vall = dataval[q].value;
+	                                if (vall == "true") {
+	
+	                                    var repodate = new Date(trackdata.events[i].eventDate.substring(0, 10)),
+	                                        dateantime = new Date(dobvalue);
+	                                    var datediff = Math.abs((repodate.getTime() - dateantime.getTime()) / (1000 * 60 * 60 * 24));
+	                                    obj_hb_gm_first.push(Math.round(datediff / 7));
+	                                    reportdate_first.push("DPT/Penta 3");
+	                                    obj_default_value.push("14");
+	                                }
+	                            } else if (id == "kq5XBCko5id") //Measles (1st dose) 
+	                            {
+	                                var vall = dataval[q].value;
+	                                if (vall == "true") {
+	
+	                                    var repodate = new Date(trackdata.events[i].eventDate.substring(0, 10)),
+	                                        dateantime = new Date(dobvalue);
+	                                    var datediff = Math.abs((repodate.getTime() - dateantime.getTime()) / (1000 * 60 * 60 * 24));
+	                                    obj_hb_gm_first.push(Math.round(datediff / 7));
+	                                    reportdate_first.push("Measles 1");
+	                                    obj_default_value.push("39");
+	                                }
+	                            } else if (id == "mtHUBDF91KG") //Measles 2nd Dose 
+	                            {
+	                                var vall = dataval[q].value;
+	                                if (vall == "true") {
+	
+	                                    var repodate = new Date(trackdata.events[i].eventDate.substring(0, 10)),
+	                                        dateantime = new Date(dobvalue);
+	                                    var datediff = Math.abs((repodate.getTime() - dateantime.getTime()) / (1000 * 60 * 60 * 24));
+	                                    obj_hb_gm_first.push(Math.round(datediff / 7));
+	                                    reportdate_first.push("Measles 2");
+	                                    obj_default_value.push("78");
+	                                }
+	                            }
+	                    }
+	                }
+	            }
+	        });
+	
+	        var ctx = document.getElementById('myChartchild').getContext('2d');
+	        var myLineChart = new Chart(ctx, {
+	            type: 'line',
+	            data: {
+	                labels: reportdate_first,
+	                responsive: true,
+	                datasets: [{
+	                    label: "Vaccination(Weeks)",
+	                    backgroundColor: '#FA0715',
+	                    borderColor: '#FA0715',
+	                    borderDash: [5, 5],
+	                    data: obj_hb_gm_first,
+	                    responsive: true,
+	                    fill: false,
+	                    lineTension: 0
+	                }, {
+	                    label: "Ideal UIP(Weeks)",
+	                    backgroundColor: '#5EFF32',
+	                    borderColor: '#5EFF32',
+	                    borderWidth: '5px',
+	                    data: obj_default_value,
+	                    responsive: true,
+	                    fill: false,
+	                    lineTension: 0
+	                }]
+	            },
+	            options: {
+	                responsive: true,
+	
+	                tooltips: {
+	                    position: 'nearest',
+	                    mode: 'index',
+	                    intersect: false,
+	                    yPadding: 10,
+	                    xPadding: 10,
+	                    caretSize: 8,
+	                    backgroundColor: '#FAFAFA',
+	                    titleFontColor: '#000',
+	                    bodyFontColor: '#000',
+	                    borderColor: '#5EFF32',
+	                    borderWidth: 4
+	                }
+	            }
+	        });
+	
+	        $("#myModalchartchild").modal('show');
+	    };
+	
 	    $scope.showEnrollment = function () {
 	        $scope.displayEnrollment = true;
 	    };
@@ -14329,108 +15414,9 @@
 	    $scope.fileNames = CurrentSelection.getFileNames();
 	    $scope.currentFileNames = $scope.fileNames;
 	
+	    $scope.generatedCustomId = ''; // custom change for INTPART
 	    //Placeholder till proper settings for time is implemented. Currently hard coded to 24h format.
 	    $scope.timeFormat = '24h';
-	    $scope.nepaliDatePicker = "";
-	
-	    // add for nepali Calendar start
-	    $scope.initiateNepaliCalendar = function () {
-	        var currentDate = new Date();
-	        var currentNepaliDate = calenderFunctions.getBsDateByAdDate(currentDate.getFullYear(), currentDate.getMonth() - 1, currentDate.getDate() - 1);
-	        var formatedNepaliDate = calenderFunctions.bsDateFormat("%y-%m-%d", currentNepaliDate.bsYear, currentNepaliDate.bsMonth, currentNepaliDate.bsDate);
-	        $("#nepali-date-picker").nepaliDatePicker({
-	            dateFormat: "%y-%m-%d",
-	            closeOnDateSelect: true,
-	            //minDate: "२०००-२-१",
-	            maxDate: formatedNepaliDate
-	        });
-	
-	        $("#nepali-date-picker").on("dateChange", function (event) {
-	            var finalUpdatedDate = "";
-	            var date = [];
-	            var val = $("#nepali-date-picker").val();
-	            console.log('here is date', val);
-	            //alert( val );
-	            var arr = [];
-	            var l = val.length;
-	            for (var i = 0; i < l; i++) {
-	                if (val[i] == "०") {
-	                    arr.push(0);
-	                }
-	                if (val[i] == "१") {
-	                    arr.push(1);
-	                }
-	                if (val[i] == "२") {
-	                    arr.push(2);
-	                }
-	                if (val[i] == "३") {
-	                    arr.push(3);
-	                }
-	                if (val[i] == "४") {
-	                    arr.push(4);
-	                }
-	                if (val[i] == "५") {
-	                    arr.push(5);
-	                }
-	                if (val[i] == "६") {
-	                    arr.push(6);
-	                }
-	                if (val[i] == "७") {
-	                    arr.push(7);
-	                }
-	                if (val[i] == "८") {
-	                    arr.push(8);
-	                }
-	                if (val[i] == "९") {
-	                    arr.push(9);
-	                }
-	                if (val[i] == "-") {
-	                    arr.push("-");
-	                }
-	                // console.log(l, arr);
-	            }
-	            var s = arr.toString();
-	            s.replace(/\,/g, "");
-	            var str2 = s.replace(/\,/g, "");
-	            var arr = str2.split("-");
-	            var year = arr[0];
-	            var month = arr[1];
-	            var day = arr[2];
-	            console.log(year, month, day, arr);
-	            try {
-	                var isoMonth = "";
-	                var isoDate = "";
-	                var converter = new DateConverter();
-	                converter.setNepaliDate(year, month, day);
-	                var convertedDate = converter.getEnglishYear() + "-" + converter.getEnglishMonth() + "-" + converter.getEnglishDate();
-	
-	                var IsoMonth = "";
-	                var IsoDate = "";
-	
-	                if (parseInt(convertedDate.split("-")[1]) >= 1 && parseInt(convertedDate.split("-")[1]) < 10) {
-	                    IsoMonth = "0" + parseInt(convertedDate.split("-")[1]);
-	                } else {
-	                    IsoMonth = parseInt(convertedDate.split("-")[1]);
-	                }
-	
-	                if (parseInt(convertedDate.split("-")[2]) >= 1 && parseInt(convertedDate.split("-")[2]) < 10) {
-	                    IsoDate = "0" + parseInt(convertedDate.split("-")[2]);
-	                } else {
-	                    IsoDate = parseInt(convertedDate.split("-")[2]);
-	                }
-	
-	                finalUpdatedDate = parseInt(convertedDate.split("-")[0]) + "-" + IsoMonth + "-" + IsoDate;
-	
-	                console.log("Final " + convertedDate + ' finalUpdatedDate ' + finalUpdatedDate);
-	                console.log('date valooo', finalUpdatedDate);
-	                $('#updatedISODate').val(finalUpdatedDate);
-	                convertDateToISO();
-	            } catch (err) {
-	                alert(err.message);
-	            }
-	        });
-	    };
-	    // add for nepali Calendar end
 	
 	    if (!$scope.attributesById) {
 	        $scope.attributesById = [];
@@ -14474,9 +15460,21 @@
 	        });
 	    }
 	
+	    // custom change for INTPART Start
+	    // update for SAVE CHILD  for disable attribute patient_identifier
 	    $scope.isDisabled = function (attribute) {
+	        if (attribute.code === 'family_unique_id') {
+	            return true;
+	        } else {
+	            return attribute.generated || $scope.assignedFields[attribute.id] || $scope.editingDisabled;
+	        }
+	    };
+	    // custom change for INTPART end
+	    /*
+	    $scope.isDisabled = function(attribute) {
 	        return attribute.generated || $scope.assignedFields[attribute.id] || $scope.editingDisabled;
 	    };
+	    */
 	
 	    $scope.selectedEnrollment = {
 	        enrollmentDate: $scope.today,
@@ -14484,32 +15482,6 @@
 	        orgUnit: $scope.selectedOrgUnit.id,
 	        orgUnitName: $scope.selectedOrgUnit ? $scope.selectedOrgUnit.displayName : ""
 	    };
-	
-	    // custom change add for nepali Calendar start
-	    function convertDateToISO() {
-	
-	        var finalUpdatedDate = $("#updatedISODate").val();
-	        console.log('here is final date', finalUpdatedDate);
-	
-	        if (finalUpdatedDate) {
-	
-	            $scope.selectedEnrollment = {
-	                enrollmentDate: finalUpdatedDate,
-	                incidentDate: finalUpdatedDate,
-	                orgUnit: $scope.selectedOrgUnit.id,
-	                orgUnitName: $scope.selectedOrgUnit ? $scope.selectedOrgUnit.displayName : ""
-	            };
-	        } else {
-	
-	            $scope.selectedEnrollment = {
-	                enrollmentDate: $scope.today,
-	                incidentDate: $scope.today,
-	                orgUnit: $scope.selectedOrgUnit.id,
-	                orgUnitName: $scope.selectedOrgUnit ? $scope.selectedOrgUnit.displayName : ""
-	            };
-	        }
-	    };
-	    // custom change add for nepali Calendar end
 	
 	    $scope.trackedEntityTypes = { available: [] };
 	    var trackedEntityTypesById = {};
@@ -14955,7 +15927,24 @@
 	        //get tei attributes and their values
 	        //but there could be a case where attributes are non-mandatory and
 	        //registration form comes empty, in this case enforce at least one value
-	        var result = RegistrationService.processForm($scope.tei, $scope.selectedTei, $scope.teiOriginal, $scope.attributesById);
+	
+	        // custom change for custom-id generation for household/member program
+	        if ($scope.registrationMode === 'REGISTRATION') {
+	
+	            var selectedOrgUnitCode = $scope.selectedOrgUnit.code;
+	            var orgUnitCodeUpperCase = selectedOrgUnitCode.substr(0, 4).toUpperCase();
+	            var houseIdentifierValue = "";
+	            // 6 digit random number
+	            var suffix = Math.floor(Math.random() * 1000000) + 1;
+	
+	            if ($scope.selectedTei.ZQMF7taSAw8 != undefined) {
+	                var tempStr = $scope.selectedTei.ZQMF7taSAw8;
+	                houseIdentifierValue = tempStr.substr(0, 4).toUpperCase();
+	            }
+	            $scope.generatedCustomId = orgUnitCodeUpperCase + "-" + houseIdentifierValue + "-" + suffix;
+	        }
+	
+	        var result = RegistrationService.processForm($scope.tei, $scope.selectedTei, $scope.teiOriginal, $scope.attributesById, $scope.generatedCustomId);
 	        $scope.formEmpty = result.formEmpty;
 	        $scope.tei = result.tei;
 	
@@ -15010,6 +15999,41 @@
 	        }
 	        return false;
 	    };
+	
+	    // custom change for INTPART generate custom ID
+	    $scope.generateFamilyMemberUniqueId = function (selectedTEI, teiAttId) {
+	        //var seriesofmember = trackvalues.UqhbFTbVeSD;
+	        //var typeofhouse = trackvalues.dCer94znEuY;
+	
+	        var personNameValue = selectedTEI.xalnzkNfD77;
+	        var householdValue = selectedTEI.YFjB0zhySP6;
+	
+	        if (personNameValue && householdValue) {
+	            var personNameUpperCase = personNameValue.toUpperCase();
+	            householdValue = householdValue.substring(0, 4);
+	            var familyMemberUniqueId = $scope.selectedOrgUnit.displayName + '/' + householdValue + '/' + personNameUpperCase.substring(0, 4);
+	            //var mergedata = $scope.selectedOrgUnit.displayName + householdValue + typeofhouse + '/' + personNameUpperCase.substring(0, 4) + '/' + seriesofmember;
+	            $scope.selectedTei[teiAttId] = familyMemberUniqueId;
+	        } else {
+	            alert("Please fill Required Detail.");
+	        }
+	    };
+	    $scope.generateFamilyUniqueId = function (selectedTEI, teiAttId) {
+	        //var typeofhouse = trackvalues.dCer94znEuY;
+	        //var headoffamily = trackvalues.FML9pARILz5;
+	        var houseIdentifierValue = selectedTEI.ZQMF7taSAw8;
+	
+	        if (houseIdentifierValue) {
+	            //var uppercaseheadname = headoffamily.toUpperCase();
+	            houseIdentifierValue = houseIdentifierValue.substring(0, 4);
+	            //var mergedata = 'CHD25/' + houseIdentifierValue + typeofhouse + '/' + uppercaseheadname.substring(0, 4) + '/H1';
+	            var familyUniqueId = $scope.selectedOrgUnit.displayName + '/' + houseIdentifierValue;
+	            $scope.selectedTei[teiAttId] = familyUniqueId;
+	        } else {
+	            alert("Please fill Required Detail.");
+	        }
+	    };
+	    // end
 	
 	    $scope.teiValueUpdated = function (tei, field) {
 	        getMatchingTeisCount(tei, field).then(function () {
@@ -16179,8 +17203,6 @@
 	    $scope.orgUnitNames = {};
 	    $scope.originalDate = '';
 	
-	    $scope.convertedFromNepaliCalEventDate = '';
-	    $scope.convertedNepaliDate = '';
 	    //Placeholder till proper settings for time is implemented. Currently hard coded to 24h format.
 	    $scope.timeFormat = '24h';
 	
@@ -16201,183 +17223,6 @@
 	    $scope.attributesById = CurrentSelection.getAttributesById();
 	    $scope.optionGroupsById = CurrentSelection.getOptionGroupsById();
 	
-	    $scope.convertISOEventDateToNepaliDate = function () {
-	        var tempEventDate = $scope.currentEvent.eventDate;
-	        var nepaliConverter = new DateConverter();
-	        //nepaliConverter.setEnglishDate(tempYear, tempMonth, tempDay);
-	
-	        var nepaliConverter = new DateConverter();
-	
-	        nepaliConverter.setEnglishDate(parseInt(tempEventDate.split("-")[0]), parseInt(tempEventDate.split("-")[1]), parseInt(tempEventDate.split("-")[2]));
-	
-	        console.log('nepali date', parseInt(tempEventDate.split("-")[0]), parseInt(tempEventDate.split("-")[1]), parseInt(tempEventDate.split("-")[2]));
-	
-	        var convertedNepaliDate = nepaliConverter.getNepaliYear() + "-" + nepaliConverter.getNepaliMonth() + "-" + nepaliConverter.getNepaliDate();
-	
-	        var tempArr = [];
-	        var l = convertedNepaliDate.length;
-	        for (var i = 0; i < l; i++) {
-	            if (convertedNepaliDate[i] == 0) {
-	                tempArr.push("०");
-	            }
-	            if (convertedNepaliDate[i] == 1) {
-	                tempArr.push("१");
-	            }
-	            if (convertedNepaliDate[i] == 2) {
-	                tempArr.push("२");
-	            }
-	            if (convertedNepaliDate[i] == 3) {
-	                tempArr.push("३");
-	            }
-	            if (convertedNepaliDate[i] == 4) {
-	                tempArr.push("४");
-	            }
-	            if (convertedNepaliDate[i] == 5) {
-	                tempArr.push("५");
-	            }
-	            if (convertedNepaliDate[i] == 6) {
-	                tempArr.push("६");
-	            }
-	            if (convertedNepaliDate[i] == 7) {
-	                tempArr.push("७");
-	            }
-	            if (convertedNepaliDate[i] == 8) {
-	                tempArr.push("८");
-	            }
-	            if (convertedNepaliDate[i] == 9) {
-	                tempArr.push("९");
-	            }
-	            if (convertedNepaliDate[i] == "-") {
-	                tempArr.push("-");
-	            }
-	        }
-	
-	        var tempString = tempArr.toString();
-	        var tempString = tempArr.toString();
-	        tempString.replace(/\,/g, "");
-	        var tempStr2 = tempString.replace(/\,/g, "");
-	        var tempArr = tempStr2.split("-");
-	        var tempYear = tempArr[0];
-	        var tempMonth = tempArr[1];
-	        var tempDay = tempArr[2];
-	        console.log(tempYear, tempMonth, tempDay, tempArr);
-	
-	        var finalNepaliDate = tempYear + "-" + tempMonth + "-" + tempDay;
-	
-	        $('#nepaliEventDatePicker').val(finalNepaliDate);
-	        $scope.convertedNepaliDate = finalNepaliDate;
-	    };
-	
-	    // add for nepali Calendar start
-	    $scope.initiateNepaliEventCalendar = function () {
-	
-	        $scope.convertISOEventDateToNepaliDate();
-	
-	        var currentDate = new Date();
-	        var currentNepaliDate = calenderFunctions.getBsDateByAdDate(currentDate.getFullYear(), currentDate.getMonth() - 1, currentDate.getDate() - 1);
-	        var currentConvertedNepaliDate = calenderFunctions.bsDateFormat("%y-%m-%d", currentNepaliDate.bsYear, currentNepaliDate.bsMonth, currentNepaliDate.bsDate);
-	
-	        $("#nepaliEventDatePicker").nepaliDatePicker({
-	            dateFormat: "%y-%m-%d",
-	            closeOnDateSelect: true,
-	            //minDate: "२०००-२-१",
-	            maxDate: currentConvertedNepaliDate
-	        });
-	
-	        $("#nepaliEventDatePicker").on("dateChange", function (nepaliCalendarEvent) {
-	            var finalUpdatedDate = "";
-	            var date = [];
-	            var val = nepaliCalendarEvent.datePickerData.formattedDate;
-	
-	            console.log('here is date', val);
-	            //alert( val );
-	            var arr = [];
-	            var l = val.length;
-	            for (var i = 0; i < l; i++) {
-	                if (val[i] == "०") {
-	                    arr.push(0);
-	                }
-	                if (val[i] == "१") {
-	                    arr.push(1);
-	                }
-	                if (val[i] == "२") {
-	                    arr.push(2);
-	                }
-	                if (val[i] == "३") {
-	                    arr.push(3);
-	                }
-	                if (val[i] == "४") {
-	                    arr.push(4);
-	                }
-	                if (val[i] == "५") {
-	                    arr.push(5);
-	                }
-	                if (val[i] == "६") {
-	                    arr.push(6);
-	                }
-	                if (val[i] == "७") {
-	                    arr.push(7);
-	                }
-	                if (val[i] == "८") {
-	                    arr.push(8);
-	                }
-	                if (val[i] == "९") {
-	                    arr.push(9);
-	                }
-	                if (val[i] == "-") {
-	                    arr.push("-");
-	                }
-	                // console.log(l, arr);
-	            }
-	            var s = arr.toString();
-	            s.replace(/\,/g, "");
-	            var str2 = s.replace(/\,/g, "");
-	            var arr = str2.split("-");
-	            var year = arr[0];
-	            var month = arr[1];
-	            var day = arr[2];
-	            console.log(year, month, day, arr);
-	
-	            //convertEventDateToISO( nepaliDate );
-	
-	            try {
-	                var isoMonth = "";
-	                var isoDate = "";
-	                var converter = new DateConverter();
-	                converter.setNepaliDate(year, month, day);
-	
-	                var convetedDate = converter.getEnglishYear() + "-" + converter.getEnglishMonth() + "-" + converter.getEnglishDate();
-	
-	                var IsoMonth = "";
-	                var IsoDate = "";
-	
-	                if (parseInt(convetedDate.split("-")[1]) >= 1 && parseInt(convetedDate.split("-")[1]) < 10) {
-	                    IsoMonth = "0" + parseInt(convetedDate.split("-")[1]);
-	                } else {
-	                    IsoMonth = parseInt(convetedDate.split("-")[1]);
-	                }
-	
-	                if (parseInt(convetedDate.split("-")[2]) >= 1 && parseInt(convetedDate.split("-")[2]) < 10) {
-	                    IsoDate = "0" + parseInt(convetedDate.split("-")[2]);
-	                } else {
-	                    IsoDate = parseInt(convetedDate.split("-")[2]);
-	                }
-	
-	                finalUpdatedDate = parseInt(convetedDate.split("-")[0]) + "-" + IsoMonth + "-" + IsoDate;
-	
-	                console.log("Final " + convetedDate + ' finalUpdatedDate ' + finalUpdatedDate);
-	                console.log('date valooo', finalUpdatedDate);
-	                //$('#updatedISOEventDate').val(finalUpdatedDate);
-	
-	                $scope.convertedFromNepaliCalEventDate = finalUpdatedDate;
-	                $scope.saveEventDate();
-	            } catch (err) {
-	                alert(err.message);
-	            }
-	        });
-	    };
-	    // add for nepali Calendar end
-	
 	    DashboardLayoutService.get().then(function (response) {
 	        $scope.dashBoardLayout = response;
 	        if ($scope.dashBoardLayout.customLayout && $scope.dashBoardLayout.customLayout[$scope.selectedProgramId] && $scope.dashBoardLayout.customLayout[$scope.selectedProgramId].programStageTimeLineLayout) {
@@ -16397,6 +17242,21 @@
 	    });
 	
 	    $scope.userAuthority = AuthorityService.getUserAuthorities(SessionStorageService.get('USER_PROFILE'));
+	
+	    // custom change for INTPART
+	    //get attribute of user
+	    ///Assign value to option set
+	    $.get("../api/me.json?fields=id,name,attributeValues[attribute[id,code,name],value]", function (meResponse) {
+	        var apiResponse = meResponse;
+	        $scope.showSectionsName = [];
+	        for (var i = 0; i < apiResponse.attributeValues.length; i++) {
+	            var userAttributevalue = apiResponse.attributeValues[i].value;
+	
+	            $scope.showSectionsName.push(apiResponse.attributeValues[i].attribute.name);
+	        }
+	    });
+	    //end
+	
 	    if (!$scope.attributesById) {
 	        $scope.attributesById = [];
 	        AttributesFactory.getAll().then(function (atts) {
@@ -16528,6 +17388,568 @@
 	        popupWin.document.close();
 	        $scope.printForm = false;
 	        $scope.printEmptyForm = false;
+	    };
+	
+	    $scope.printslip = function (eventvale, printdivname) {
+	
+	        $.ajaxSetup({
+	            async: false
+	        });
+	
+	        var procedureprescribed = "";
+	        //printcustomslip(eventvale);
+	        $.get("../api/events/" + eventvale + ".json&skipPaging=true", function (data) {
+	
+	            var trackdata = data;
+	            $scope.programname = trackdata.program;
+	            $scope.organisationname = trackdata.orgUnit;
+	            $scope.trackentityid = trackdata.trackedEntityInstance;
+	            $scope.eventdateandtime = trackdata.eventDate.substring(0, 10);
+	
+	            // $scope.Doctor = "";
+	            // $scope.bmi = "";
+	            // $scope.investigation = "";
+	            // $scope.opddiagnosis = "";
+	            // $scope.bodyweight = "";
+	            // $scope.bodyheight = "";
+	            // $scope.temperature = "";
+	            // $scope.systolic = "";
+	            // $scope.dystolic = "";
+	            // $scope.pulserate = "";
+	            // $scope.presenthistory = "";
+	            //console.log(trackdata);
+	
+	            for (var i = 0; i < trackdata.dataValues.length; i++) {
+	
+	                var id = trackdata.dataValues[i].dataElement;
+	
+	                if (id == "qnMyYSej1ZK") //Body Weight in Cm 
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.bodyweight = vall;
+	                    } else if (id == "mLwwGErD48L") //Body Height in Cm 
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.bodyheight = vall;
+	                    } else if (id == "X0kPZZMoenf") //Temperature in *F
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.temperature = vall;
+	                    } else if (id == "HQz8UUWfvo0") //Systolic (mm Hg)
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.systolic = vall;
+	                    } else if (id == "pTuKCcPRn9k") // Diastolic (mm Hg)
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.dystolic = vall;
+	                    } else if (id == "iXXTGI1On6M") // Pulse Rate
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.pulserate = vall;
+	                    } else if (id == "eHFn5Je3TyO") // History of Present illness
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.presenthistory = vall;
+	                    } else if (id == "TyjTa70SSJq") //OPD-Drug name 1
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.opddrug1 = vall;
+	                    } else if (id == "CGvUQ23S5vE") // OPD-Drug name 2   
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.opddrug2 = vall;
+	                    } else if (id == "uwk0dM0wtJW") // OPD-Drug name 3   
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.opddrug3 = vall;
+	                    } else if (id == "lC94CnkbOGs") // OPD-Drug name 4  
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.opddrug4 = vall;
+	                    } else if (id == "TbiR8vx2OXp") // OPD-Drug name 5 
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.opddrug5 = vall;
+	                    } else if (id == "XDbRMS9Sxi3") // OPD-Drug name 6
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.opddrug6 = vall;
+	                    } else if (id == "gBlOM8ikzuA") // OPD-Drug name 7
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.opddrug7 = vall;
+	                    } else if (id == "YXwFyNj37D2") // OPD-Drug name 8
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.opddrug8 = vall;
+	                    } else if (id == "Jx3akc91Xwh") // OPD-Drug name 9
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.opddrug9 = vall;
+	                    } else if (id == "bDrj9bio49t") // OPD-Dose 1
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.opddose1 = vall;
+	                    } else if (id == "A5EqIM4pk4d") // OPD-Dose 2
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.opddose2 = vall;
+	                    } else if (id == "yeFN33fywYN") //OPD-Dose 3
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.opddose3 = vall;
+	                    } else if (id == "YX4zezFRROk") // OPD-Dose 4
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.opddose4 = vall;
+	                    } else if (id == "ZirWJ8OUiKK") // OPD-Dose 5
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.opddose5 = vall;
+	                    } else if (id == "DLUcEOLpGt6") // OPD-Dose 6
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.opddose6 = vall;
+	                    } else if (id == "qV5C6poQeu6") //OPD-Dose 7
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.opddose7 = vall;
+	                    } else if (id == "FrEseFRNabY") // OPD-Dose 8
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.opddose8 = vall;
+	                    } else if (id == "QUMhIrPSpu7") // OPD-Dose 9
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.opddose9 = vall;
+	                    } else if (id == "zC8ogWKNaPM") // OPD-Drug formulation 1
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.formulation1 = vall;
+	                    } else if (id == "ttb3d5tWOOp") // OPD-Drug formulation 2
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.formulation2 = vall;
+	                    } else if (id == "fpff3EL6UcM") //OPD-Drug formulation 3
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.formulation3 = vall;
+	                    } else if (id == "QONbufvKE0Z") // OPD-Drug formulation 4
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.formulation4 = vall;
+	                    } else if (id == "wsQyonZXqMN") // OPD-Drug formulation 5
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.formulation5 = vall;
+	                    } else if (id == "dVAcQvOM7dv") // OPD-Drug formulation 6
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.formulation6 = vall;
+	                    } else if (id == "AkT2g5e7ANT") // OPD-Drug formulation 7
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.formulation7 = vall;
+	                    } else if (id == "IfloYR7eJgG") //OPD-Drug formulation 8
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.formulation8 = vall;
+	                    } else if (id == "EpwLuI27hwU") // OPD-Drug formulation 9
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.formulation9 = vall;
+	                    } else if (id == "dwSMErTpar8") // OPD-Drug Frequency 1
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.Frequency1 = vall;
+	                    } else if (id == "qtCukzYKmZS") // OPD-Drug Frequency 2
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.Frequency2 = vall;
+	                    } else if (id == "tvhWoK0BLb1") // OPD-Drug Frequency 3
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.Frequency3 = vall;
+	                    } else if (id == "Sw73vg4Yjxl") // OPD-Drug Frequency 4
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.Frequency4 = vall;
+	                    } else if (id == "M8Ui2FdNiw6") // OPD-Drug Frequency 5
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.Frequency5 = vall;
+	                    } else if (id == "eXHG8A0G8Tc") // OPD-Drug Frequency 6
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.Frequency6 = vall;
+	                    } else if (id == "enHDrR9XID3") // OPD-Drug Frequency 7
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.Frequency7 = vall;
+	                    } else if (id == "EiTjNJPeWOU") // OPD-Drug Frequency 8
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.Frequency8 = vall;
+	                    } else if (id == "wPYeMtOYzEK") // OPD-Drug Frequency 9
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.Frequency9 = vall;
+	                    } else if (id == "dfzUCsPptuS") // OPD-Drug - days prescribed 1
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.prescribed1 = vall;
+	                    } else if (id == "jhldWs9Qw0j") //OPD-Drug - days prescribed 2
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.prescribed2 = vall;
+	                    } else if (id == "cn3CDIaIyuS") // OPD-Drug - days prescribed 3
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.prescribed3 = vall;
+	                    } else if (id == "CHQ52iv9MEE") // OPD-Drug - days prescribed 4
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.prescribed4 = vall;
+	                    } else if (id == "jJWQnO4CIgY") // OPD-Drug - days prescribed 5
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.prescribed5 = vall;
+	                    } else if (id == "lgBRSIp8UyQ") // OPD-Drug - days prescribed 6
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.prescribed6 = vall;
+	                    } else if (id == "qI7oqt62ZHd") // OPD-Drug - days prescribed 7
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.prescribed7 = vall;
+	                    } else if (id == "X9hdYWrwu0e") // OPD-Drug - days prescribed 8
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.prescribed8 = vall;
+	                    } else if (id == "DgRKYVEp9Q4") // OPD-Drug - days prescribed 9
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.prescribed9 = vall;
+	                    } else if (id == "dKFe6B5IQYj") // OPD - diagnosis1
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.opddiagnosis = $scope.opddiagnosis + "," + vall;
+	                    } else if (id == "OgnHAtwpquC") // OPD - diagnosis2
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.opddiagnosis = $scope.opddiagnosis + "," + vall;
+	                    } else if (id == "XP2o2kBlreU") // OPD - diagnosis3
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.opddiagnosis = $scope.opddiagnosis + "," + vall;
+	                    } else if (id == "uFl5KFNyFIj") // OPD - diagnosis4
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.opddiagnosis = $scope.opddiagnosis + "," + vall;
+	                    } else if (id == "ePEY9h1AaV2") // OPD - diagnosis5
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.opddiagnosis = $scope.opddiagnosis + "," + vall;
+	                    } else if (id == "XBdRz4Ltofp") // OPD - diagnosis6
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.opddiagnosis = $scope.opddiagnosis + "," + vall;
+	                    } else if (id == "dz40pEes1EH") // OPD - diagnosis7
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.opddiagnosis = $scope.opddiagnosis + "," + vall;
+	                    } else if (id == "T2jwDKysRhL") // OPD - diagnosis8
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.opddiagnosis = $scope.opddiagnosis + "," + vall;
+	                    } else if (id == "bTBnXw52gnJ") // OPD - diagnosis9
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.opddiagnosis = $scope.opddiagnosis + "," + vall;
+	                    } else if (id == "ihnibt01QTA") // OPD - Investigation1
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.investigation = $scope.investigation + "," + vall;
+	                    } else if (id == "JNVlvJRXOCb") // OPD - Investigation2
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.investigation = $scope.investigation + "," + vall;
+	                    } else if (id == "lPMhjJdBlzF") // OPD - Investigation3
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.investigation = $scope.investigation + "," + vall;
+	                    } else if (id == "czqGaj5QJZG") // OPD - Investigation4
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.investigation = $scope.investigation + "," + vall;
+	                    } else if (id == "C3EdRmAMYhO") // OPD - Investigation5
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.investigation = $scope.investigation + "," + vall;
+	                    } else if (id == "QyAEyu6jmTA") // OPD - Investigation6
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.investigation = $scope.investigation + "," + vall;
+	                    } else if (id == "UPvVPO2ctLj") // OPD - Investigation7
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.investigation = $scope.investigation + "," + vall;
+	                    } else if (id == "h68x1r7fEMp") // OPD - Investigation8
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.investigation = $scope.investigation + "," + vall;
+	                    } else if (id == "FFYzaOjR7Lx") // OPD - Investigation9
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.investigation = $scope.investigation + "," + vall;
+	                    } else if (id == "CzaHcTqzgPh") // OPD - Procedure prescribed1
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        procedureprescribed = procedureprescribed + "," + vall;
+	                    } else if (id == "IwV0jUwEFZx") // OPD - Procedure prescribed2
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        procedureprescribed = procedureprescribed + "," + vall;
+	                    } else if (id == "okrqz57YMeS") //OPD - Procedure prescribed3
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        procedureprescribed = procedureprescribed + "," + vall;
+	                    } else if (id == "w3SJ3DTNLhM") // OPD - Procedure prescribed4
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        procedureprescribed = procedureprescribed + "," + vall;
+	                    } else if (id == "rQ4JVzfPCK0") // OPD - Procedure prescribed5
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        procedureprescribed = procedureprescribed + "," + vall;
+	                    } else if (id == "yA7P9zxOTzl") // OPD - Procedure prescribed6
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        procedureprescribed = procedureprescribed + "," + vall;
+	                    } else if (id == "pfCGnBhB52s") // OPD - Procedure prescribed7
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        procedureprescribed = procedureprescribed + "," + vall;
+	                    } else if (id == "r7njjEZVSM5") //OPD - Procedure prescribed8
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        procedureprescribed = procedureprescribed + "," + vall;
+	                    } else if (id == "HYQvQ4uycz5") // OPD - Procedure prescribed9
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        procedureprescribed = procedureprescribed + "," + vall;
+	                    } else if (id == "cp110jDw81n") // BMI
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.bmi = vall;
+	                    } else if (id == "hBUR4vzP4G6") // Doctor Name
+	                    {
+	
+	                        var vall = trackdata.dataValues[i].value;
+	                        $scope.Doctor = vall;
+	                    }
+	            }
+	        });
+	
+	        $.get("../api/trackedEntityInstances.json?ou=" + $scope.organisationname + "&program=" + $scope.programname + "&trackedEntityInstance=" + $scope.trackentityid + "&skipPaging=true", function (data1) {
+	            var trackdatavalue = data1;
+	
+	            for (var i = 0; i < trackdatavalue.trackedEntityInstances.length; i++) {
+	
+	                var attributepath = trackdatavalue.trackedEntityInstances[i].attributes;
+	                // objtrack.push(trackdata.trackedEntityInstances[i].trackedEntityInstance);
+	                for (var q = 0; q < attributepath.length; q++) {
+	                    var idd = attributepath[q].attribute;
+	
+	                    if (attributepath[q].attribute == "vbUue5poEcT") //Caste
+	                        {
+	                            var vall = attributepath[q].value;
+	
+	                            $scope.Caste = vall;
+	                        } else if (attributepath[q].attribute == "xalnzkNfD77") //Name of the person
+	                        {
+	                            var vall = attributepath[q].value;
+	
+	                            $scope.Name = vall;
+	                        } else if (attributepath[q].attribute == "PbEhJPnon0o") //Sex
+	                        {
+	                            var vall = attributepath[q].value;
+	
+	                            $scope.Sex = vall;
+	                        } else if (attributepath[q].attribute == "iIf1gJ4FVdR") //Age
+	                        {
+	                            var vall = attributepath[q].value;
+	
+	                            $scope.Age = vall;
+	                        } else if (attributepath[q].attribute == "Lt9ZrfgAMuw") //Mobile number
+	                        {
+	                            var vall = attributepath[q].value;
+	
+	                            $scope.Mobile = vall;
+	                        } else if (attributepath[q].attribute == "YFjB0zhySP6") //Household
+	                        {
+	                            var vall = attributepath[q].value;
+	
+	                            $scope.Household = vall;
+	                        }
+	                }
+	            }
+	        });
+	        if ($scope.Household == undefined) {
+	
+	            $scope.Household = "&nbsp&nbsp";
+	        }
+	        if ($scope.Mobile == undefined) {
+	
+	            $scope.Mobile = "&nbsp&nbsp";
+	        }
+	
+	        var printdata = "<span class='boxHeaderslip'>PHC Balarhi</span><table class='box'><tbody><tr><td><strong>Date of the visit:</strong></td><td>" + $scope.eventdateandtime + "</td><td><strong>Patient Category:</strong></td><td>" + $scope.Caste + "</td></tr><tr><td><strong>Patient ID:</strong></td><td>sfsfsdfffs</td><td>Name:</td><td>" + $scope.Name + "</td></tr><tr><td><strong>Gender:</strong></td><td>" + $scope.Sex + "</td><td><strong>Age:</strong></td><td>" + $scope.Age + "</td></tr><tr><td><strong>Address:</strong></td><td>" + $scope.Household + "</td><td><strong>Mob No.</strong></td><td>" + $scope.Mobile + "</td></tr></tbody></table><table class='box'><tbody><span class='boxHeaderslip'>VITAL STATISTIC DETAILS</span><tr><td></td><td></td><td>Range</td><td>Unit</td></tr><tr><td><strong>Weight</strong></td><td>" + $scope.bodyweight + "</td><td></td><td>Kg</td></tr><tr><td><strong>Height</strong></td><td>" + $scope.bodyheight + "</td><td></td><td>Kg</td></tr><tr><td><strong>BMI</strong></td><td>" + $scope.bmi + "</td><td>18.5-24.9</td><td></td></tr><tr><td><strong>Temperature</strong></td><td>" + $scope.temperature + "</td><td>97.7-98.96</td><td>F</td></tr><tr><td><strong>B.P</strong></td><td>" + $scope.systolic + "/" + $scope.dystolic + "</td><td>110/70-140/90</td><td>mm/Hg</td></tr><tr><td><strong>Pulse Rate</strong></td><td>" + $scope.pulserate + "</td><td>60-90</td><td>/min</td></tr><tr><td><strong>LMP</strong></td><td></td><td></td><td></td></tr></tbody></table><table class='box' id='drugtable'><tbody><span class='boxHeaderslip'>CLINICAL SUMMARY</span><tr><td><strong>History of Present Illness:</strong></td><td>" + $scope.presenthistory + "</td></tr><tr><td><strong>Provisional Diagnosis:</strong></td><td>" + $scope.opddiagnosis + "</td></tr><tr><td><strong>Procedure</strong></td><td>" + procedureprescribed + "</td></tr><tr><td><strong>Investigation</strong></td><td>" + $scope.investigation + "</td></tr><tr></tr></tbody></table><table class='box'><tbody><span class='boxHeaderslip'>TREATMENT ADVISED</span><tr align='center'><th><strong>Drug</strong></th><th><strong>Formulation</strong></th><th><strong>Frequency</strong></th><th><strong>No of Days</strong></th><th><strong>Comments</strong></th></tr><tr align='center'><td>" + $scope.opddrug1 + "</td><td>" + $scope.formulation1 + "-" + $scope.opddose1 + "</td><td>" + $scope.Frequency1 + "</td><td>" + $scope.prescribed1 + "</td><td></td></tr><tr align='center'><td>" + $scope.opddrug2 + "</td><td>" + $scope.formulation2 + "-" + $scope.opddose2 + "</td><td>" + $scope.Frequency2 + "</td><td>" + $scope.prescribed2 + "</td><td></td></tr><tr align='center' id='cons'><td>" + $scope.opddrug3 + "</td><td>" + $scope.formulation3 + "-" + $scope.opddose3 + "</td><td>" + $scope.Frequency3 + "</td><td>" + $scope.prescribed3 + "</td><td></td></tr><tr align='center'><td>" + $scope.opddrug4 + "</td><td>" + $scope.formulation4 + "-" + $scope.opddose4 + "</td><td>" + $scope.Frequency4 + "</td><td>" + $scope.prescribed4 + "</td><td></td></tr><tr align='center'><td>" + $scope.opddrug5 + "</td><td>" + $scope.formulation5 + "-" + $scope.opddose5 + "</td><td>" + $scope.Frequency5 + "</td><td>" + $scope.prescribed5 + "</td><td></td></tr><tr align='center'><td>" + $scope.opddrug6 + "</td><td>" + $scope.formulation6 + "-" + $scope.opddose6 + "</td><td>" + $scope.Frequency6 + "</td><td>" + $scope.prescribed6 + "</td><td></td></tr><tr align='center'><td>" + $scope.opddrug + "</td><td>" + $scope.formulation7 + "-" + $scope.opddose7 + "</td><td>" + $scope.Frequency7 + "</td><td>" + $scope.prescribed7 + "</td><td></td></tr><tr align='center'><td>" + $scope.opddrug8 + "</td><td>" + $scope.formulation8 + "-" + $scope.opddose8 + "</td><td>" + $scope.Frequency8 + "</td><td>" + $scope.prescribed8 + "</td><td></td></tr><tr align='center'><td>" + $scope.opddrug9 + "</td><td>" + $scope.formulation9 + "-" + $scope.opddose9 + "</td><td>" + $scope.Frequency9 + "</td><td>" + $scope.prescribed9 + "</td><td></td></tr></tbody></table><br></br><p align='right'>" + $scope.Doctor + "</p>";
+	
+	        if ($scope.opddrug1 == undefined || $scope.opddrug1 == null || $scope.opddrug1 == "") {
+	
+	            //$("tr.cons").hide();
+	            //document.getElementById("drugtable").deleteRow(2);
+	            printdata = printdata.replace("<tr align='center'><td>" + $scope.opddrug1 + "</td><td>" + $scope.formulation1 + "-" + $scope.opddose1 + "</td><td>" + $scope.Frequency1 + "</td><td>" + $scope.prescribed1 + "</td><td></td></tr>", "");
+	        }
+	        if ($scope.opddrug2 == undefined || $scope.opddrug2 == null || $scope.opddrug2 == "") {
+	
+	            //$("tr.cons").hide();
+	            //document.getElementById("drugtable").deleteRow(2);
+	            printdata = printdata.replace("<tr align='center'><td>" + $scope.opddrug2 + "</td><td>" + $scope.formulation2 + "-" + $scope.opddose2 + "</td><td>" + $scope.Frequency2 + "</td><td>" + $scope.prescribed2 + "</td><td></td></tr>", "");
+	        }
+	        if ($scope.opddrug3 == undefined || $scope.opddrug3 == null || $scope.opddrug3 == "") {
+	
+	            //$("tr.cons").hide();
+	            //document.getElementById("drugtable").deleteRow(2);
+	            printdata = printdata.replace("<tr align='center' id='cons'><td>" + $scope.opddrug3 + "</td><td>" + $scope.formulation3 + "-" + $scope.opddose3 + "</td><td>" + $scope.Frequency3 + "</td><td>" + $scope.prescribed3 + "</td><td></td></tr>", "");
+	        }
+	        if ($scope.opddrug4 == undefined || $scope.opddrug4 == null || $scope.opddrug4 == "") {
+	
+	            //$("tr.cons").hide();
+	            //document.getElementById("drugtable").deleteRow(2);
+	            printdata = printdata.replace("<tr align='center'><td>" + $scope.opddrug4 + "</td><td>" + $scope.formulation4 + "-" + $scope.opddose4 + "</td><td>" + $scope.Frequency4 + "</td><td>" + $scope.prescribed4 + "</td><td></td></tr>", "");
+	        }
+	        if ($scope.opddrug5 == undefined || $scope.opddrug5 == null || $scope.opddrug5 == "") {
+	
+	            //$("tr.cons").hide();
+	            //document.getElementById("drugtable").deleteRow(2);
+	            printdata = printdata.replace("<tr align='center'><td>" + $scope.opddrug5 + "</td><td>" + $scope.formulation5 + "-" + $scope.opddose5 + "</td><td>" + $scope.Frequency5 + "</td><td>" + $scope.prescribed5 + "</td><td></td></tr>", "");
+	        }
+	        if ($scope.opddrug6 == undefined || $scope.opddrug6 == null || $scope.opddrug6 == "") {
+	
+	            //$("tr.cons").hide();
+	            //document.getElementById("drugtable").deleteRow(2);
+	            printdata = printdata.replace("<tr align='center'><td>" + $scope.opddrug6 + "</td><td>" + $scope.formulation6 + "-" + $scope.opddose6 + "</td><td>" + $scope.Frequency6 + "</td><td>" + $scope.prescribed6 + "</td><td></td></tr>", "");
+	        }
+	        if ($scope.opddrug7 == undefined || $scope.opddrug7 == null || $scope.opddrug7 == "") {
+	
+	            //$("tr.cons").hide();
+	            //document.getElementById("drugtable").deleteRow(2);
+	            printdata = printdata.replace("<tr align='center'><td>" + $scope.opddrug7 + "</td><td>" + $scope.formulation7 + "-" + $scope.opddose7 + "</td><td>" + $scope.Frequency7 + "</td><td>" + $scope.prescribed7 + "</td><td></td></tr>", "");
+	        }
+	        if ($scope.opddrug8 == undefined || $scope.opddrug8 == null || $scope.opddrug8 == "") {
+	
+	            //$("tr.cons").hide();
+	            //document.getElementById("drugtable").deleteRow(2);
+	            printdata = printdata.replace("<tr align='center'><td>" + $scope.opddrug8 + "</td><td>" + $scope.formulation8 + "-" + $scope.opddose8 + "</td><td>" + $scope.Frequency8 + "</td><td>" + $scope.prescribed8 + "</td><td></td></tr>", "");
+	        }
+	        if ($scope.opddrug9 == undefined || $scope.opddrug9 == null || $scope.opddrug9 == "") {
+	
+	            //$("tr.cons").hide();
+	            //document.getElementById("drugtable").deleteRow(2);
+	            printdata = printdata.replace("<tr align='center'><td>" + $scope.opddrug9 + "</td><td>" + $scope.formulation9 + "-" + $scope.opddose9 + "</td><td>" + $scope.Frequency9 + "</td><td>" + $scope.prescribed9 + "</td><td></td></tr>", "");
+	        }
+	
+	        //  	printcustomform(printdivname);
+	
+	        //var printContents = document.getElementById(printdata).innerHTML;
+	        var w = window.open();
+	        w.document.write(printdata);
+	        w.document.write('<style>.boxHeaderslip {background-color: #1aac9b;color: white;display: block;padding: 2px;}.box, .boxHeaderslip{border: 1px solid #1aac9b;width: 100%;padding: 5px 2px 5px 2px; text-align: left; margin-left: auto;margin-right: auto;}</style>');
+	        w.print();
+	        w.close();
 	    };
 	
 	    $scope.toggleForm = function (type) {
@@ -17970,8 +19392,6 @@
 	    };
 	
 	    $scope.saveEventDate = function (reOrder) {
-	        // add for nepali Calendar
-	        $scope.initiateNepaliEventCalendar();
 	        $scope.saveEventDateForEvent($scope.currentEvent, reOrder);
 	    };
 	
@@ -17982,12 +19402,6 @@
 	        $scope.eventDateSaved = false;
 	
 	        $scope.currentElement = { id: "eventDate", event: eventToSave.event, saved: false };
-	
-	        // add for nepali Calendar start
-	        if ($scope.convertedFromNepaliCalEventDate) {
-	            eventToSave.eventDate = $scope.convertedFromNepaliCalEventDate;
-	        }
-	        // add for nepali Calendar end
 	
 	        var e = { event: eventToSave.event,
 	            enrollment: eventToSave.enrollment,
@@ -21269,7 +22683,7 @@
 	/* global trackerCapture, angular */
 	
 	var trackerCapture = angular.module('trackerCapture');
-	trackerCapture.controller('RelationshipController', ["$scope", "$rootScope", "$modal", "$location", "TEIService", "AttributesFactory", "CurrentSelection", "RelationshipFactory", "OrgUnitFactory", "ProgramFactory", "EnrollmentService", "ModalService", "CommonUtils", "TEService", function ($scope, $rootScope, $modal, $location, TEIService, AttributesFactory, CurrentSelection, RelationshipFactory, OrgUnitFactory, ProgramFactory, EnrollmentService, ModalService, CommonUtils, TEService) {
+	trackerCapture.controller('RelationshipController', ["$scope", "$rootScope", "$modal", "$location", "TEIService", "AttributesFactory", "CurrentSelection", "RelationshipFactory", "OrgUnitFactory", "ProgramFactory", "EnrollmentService", "ModalService", "CommonUtils", "TEService", "DHIS2EventFactory", "DateUtils", function ($scope, $rootScope, $modal, $location, TEIService, AttributesFactory, CurrentSelection, RelationshipFactory, OrgUnitFactory, ProgramFactory, EnrollmentService, ModalService, CommonUtils, TEService, DHIS2EventFactory, DateUtils) {
 	    $rootScope.showAddRelationshipDiv = false;
 	    $scope.relatedProgramRelationship = false;
 	    var ENTITYNAME = "TRACKED_ENTITY_INSTANCE";
@@ -21303,6 +22717,11 @@
 	        $scope.selectedProgram = $scope.selections.pr;
 	        $scope.programs = $scope.selections.prs;
 	        $scope.programsById = {};
+	        $scope.allProgramNames = {};
+	        ProgramFactory.getAllAccesses().then(function (data) {
+	            $scope.allProgramNames = data.programIdNameMap;
+	            $scope.accessByProgramId = data.programsById;
+	        });
 	        angular.forEach($scope.programs, function (program) {
 	            $scope.programsById[program.id] = program;
 	        });
@@ -21388,17 +22807,11 @@
 	            }
 	
 	            if (index !== -1) {
-	                $scope.selectedTei.relationships.splice(index, 1);
-	                var trimmedTei = angular.copy($scope.selectedTei);
-	                angular.forEach(trimmedTei.relationships, function (rel) {
-	                    delete rel.relative;
-	                });
-	                TEIService.update(trimmedTei, $scope.optionSets, $scope.attributesById).then(function (response) {
-	                    if (!response || response.response && response.response.status !== 'SUCCESS') {
-	                        //update has failed
-	                        return;
-	                    }
+	                var relationshipToDelete = $scope.selectedTei.relationships.splice(index, 1);
+	                RelationshipFactory.delete(rel.relId).then(function (response) {
 	                    setRelationships();
+	                }, function (error) {
+	                    $scope.selectedTei.relationships.splice(index, 0, relationshipToDelete[0]);
 	                });
 	            }
 	        });
@@ -21408,8 +22821,13 @@
 	        $location.path('/dashboard').search({ tei: teiId, program: program, ou: $scope.selectedOrgUnit.id });
 	    };
 	
+	    $scope.showEventInCaptureApp = function (eventId) {
+	        location.href = '../dhis-web-capture/index.html#/viewEvent/' + eventId;
+	    };
+	
 	    var setRelationships = function setRelationships() {
 	        $scope.relatedTeis = [];
+	        $scope.relatedEvents = [];
 	        $scope.relationshipPrograms = [];
 	        $scope.relationshipAttributes = [];
 	        var relationshipProgram = {};
@@ -21424,7 +22842,7 @@
 	                        relationshipType = $scope.relationshipTypes.find(function (relType) {
 	                            return relType.id === rel.relationshipType;
 	                        });
-	                        var relName = relationshipType.bidirectional ? relationshipType.toFromName : relationshipType.displayName;
+	                        var relName = relationshipType.fromToName;
 	
 	                        if (relationshipType && teiTypes.filter(function (teiType) {
 	                            return teiType.id === tei.trackedEntityType;
@@ -21458,7 +22876,7 @@
 	                        relationshipType = $scope.relationshipTypes.find(function (relType) {
 	                            return relType.id === rel.relationshipType;
 	                        });
-	                        var relName = relationshipType.fromToName;
+	                        var relName = relationshipType.toFromName;
 	
 	                        if (relationshipType && teiTypes.filter(function (teiType) {
 	                            return teiType.id === tei.trackedEntityType;
@@ -21485,6 +22903,41 @@
 	
 	                        var relative = { trackedEntityInstance: teiId, relName: relName, relId: rel.relationship, attributes: getRelativeAttributes(tei.attributes), relationshipProgramConstraint: relationshipProgram, relationshipType: relationshipType };
 	                        $scope.relatedTeis.push(relative);
+	                    });
+	                } else if (rel.from && rel.bidirectional && rel.from.event && rel.from.event.event) {
+	                    var event = null;
+	                    DHIS2EventFactory.getEventWithoutRegistration(rel.from.event.event).then(function (e) {
+	                        event = e;
+	
+	                        relationshipType = $scope.relationshipTypes.find(function (relType) {
+	                            return relType.id === rel.relationshipType;
+	                        });
+	                        var relName = relationshipType.toFromName;
+	
+	                        relationshipProgram = relationshipType.fromConstraint.program;
+	
+	                        if (!relationshipProgram && $scope.selectedProgram) {
+	                            relationshipProgram = { id: $scope.selectedProgram.id };
+	                        }
+	
+	                        var convertedEventDate = DateUtils.formatFromApiToUser(event.eventDate);
+	
+	                        var isDeleteable = !$scope.selectedTei.inactive && relationshipType.access.data.write && $scope.trackedEntityType.access.data.write && $scope.accessByProgramId[event.program].data.write;
+	
+	                        var eventToDisplay = {
+	                            eventId: rel.from.event.event,
+	                            eventDate: convertedEventDate,
+	                            program: $scope.allProgramNames[event.program],
+	                            status: event.status,
+	                            orgUnit: event.orgUnitName,
+	                            relName: relName,
+	                            relId: rel.relationship,
+	                            relationshipProgramConstraint: relationshipProgram,
+	                            relationshipType: relationshipType,
+	                            isDeleteable: isDeleteable
+	                        };
+	
+	                        $scope.relatedEvents.push(eventToDisplay);
 	                    });
 	                }
 	            });
@@ -22751,6 +24204,8 @@
 	    var previousProgram = null;
 	    $scope.base = {};
 	    $scope.APIURL = DHIS2URL;
+	    $scope.houseHoldProgramId = "BgTTdBNKHwc";
+	    $scope.houseHoldMemberProgramId = "TcaMMqHJxK5";
 	
 	    var viewsByType = {
 	        registration: {
@@ -22933,8 +24388,16 @@
 	        resetView(defaultView);
 	        loadCanRegister();
 	    };
+	
 	    var loadCanRegister = function loadCanRegister() {
 	        if ($scope.selectedProgram) {
+	            // custom change for show registration button for household/member program
+	            if ($scope.selectedProgram.id == $scope.houseHoldProgramId) {
+	                $scope.views = [viewsByType.lists, viewsByType.search, viewsByType.registration];
+	            } else {
+	                $scope.views = [viewsByType.lists, viewsByType.search];
+	            }
+	            // end
 	            var tet = $scope.trackedEntityTypesById[$scope.selectedProgram.trackedEntityType.id];
 	            var promise;
 	            if (tet) {
@@ -38905,7 +40368,7 @@
 /***/ (function(module, exports) {
 
 	/* @preserve
-	 * Leaflet Control Geocoder 1.10.0
+	 * Leaflet Control Geocoder 1.9.0
 	 * https://github.com/perliedman/leaflet-control-geocoder
 	 *
 	 * Copyright (c) 2012 sa3m (https://github.com/sa3m)
@@ -39269,12 +40732,13 @@
 	      app_id: '<insert your app_id here>',
 	      app_code: '<insert your app_code here>',
 	      geocodingQueryParams: {},
-	      reverseQueryParams: {},
-	      reverseGeocodeProxRadius: null
+	      reverseQueryParams: {}
 	    },
+	
 	    initialize: function(options) {
 	      L.setOptions(this, options);
 	    },
+	
 	    geocode: function(query, cb, context) {
 	      var params = {
 	        searchtext: query,
@@ -39286,13 +40750,10 @@
 	      params = L.Util.extend(params, this.options.geocodingQueryParams);
 	      this.getJSON(this.options.geocodeUrl, params, cb, context);
 	    },
+	
 	    reverse: function(location, scale, cb, context) {
-	      var _proxRadius = this.options.reverseGeocodeProxRadius
-	        ? this.options.reverseGeocodeProxRadius
-	        : null;
-	      var proxRadius = _proxRadius ? ',' + encodeURIComponent(_proxRadius) : '';
 	      var params = {
-	        prox: encodeURIComponent(location.lat) + ',' + encodeURIComponent(location.lng) + proxRadius,
+	        prox: encodeURIComponent(location.lat) + ',' + encodeURIComponent(location.lng),
 	        mode: 'retrieveAddresses',
 	        app_id: this.options.app_id,
 	        app_code: this.options.app_code,
@@ -39302,6 +40763,7 @@
 	      params = L.Util.extend(params, this.options.reverseQueryParams);
 	      this.getJSON(this.options.reverseGeocodeUrl, params, cb, context);
 	    },
+	
 	    getJSON: function(url, params, cb, context) {
 	      getJSON(url, params, function(data) {
 	        var results = [],
@@ -39327,6 +40789,7 @@
 	      });
 	    }
 	  });
+	
 	  function here(options) {
 	    return new HERE(options);
 	  }
@@ -40845,4 +42308,4 @@
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=app-113efd6abdc83351923a.js.map
+//# sourceMappingURL=app-39b72aaef50284ee4ccb.js.map
