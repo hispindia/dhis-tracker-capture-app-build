@@ -13704,9 +13704,17 @@
 	                    }
 	                }
 	            });
-	        } else if ($scope.trackedEntityTypes.selected) {
+	        }
+	        if ($scope.trackedEntityTypes.selected) {
 	            AttributesFactory.getByTrackedEntityType($scope.trackedEntityTypes.selected).then(function (atts) {
-	                $scope.attributes = TEIGridService.generateGridColumns(atts, null, false).columns;
+	                $scope.teTypeAttributesById = {};
+	                angular.forEach(atts, function (att) {
+	                    $scope.teTypeAttributesById[att.id] = att;
+	                });
+	                atts;
+	                if (!$scope.selectedProgram) {
+	                    $scope.attributes = TEIGridService.generateGridColumns(atts, null, false).columns;
+	                }
 	                fetchGeneratedAttributes();
 	            });
 	        }
@@ -14530,16 +14538,16 @@
 	    };
 	
 	    $scope.attributeFieldDisabled = function (attribute) {
-	        if ($scope.selectedTei && $scope.selectedTei.programOwnersById && $scope.selectedProgram && $scope.selectedTei.programOwnersById[$scope.selectedProgram.id] && $scope.selectedTei.programOwnersById[$scope.selectedProgram.id] != $scope.selectedOrgUnit.id) return true;
-	        if ($scope.isDisabled(attribute)) return true;
-	        if ($scope.selectedOrgUnit.closedStatus) return true;
+	        if (!$scope.teTypeAttributesById[attribute.id]) {
+	            if ($scope.selectedTei && $scope.selectedTei.programOwnersById && $scope.selectedProgram && $scope.selectedTei.programOwnersById[$scope.selectedProgram.id] && $scope.selectedTei.programOwnersById[$scope.selectedProgram.id] != $scope.selectedOrgUnit.id) return true;
+	            if ($scope.isDisabled(attribute)) return true;
+	            if ($scope.selectedOrgUnit.closedStatus) return true;
+	        }
 	        if (!$scope.hasTeiWrite()) return true;
 	        return false;
 	    };
 	
 	    $scope.saveAttributedDisabledButton = function () {
-	        if ($scope.selectedTei && $scope.selectedTei.programOwnersById && $scope.selectedProgram && $scope.selectedTei.programOwnersById[$scope.selectedProgram.id] != $scope.selectedOrgUnit.id) return true;
-	        if ($scope.selectedOrgUnit.closedStatus) return true;
 	        if (!$scope.hasTeiWrite()) return true;
 	        return false;
 	    };
@@ -39034,4 +39042,4 @@
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=app-400122324613d9bc1098.js.map
+//# sourceMappingURL=app-ed3311f0202e066c9733.js.map
