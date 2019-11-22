@@ -73,8 +73,8 @@
                     {{section.displayName}}
                 </accordion-heading>
                 <div class="alert alert-info" ng-if="section.description">
-					{{section.description}}
-				</div>
+                    {{section.description}}
+                </div>
                 <div class="vertical-spacing" ng-if="!section.dataElements || section.dataElements.length === 0">
                     <div class="alert alert-warning">{{'section'| translate}} {{section.displayName}} {{'has_no_dataelements'| translate}}</div>
                 </div>
@@ -741,7 +741,7 @@
                     <!-- ySHnTsMgLvN -->
                     <table ng-if="currentStage.id == 'YrjjV4LVXo6' && section.id == 'ySHnTsMgLvN'" style="text-align:center">
                         <tr>
-                            <!-- <td>
+                             <!-- <td>
                                 <table class="dhis2-list-table-striped default-form-table" style="text-align:center"
                                     ng-if="section.dataElements && section.dataElements.length > 0">
                                     <tr>
@@ -749,7 +749,7 @@
                                             <Strong>Symptoms of Leprosy</Strong>
                                         </td>
                                     </tr>
-                                    <tr ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 1">
+                                    <tr ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 5">
                                         <td>
                                             <span d2-pop-over class="popover-label hideInPrint small-horizontal-spacing"
                                                 details="{{'details '| translate}}" content="prStDes[de.id].dataElement"
@@ -963,81 +963,222 @@
                         <tr>
                             <td ng-if="section.id == 'BinhPgLJOzw'" ng-init="pointerLocation()">
                                 <div class="FrontBodyContainer">
-                                    <div id="Fbdcthing" class='Fbdcthing' ondrop="drop(event)" ondragover="allowDrop(event)">
+                                    <div id="Fbdcthing" class='Fbdcthing' ng-click='dataelenochng("Fbdcthing")' >1
                                     </div>
-                                    <div id="Fbdcthing1" class='Fbdcthing1' ondrop="drop(event)" ondragover="allowDrop(event)">
+                                    <div id="Fbdcthing1" class='Fbdcthing1' ng-click='dataelenochng("Fbdcthing1")' >2
                                     </div>
-                                    <div id="Fbdcthing2" class='Fbdcthing2' ondrop="drop(event)" ondragover="allowDrop(event)">
+                                    <div id="Fbdcthing2" class='Fbdcthing2' ng-click='dataelenochng("Fbdcthing2")' >3
                                     </div>
-                                    <div id="Fbdcthing3" class='Fbdcthing3' ondrop="drop(event)" ondragover="allowDrop(event)">
+                                    <div id="Fbdcthing3" class='Fbdcthing3' ng-click='dataelenochng("Fbdcthing3")' >4
                                     </div>
-                                    <div id="Fbdcthing4" class='Fbdcthing4' ondrop="drop(event)" ondragover="allowDrop(event)">
+                                    <div id="Fbdcthing4" class='Fbdcthing4' ng-click='dataelenochng("Fbdcthing4")' >5
                                     </div>
-                                    <div id="Fbdcthing5" class='Fbdcthing5' ondrop="drop(event)" ondragover="allowDrop(event)">
+                                    <div id="Fbdcthing5" class='Fbdcthing5' ng-click='dataelenochng("Fbdcthing5")' >6
                                     </div>
-                                    <div id="Fbdcthing6" class='Fbdcthing6' ondrop="drop(event)" ondragover="allowDrop(event)">
+                                    <div id="Fbdcthing6" class='Fbdcthing6' ng-click='dataelenochng("Fbdcthing6")' >7
                                     </div>
-                                    <div id="Fbdcthing7" class='Fbdcthing7' ondrop="drop(event)" ondragover="allowDrop(event)">
+                                    <div id="Fbdcthing7" class='Fbdcthing7' ng-click='dataelenochng("Fbdcthing7")' >8
                                     </div>
-                                    <div id="Fbdcthing8" class='Fbdcthing8' ondrop="drop(event)" ondragover="allowDrop(event)">
+                                    <div id="Fbdcthing8" class='Fbdcthing8' ng-click='dataelenochng("Fbdcthing8")' >9
                                     </div>
-                                    <div id="Fbdcthing9" class='Fbdcthing9' ondrop="drop(event)" ondragover="allowDrop(event)">
+                                    <div id="Fbdcthing9" class='Fbdcthing9' ng-click='dataelenochng("Fbdcthing9")' >10
                                     </div>
-                                    <div id="Fbdcthing10" class='Fbdcthing10' ondrop="drop(event)" ondragover="allowDrop(event)">
+                                    <div id="Fbdcthing10" class='Fbdcthing10' ng-click='dataelenochng("Fbdcthing10")' >11
                                     </div>
-                                    <div id="Fbdcthing11" class='Fbdcthing11' ondrop="drop(event)" ondragover="allowDrop(event)">
+                                    <div id="Fbdcthing11" class='Fbdcthing11' ng-click='dataelenochng("Fbdcthing11")' >12
                                     </div>
-                                    <div id="Fbdcthing12" class='Fbdcthing12' ondrop="drop(event)" ondragover="allowDrop(event)">
+                                    <div id="Fbdcthing12" class='Fbdcthing12' ng-click='dataelenochng("Fbdcthing12")' >13
                                     </div>
-                                    <div id="Fbdcthing13" class='Fbdcthing13' ondrop="drop(event)" ondragover="allowDrop(event)">
+                                    <div id="Fbdcthing13" class='Fbdcthing13' ng-click='dataelenochng("Fbdcthing13")' >14
                                     </div>
-                                    <div id="Fbdcthing14" class='Fbdcthing14' ondrop="drop(event)" ondragover="allowDrop(event)">
+                                    <div id="Fbdcthing14" class='Fbdcthing14' ng-click='dataelenochng("Fbdcthing14")' >15
                                     </div>
-                                    <div id="Fbdcthing15" class='Fbdcthing15' ondrop="drop(event)" ondragover="allowDrop(event)">
+                                    <div id="Fbdcthing15" class='Fbdcthing15' ng-click='dataelenochng("Fbdcthing15")' >16
                                     </div>
-                                    <div id="Fbdcthing16" class='Fbdcthing16' ondrop="drop(event)" ondragover="allowDrop(event)">
+                                    <div id="Fbdcthing16" class='Fbdcthing16' ng-click='dataelenochng("Fbdcthing16")' >17
                                     </div>
-                                    <div id="Fbdcthing17" class='Fbdcthing17' ondrop="drop(event)" ondragover="allowDrop(event)">
+                                    <div id="Fbdcthing17" class='Fbdcthing17' ng-click='dataelenochng("Fbdcthing17")' >18
+                                    </div>
+                                    <div id="Fbdcthing18" class='Fbdcthing18' ng-click='dataelenochng("Fbdcthing18")' >19
+                                    </div>
+                                    <div id="Fbdcthing19" class='Fbdcthing19' ng-click='dataelenochng("Fbdcthing19")' >20
+                                    </div>
+                                    <div id="Fbdcthing20" class='Fbdcthing20' ng-click='dataelenochng("Fbdcthing20")' >21
+                                    </div>
+                                    <div id="Fbdcthing21" class='Fbdcthing21' ng-click='dataelenochng("Fbdcthing21")' >22
+                                    </div>
+                                    <div id="Fbdcthing22" class='Fbdcthing22' ng-click='dataelenochng("Fbdcthing22")' >23
                                     </div>
                                 </div>
                             </td>
+                            
+                            <td>
+                                <table class="dhis2-list-table-striped default-form-table" style="text-align:center"
+                                    ng-if="section.dataElements && section.dataElements.length > 0">
+                                    <tr>
+                                        <td style="background:#276696; color:white">
+                                            <strong>{{name}}</strong>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 1}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 14 && name == 1">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                            <p ng-init></p>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 1}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 28 && $index >= 14 && name == 2">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                            <p ng-init></p>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 1}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 42 && $index >= 28 && name == 3"> 
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                            <p ng-init></p>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 1}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 56 && $index >= 42 && name == 4">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                            <p ng-init></p>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 1}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 70 && $index >= 56 && name == 5">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                            <p ng-init></p>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 1}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 84 && $index >= 70 && name == 6">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                            <p ng-init></p>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 1}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 98 && $index >= 84 && name == 7">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                            <p ng-init></p>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 1}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 112 && $index >= 98 && name == 8">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                            <p ng-init></p>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 1}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 126 && $index >= 112 && name == 9">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                            <p ng-init></p>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 1}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 140 && $index >= 126 && name == 10">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                            <p ng-init></p>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 1}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 154 && $index >= 140 && name == 11">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                            <p ng-init></p>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 1}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 168 && $index >= 154 && name == 12">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                            <p ng-init></p>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 1}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 182 && $index >= 168 && name == 13">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                            <p ng-init></p>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 1}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 196 && $index >= 182 && name == 14">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                            <p ng-init></p>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 1}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 210 && $index >= 196 && name == 15">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                            <p ng-init></p>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 1}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 224 && $index >= 210 && name == 16">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                            <p ng-init></p>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 1}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 238 && $index >= 224 && name == 17">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                            <p ng-init></p>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 1}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 252 && $index >= 238 && name == 18">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                            <p ng-init></p>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 1}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 266 && $index >= 252 && name == 19">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                            <p ng-init></p>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 1}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 280 && $index >= 266 && name == 20">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                            <p ng-init></p>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 1}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 294 && $index >= 280 && name == 21">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                            <p ng-init></p>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 1}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 308 && $index >= 294 && name == 22">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                            <p ng-init></p>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 1}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 322 && $index >= 308 && name == 23">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                            <p ng-init></p>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
 
+                            
                             <td>
                                 <div class='FrontBodyDropconatiner'>
-                                    <p draggable="true" ondragstart="drag(event)" id="drag1" width="88" height="31">1.
-                                        Clear border </p>
-                                    <p draggable="true" ondragstart="drag(event)" id="drag2" width="88" height="31">2.
-                                        Colapse of nose </p>
-                                    <p draggable="true" ondragstart="drag(event)" id="drag3" width="88" height="31">3.
-                                        Contracture </p>
-                                    <p draggable="true" ondragstart="drag(event)" id="drag4" width="88" height="31">4.
-                                        Erythema </p>
-                                    <p draggable="true" ondragstart="drag(event)" id="drag5" width="88" height="31">5.
-                                        Foot Drop/ wrist drop </p>
-                                    <p draggable="true" ondragstart="drag(event)" id="drag6" width="88" height="31">6.
-                                        infiltrat </p>
-                                    <p draggable="true" ondragstart="drag(event)" id="drag7" width="88" height="31">7.
-                                        Madarosis </p>
-                                    <p draggable="true" ondragstart="drag(event)" id="drag8" width="88" height="31">8.
-                                        Mutilation </p>
-                                    <p draggable="true" ondragstart="drag(event)" id="drag9" width="88" height="31">9.
-                                        Nerve Thickening </p>
-                                    <p draggable="true" ondragstart="drag(event)" id="drag10" width="88" height="31">10.
+                                    <p  id="drag1" width="88" height="31" class='padlist'>1.
+                                        Hypoanestesi with Clear border </p>
+                                    <p  id="drag2" width="88" height="31" class='padlist'>2.
+                                        Hypoanestesi with Unclear border</p>
+                                    <p  id="drag3" width="88" height="31" class='padlist'>3.
+                                        infiltrate </p>
+                                    <p  id="drag4" width="88" height="31" class='padlist'>4.
                                         Nodule </p>
-                                    <p draggable="true" ondragstart="drag(event)" id="drag11" width="88" height="31">11.
-                                        Plaque  </p>
-                                    <p draggable="true" ondragstart="drag(event)" id="drag12" width="88" height="31">12.
-                                        Stif contracture  </p>
-                                    <p draggable="true" ondragstart="drag(event)" id="drag13" width="88" height="31">13.
-                                        Unclear border  </p>
-                                    <p draggable="true" ondragstart="drag(event)" id="drag14" width="88" height="31">14.
+                                    <p  id="drag5" width="88" height="31" class='padlist'>5.
+                                        Nerve Thickening </p>
+                                    <p  id="drag6" width="88" height="31" class='padlist'>6.
+                                        Madarosis </p>
+                                    <p  id="drag7" width="88" height="31" class='padlist'>7.
+                                        Collapse of nose </p>
+                                    <p  id="drag8" width="88" height="31" class='padlist'>8.
+                                        Clawing</p>
+                                    <p  id="drag9" width="88" height="31" class='padlist'>9.
+                                        Stif contracture </p>
+                                    <p  id="drag10" width="88" height="31" class='padlist'>10.
+                                        Mutilation </p>
+                                    <p  id="drag11" width="88" height="31" class='padlist'>11.
+                                        Ulcus</p>
+                                    <p  id="drag12" width="88" height="31" class='padlist'>12.
+                                        Foot Drop/ wrist drop  </p>
+                                    <p  id="drag13" width="88" height="31" class='padlist'>13.
+                                        Gynaecomastia </p>
+                                    <p  id="drag14" width="88" height="31" class='padlist'>14.
                                         Lagopthalmos  </p>
-                                    <p draggable="true" ondragstart="drag(event)" id="drag15" width="88" height="31">15.
-                                        Hypopigmentation  </p>
+                                    <!-- <p draggable="true" ondragstart="drag(event)" id="drag15" width="88" height="31">15.
+                                        Hypopigmentation </p>
                                     <p draggable="true" ondragstart="drag(event)" id="drag16" width="88" height="31">16.
-                                        Gynaecomastia  </p>
-                                    <p draggable="true" ondragstart="drag(event)" id="drag17" width="88" height="31">17.
                                         Anasthesia  </p>
+                                    <p draggable="true" ondragstart="drag(event)" id="drag17" width="88" height="31">17.
+                                        Contracture </p>
+                                    <p draggable="true" ondragstart="drag(event)" id="drag18" width="88" height="31">18.
+                                        Erythema  </p>
+                                    <p draggable="true" ondragstart="drag(event)" id="drag19" width="88" height="31">19.
+                                        Plaque </p> -->
                                 </div>
                             </td>
 
@@ -1105,78 +1246,215 @@
                         <tr>
                             <td ng-if="section.id == 'jU3BqhzqiE1'" ng-init="pointerLocation()">
                                 <div class="BackBodyContainer">
-                                    <div id="bbthing" class="bbthing" ondrop="drop(event)" ondragover="allowDrop(event)">
+                                    <div id="bbthing" class="bbthing" ng-click='dataelenochng("bbthing")' >1
                                     </div>
-                                    <div id="bbthing1" class="bbthing1" ondrop="drop(event)" ondragover="allowDrop(event)">
+                                    <div id="bbthing1" class="bbthing1" ng-click='dataelenochng("bbthing1")' >2
                                     </div>
-                                    <div id="bbthing2" class="bbthing2" ondrop="drop(event)" ondragover="allowDrop(event)">
+                                    <div id="bbthing2" class="bbthing2" ng-click='dataelenochng("bbthing2")' >3
                                     </div>
-                                    <div id="bbthing3" class="bbthing3" ondrop="drop(event)" ondragover="allowDrop(event)">
+                                    <div id="bbthing3" class="bbthing3" ng-click='dataelenochng("bbthing3")' >4
                                     </div>
-                                    <div id="bbthing4" class="bbthing4" ondrop="drop(event)" ondragover="allowDrop(event)">
+                                    <div id="bbthing4" class="bbthing4" ng-click='dataelenochng("bbthing4")' >5
                                     </div>
-                                    <div id="bbthing5" class="bbthing5" ondrop="drop(event)" ondragover="allowDrop(event)">
+                                    <div id="bbthing5" class="bbthing5" ng-click='dataelenochng("bbthing5")' >6
                                     </div>
-                                    <div id="bbthing6" class="bbthing6" ondrop="drop(event)" ondragover="allowDrop(event)">
+                                    <div id="bbthing6" class="bbthing6" ng-click='dataelenochng("bbthing6")' >7
                                     </div>
-                                    <div id="bbthing7" class="bbthing7" ondrop="drop(event)" ondragover="allowDrop(event)">
+                                    <div id="bbthing7" class="bbthing7" ng-click='dataelenochng("bbthing7")' >8
                                     </div>
-                                    <div id="bbthing8" class="bbthing8" ondrop="drop(event)" ondragover="allowDrop(event)">
+                                    <div id="bbthing8" class="bbthing8" ng-click='dataelenochng("bbthing8")' >9
                                     </div>
-                                    <div id="bbthing9" class="bbthing9" ondrop="drop(event)" ondragover="allowDrop(event)">
+                                    <div id="bbthing9" class="bbthing9" ng-click='dataelenochng("bbthing9")' >10
                                     </div>
-                                    <div id="bbthing10" class="bbthing10" ondrop="drop(event)" ondragover="allowDrop(event)">
+                                    <div id="bbthing10" class="bbthing10" ng-click='dataelenochng("bbthing10")' >11
                                     </div>
-                                    <div id="bbthing11" class="bbthing11" ondrop="drop(event)" ondragover="allowDrop(event)">
+                                    <div id="bbthing11" class="bbthing11" ng-click='dataelenochng("bbthing11")' >12
                                     </div>
-                                    <div id="bbthing12" class="bbthing12" ondrop="drop(event)" ondragover="allowDrop(event)">
+                                    <div id="bbthing12" class="bbthing12" ng-click='dataelenochng("bbthing12")' >13
                                     </div>
-                                    <div id="bbthing13" class="bbthing13" ondrop="drop(event)" ondragover="allowDrop(event)">
+                                    <div id="bbthing13" class="bbthing13" ng-click='dataelenochng("bbthing13")' >14
                                     </div>
-                                    <div id="bbthing14" class="bbthing14" ondrop="drop(event)" ondragover="allowDrop(event)">
+                                    <div id="bbthing14" class="bbthing14" ng-click='dataelenochng("bbthing14")' >15
                                     </div>
-                                    <div id="bbthing15" class="bbthing15" ondrop="drop(event)" ondragover="allowDrop(event)">
+                                    <div id="bbthing15" class="bbthing15" ng-click='dataelenochng("bbthing15")' >16
                                     </div>
-                                    <div id="bbthing16" class="bbthing16" ondrop="drop(event)" ondragover="allowDrop(event)">
+                                    <div id="bbthing16" class="bbthing16" ng-click='dataelenochng("bbthing16")' >17
                                     </div>
-                                    <div id="bbthing17" class="bbthing17" ondrop="drop(event)" ondragover="allowDrop(event)">
+                                    <div id="bbthing17" class="bbthing17" ng-click='dataelenochng("bbthing17")' >18
+                                    </div>
+                                    <div id="bbthing18" class="bbthing18" ng-click='dataelenochng("bbthing18")' >19
+                                    </div>
+                                    <div id="bbthing19" class="bbthing19" ng-click='dataelenochng("bbthing19")' >20
+                                    </div>
+                                    <div id="bbthing20" class="bbthing20" ng-click='dataelenochng("bbthing20")' >21
+                                    </div>
+                                    <div id="bbthing21" class="bbthing21" ng-click='dataelenochng("bbthing21")' >22
                                     </div>
                                 </div>
                             </td>
+                            
+                            <td>
+                                <table class="dhis2-list-table-striped default-form-table" style="text-align:center"
+                                    ng-if="section.dataElements && section.dataElements.length > 0">
+                                    <tr>
+                                        <td style="background:#276696; color:white">
+                                            <strong>{{name1}}</strong>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 1}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 10 && name1 == 1">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                            <p ng-init></p>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 1}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 20 && $index >= 10 && name1 == 2">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                            <p ng-init></p>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 1}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 30 && $index >= 20 && name1 == 3">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                            <p ng-init></p>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 1}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 40 && $index >= 30 && name1 == 4">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                            <p ng-init></p>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 1}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 50 && $index >= 40 && name1 == 5">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                            <p ng-init></p>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 1}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 60 && $index >= 50 && name1 == 6">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                            <p ng-init></p>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 1}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 70 && $index >= 60 && name1 == 7">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                            <p ng-init></p>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 1}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 80 && $index >= 70 && name1 == 8">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                            <p ng-init></p>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 1}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 90 && $index >= 80 && name1 == 9">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                            <p ng-init></p>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 1}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 100 && $index >= 90 && name1 == 10">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                            <p ng-init></p>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 1}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 110 && $index >= 100 && name1 == 11">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                            <p ng-init></p>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 1}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 120 && $index >= 110 && name1 == 12">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                            <p ng-init></p>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 1}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 130 && $index >= 120 && name1 == 13">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                            <p ng-init></p>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 1}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 140 && $index >= 130 && name1 == 14">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                            <p ng-init></p>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 1}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 150 && $index >= 140 && name1 == 15">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                            <p ng-init></p>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 1}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 160 && $index >= 150 && name1 == 16">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                            <p ng-init></p>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 1}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 170 && $index >= 160 && name1 == 17">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                            <p ng-init></p>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 1}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 180 && $index >= 170 && name1 == 18">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                            <p ng-init></p>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 1}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 190 && $index >= 180 && name1 == 19">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                            <p ng-init></p>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 1}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 200 && $index >= 190 && name1 == 20">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                            <p ng-init></p>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 1}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 210 && $index >= 200 && name1 == 21">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                            <p ng-init></p>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 1}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 220 && $index >= 210 && name1 == 22">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                            <p ng-init></p>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+
 
                             <td>
                                 <div class='FrontBodyDropconatiner'>
-                                    <p draggable="true" ondragstart="drag(event)" id="drag11" width="88" height="31">1.
-                                        Clear border </p>
-                                    <p draggable="true" ondragstart="drag(event)" id="drag22" width="88" height="31">2.
-                                        Ulcus </p>
-                                    <p draggable="true" ondragstart="drag(event)" id="drag33" width="88" height="31">3.
-                                        Contracture </p>
-                                    <p draggable="true" ondragstart="drag(event)" id="drag44" width="88" height="31">4.
-                                        Erythema </p>
-                                    <p draggable="true" ondragstart="drag(event)" id="drag55" width="88" height="31">5.
-                                        Foot Drop/ wrist drop </p>
-                                    <p draggable="true" ondragstart="drag(event)" id="drag66" width="88" height="31">6.
-                                        infiltrat </p>
-                                    <p draggable="true" ondragstart="drag(event)" id="drag77" width="88" height="31">7.
-                                        Madarosis </p>
-                                    <p draggable="true" ondragstart="drag(event)" id="drag88" width="88" height="31">8.
-                                        Mutilation </p>
-                                    <p draggable="true" ondragstart="drag(event)" id="drag99" width="88" height="31">9.
-                                        Nerve Thickening </p>
-                                    <p draggable="true" ondragstart="drag(event)" id="drag1010" width="88" height="31">10.
+                                    <p  id="drag11" width="88" height="31" class='padlist'>1.
+                                        Hypoanestesi with Clear border </p>
+                                    <p  id="drag22" width="88" height="31" class='padlist'>2.
+                                        Hypoanestesi with Unclear border </p>
+                                    <p  id="drag33" width="88" height="31" class='padlist'>3.
+                                        infiltrate </p>
+                                    <p  id="drag44" width="88" height="31" class='padlist'>4.
                                         Nodule </p>
-                                    <p draggable="true" ondragstart="drag(event)" id="drag1111" width="88" height="31">11.
-                                        Plaque </p>
-                                    <p draggable="true" ondragstart="drag(event)" id="drag1212" width="88" height="31">12.
-                                        Stif contracture  </p>
-                                    <p draggable="true" ondragstart="drag(event)" id="drag1313" width="88" height="31">13.
-                                        Unclear border  </p>
+                                    <p  id="drag55" width="88" height="31" class='padlist'>5.
+                                        Nerve Thickening </p>
+                                    <!-- <p draggable="true" ondragstart="drag(event)" id="drag66" width="88" height="31">6.
+                                        Madarosis </p>
+                                    <p draggable="true" ondragstart="drag(event)" id="drag77" width="88" height="31">7.
+                                        Collapse of nose </p> -->
+                                    <p  id="drag88" width="88" height="31" class='padlist'>6.
+                                        Clawing </p>
+                                    <p  id="drag99" width="88" height="31" class='padlist'>7.
+                                        Stif contracture </p>
+                                    <p  id="drag1010" width="88" height="31" class='padlist'>8.
+                                        Mutilation </p>
+                                    <p  id="drag1111" width="88" height="31" class='padlist'>9.
+                                        Ulcus </p>
+                                    <p  id="drag1212" width="88" height="31" class='padlist'>10.
+                                        Foot Drop/ wrist drop </p>
+                                    <!-- <p draggable="true" ondragstart="drag(event)" id="drag1313" width="88" height="31">13.
+                                        Gynaecomastia</p>
                                     <p draggable="true" ondragstart="drag(event)" id="drag1414" width="88" height="31">14.
-                                        Anasthesia </p>
-                                    <p draggable="true" ondragstart="drag(event)" id="drag1515" width="88" height="31">15.
-                                        Hypopigmentation  </p>
-
+                                        Lagopthalmos </p> -->
+                                    <!-- <p draggable="true" ondragstart="drag(event)" id="drag1515" width="88" height="31">15.
+                                        Plaque </p>
+                                    <p draggable="true" ondragstart="drag(event)" id="drag1616" width="88" height="31">16.
+                                        Hypopigmentation </p>
+                                    <p draggable="true" ondragstart="drag(event)" id="drag1717" width="88" height="31">17.
+                                        Contracture </p>
+                                    <p draggable="true" ondragstart="drag(event)" id="drag1818" width="88" height="31">18.
+                                        Erythema </p>
+                                    <p draggable="true" ondragstart="drag(event)" id="drag1919" width="88" height="31">19.
+                                        Anasthesia </p> -->
                                 </div>
                             </td>
 
@@ -1408,6 +1686,9 @@
 
 <!-- add for indonesia_leprosy -->
 <script>
+    // #b94a4866 bg color
+    // #eee0 bg color2
+    var clicked = [];
     function allowDrop(ev) {
         ev.preventDefault();
     }
@@ -1416,11 +1697,191 @@
         ev.dataTransfer.setData("text", ev.target.id);
     }
 
+    //square box onclick function
+    function sqrclick(idno){
+        var trackerCapture = angular.module('trackerCapture');
+	    var test = document.getElementById(idno);
+        trackerCapture.controller('myctrl', function($scope) {
+            $scope.name = test.innerHTML;
+        })
+		//test.classList.add("sqrbg");
+		//console.log(test.innerHTML);
+        //bgcolorchng(idno);
+        //dataelementchng(idno);
+    }
+
+    //square bgcolor change
+    function bgcolorchng(idno) {
+        if (clicked.length == 0 || clicked.indexOf(idno) == -1){
+            clicked.push(idno);
+        }
+        //console.log(clicked);
+        for (let index = 0; index < clicked.length; index++) {
+            if ((document.getElementById(clicked[index]).classList.contains("sqrbg")) && clicked[index] != idno) {
+                document.getElementById(clicked[index]).classList.remove("sqrbg");
+                console.log("not matched")
+            } else if(clicked[index] == idno){
+                //document.getElementById(clicked[index]).style.backgroundColor = '#b94a4866';
+                //$(this).css('background-color','#b94a4866');
+				// document.getElementById(idno).classList.add("sqrbg");
+				console.log("matched");
+				
+//                document.getElementById(idno).classList.add("sqrbg");
+            }
+			console.log(clicked);
+        }
+        
+    }
+
+    function dataelementchng(idno) {
+        switch (idno) {
+            case 'Fbdcthing':
+                console.log(idno);
+                break;
+            case 'Fbdcthing1':
+                console.log(idno);
+                break;
+            case 'Fbdcthing2':
+                console.log(idno);
+                break;
+            case 'Fbdcthing3':
+                console.log(idno);
+                break;
+            case 'Fbdcthing4':
+                console.log(idno);
+                break;
+            case 'Fbdcthing5':
+                console.log(idno);
+                break;
+            case 'Fbdcthing6':
+                console.log(idno);
+                break;
+            case 'Fbdcthing7':
+                console.log(idno);
+                break;
+            case 'Fbdcthing8':
+                console.log(idno);
+                break;
+            case 'Fbdcthing9':
+                console.log(idno);
+                break;
+            case 'Fbdcthing10':
+                console.log(idno);
+                break;
+            case 'Fbdcthing11':
+                console.log(idno);
+                break;
+            case 'Fbdcthing12':
+                console.log(idno);
+                break;
+            case 'Fbdcthing13':
+                console.log(idno);
+                break;
+            case 'Fbdcthing14':
+                console.log(idno);
+                break;
+            case 'Fbdcthing15':
+                console.log(idno);
+                break;
+            case 'Fbdcthing16':
+                console.log(idno);
+                break;
+            case 'Fbdcthing17':
+                console.log(idno);
+                break;
+            case 'Fbdcthing18':
+                console.log(idno);
+                break;
+            case 'Fbdcthing19':
+                console.log(idno);
+                break;
+            case 'Fbdcthing20':
+                console.log(idno);
+                break;
+            case 'Fbdcthing21':
+                console.log(idno);
+                break;
+            case 'Fbdcthing22':
+                console.log(idno);
+                break;
+            case 'bbthing':
+                console.log(idno);
+                break;
+            case 'bbthing1':
+                console.log(idno);
+                break;
+            case 'bbthing2':
+                console.log(idno);
+                break;
+            case 'bbthing3':
+                console.log(idno);
+                break;
+            case 'bbthing4':
+                console.log(idno);
+                break;
+            case 'bbthing5':
+                console.log(idno);
+                break;
+            case 'bbthing6':
+                console.log(idno);
+                break;
+            case 'bbthing7':
+                console.log(idno);
+                break;
+            case 'bbthing8':
+                console.log(idno);
+                break;
+            case 'bbthing9':
+                console.log(idno);
+                break;
+            case 'bbthing10':
+                console.log(idno);
+                break;
+            case 'bbthing11':
+                console.log(idno);
+                break;
+            case 'bbthing12':
+                console.log(idno);
+                break;
+            case 'bbthing13':
+                console.log(idno);
+                break;
+            case 'bbthing14':
+                console.log(idno);
+                break;
+            case 'bbthing15':
+                console.log(idno);
+                break;
+            case 'bbthing16':
+                console.log(idno);
+                break;
+            case 'bbthing17':
+                console.log(idno);
+                break;
+            case 'bbthing18':
+                console.log(idno);
+                break;
+            case 'bbthing19':
+                console.log(idno);
+                break;
+            case 'bbthing20':
+                console.log(idno);
+                break;
+            case 'bbthing21':
+                console.log(idno);
+                break;
+            default:
+                break;
+        }
+    }
+    
     function drop(ev) {
         ev.preventDefault();
         var data = ev.dataTransfer.getData("text");
         ev.target.appendChild(document.getElementById(data));
-        console.log(data);
+        document.getElementById(data).innerHTML = document.getElementById(data).innerHTML.slice(0,1);
+        //console.log(document.getElementById(data).innerHTML.slice(0,1));
+        //console.log(document.getElementById(data).innerHTML.slice(0,1));
     }
 
 </script>
