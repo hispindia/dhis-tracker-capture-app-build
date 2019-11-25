@@ -14183,13 +14183,15 @@
 	                }
 	            });
 	        }
-	        if ($scope.trackedEntityTypes.selected) {
-	            AttributesFactory.getByTrackedEntityType($scope.trackedEntityTypes.selected).then(function (atts) {
+	
+	        var trackedEntityType = $scope.trackedEntityTypes.selected || $scope.selectedProgram.trackedEntityType;
+	        if (trackedEntityType) {
+	            AttributesFactory.getByTrackedEntityType(trackedEntityType).then(function (atts) {
 	                $scope.teTypeAttributesById = {};
 	                angular.forEach(atts, function (att) {
 	                    $scope.teTypeAttributesById[att.id] = att;
 	                });
-	                atts;
+	
 	                if (!$scope.selectedProgram) {
 	                    $scope.attributes = TEIGridService.generateGridColumns(atts, null, false).columns;
 	                }
@@ -15016,9 +15018,9 @@
 	    };
 	
 	    $scope.attributeFieldDisabled = function (attribute) {
-	        if (!$scope.teTypeAttributesById[attribute.id]) {
+	        if ($scope.isDisabled(attribute)) return true;
+	        if (!$scope.teTypeAttributesById || !$scope.teTypeAttributesById[attribute.id]) {
 	            if ($scope.selectedTei && $scope.selectedTei.programOwnersById && $scope.selectedProgram && $scope.selectedTei.programOwnersById[$scope.selectedProgram.id] && $scope.selectedTei.programOwnersById[$scope.selectedProgram.id] != $scope.selectedOrgUnit.id) return true;
-	            if ($scope.isDisabled(attribute)) return true;
 	            if ($scope.selectedOrgUnit.closedStatus) return true;
 	        }
 	        if (!$scope.hasTeiWrite()) return true;
@@ -39550,4 +39552,4 @@
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=app-dbf9d79cb727ed36bc36.js.map
+//# sourceMappingURL=app-3e6c948b16a571b3d813.js.map
