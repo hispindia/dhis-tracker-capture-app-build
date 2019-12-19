@@ -92,8 +92,6 @@
 	
 	__webpack_require__(20);
 	
-	__webpack_require__(21);
-	
 	__webpack_require__(22);
 	
 	__webpack_require__(23);
@@ -136,21 +134,23 @@
 	
 	__webpack_require__(42);
 	
-	var _leaflet = __webpack_require__(43);
+	__webpack_require__(43);
+	
+	var _leaflet = __webpack_require__(44);
 	
 	var _leaflet2 = _interopRequireDefault(_leaflet);
-	
-	__webpack_require__(44);
 	
 	__webpack_require__(45);
 	
 	__webpack_require__(46);
 	
-	__webpack_require__(52);
+	__webpack_require__(47);
 	
 	__webpack_require__(53);
 	
-	__webpack_require__(58);
+	__webpack_require__(54);
+	
+	__webpack_require__(59);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -161,9 +161,9 @@
 	
 	
 	_leaflet2.default.Icon.Default.mergeOptions({
-	    iconRetinaUrl: __webpack_require__(60),
-	    iconUrl: __webpack_require__(57),
-	    shadowUrl: __webpack_require__(61)
+	    iconRetinaUrl: __webpack_require__(61),
+	    iconUrl: __webpack_require__(58),
+	    shadowUrl: __webpack_require__(62)
 	});
 	
 	
@@ -4341,6 +4341,28 @@
 	    };
 	})
 	
+	.directive('serversidePaginatorPerformant', function factory() {
+	
+	    return {
+	        restrict: 'E',
+	        controller: function ($scope, Paginator) {
+	            $scope.paginator = Paginator;
+	            
+	            $scope.getDisplayPage = function() {
+	                var pager = $scope.pager;
+	                return pager.page;
+	            }
+	
+	            $scope.hasNextPage = function(){
+	                var pager = $scope.pager;
+	                return pager.recordsCount === pager.pageSize;
+	            }
+	
+	        },
+	        templateUrl: './templates/serverside-pagination-performant.html'
+	    };
+	})
+	
 	.directive('d2CustomDataEntryForm', function ($compile) {
 	    return{
 	        restrict: 'E',
@@ -6927,6 +6949,7 @@
 	$templateCache.put('./templates/orgunit-tree.html','<div class="modal-header page">\n    <h3>{{\'org_unit\'| translate}}</h3>\n</div>\n<div class="modal-body page">\n    <div class="input-group">    \n        <input type="text" \n            name="orgUnitFilterText" \n            d2-on-enter-blur\n            d2-on-blur-change="filterOrgUnits()"\n            ng-model="orgUnitFilterText" \n            class="form-control" ng-attr-placeholder="{{\'search\' | translate}}"> \n        <span class="input-group-btn"> \n            <button class="btn btn-success hideInPrint trim" type="button" ng-attr-title="{{\'search\' | translate}}" ng-disabled="!orgUnitFilterText" ng-click="filterOrgUnits()"> \n                <i class="fa fa-search"></i> \n            </button> \n            <button class="btn btn-danger hideInPrint trim" type="button" ng-attr-title="{{\'clear\' | translate}}" ng-disabled="!orgUnitFilterText" ng-click="filterOrgUnits(true)"> \n                <i class="fa fa-trash-o"></i>\n            </button> \n        </span> \n    </div>\n    <div class="org-unit-tree" data-stop-propagation="true">\n        <script type="text/ng-template" id="orgUnitTree.html">\n            <span class="org-unit-tree-button" ng-click="expandCollapse(orgUnit)" ng-show="orgUnit.show && orgUnit.children.length > 0"><i class="fa fa-minus-square-o"></i></span>\n            <span class="org-unit-tree-button" ng-click="expandCollapse(orgUnit)" ng-show="(!orgUnit.show && orgUnit.children.length > 0) || (!orgUnit.show && orgUnit.hasChildren)"><i class="fa fa-plus-square-o"></i></span>\n            <span class="org-unit-tree-button" ng-click="setSelectedOrgUnit(orgUnit)" ng-class="{\'selected-org-unit\' : orgUnit.id === model.selectedOrgUnitId}">{{orgUnit.displayName}}</span>\n            <ul class="tree" id="tree" ng-show="orgUnit.show">\n                <li ng-repeat="orgUnit in orgUnit.children | orderBy:[\'level\',\'displayName\']" ng-include="\'orgUnitTree.html\'"></li>\n            </ul>\n        </script>\n        <ul class="tree" id="tree">\n            <li ng-repeat="orgUnit in orgUnitsDataElement | orderBy:[\'level\',\'displayName\']" ng-include="\'orgUnitTree.html\'"></li>\n        </ul>\n    </div>\n</div>\n<div class="modal-footer page">\n    <button class="btn btn-primary" data-ng-click="select()">{{\'select\'| translate}}</button>\n    <button class="btn btn-default" data-ng-click="close()">{{\'close\'| translate}}</button>\n</div>');
 	$templateCache.put('./templates/radio-button.html','<!--\nCopyright (c) 2015, UiO\nAll rights reserved.\n\nRedistribution and use in source and binary forms, with or without\nmodification, are permitted provided that the following conditions are met:\n\n* Redistributions of source code must retain the above copyright notice, this\n  list of conditions and the following disclaimer.\n* Redistributions in binary form must reproduce the above copyright notice,\n  this list of conditions and the following disclaimer in the documentation\n  and/or other materials provided with the distribution.\n\nTHIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"\nAND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE\nIMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE\nARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE\nLIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR\nCONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF\nSUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS\nINTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN\nCONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)\nARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE\nPOSSIBILITY OF SUCH DAMAGE.\n-->\n \n\n<div tabindex="0" ng-if="!disabled" class="custom-radio-group custom-radio-container">\n    <span ng-click="valueClicked(\'true\')" class="cursor-pointer">\n        <span class="fa-stack">                                                                                                        \n            <span class=\'fa fa-stack-1x fa-circle radio-default fa-stack-custom-large\' ng-class=\'radioButtonColor("true")\'></span>        \n            <span class="fa fa-stack-1x fa-circle-thin fa-stack-custom-large"></span>\n            <span class="fa-stack-custom-small" ng-class="radioButtonImage(\'true\')"></span>\n        </span>\n        <span class="custom-radio-text">\n            {{\'Yes\' | translate }}\n        </span>\n    </span>\n    &nbsp;&nbsp;    \n    <span ng-click="valueClicked(\'false\')" class="cursor-pointer">\n        <span class="fa-stack">                                                                                                        \n            <span class=\'fa fa-stack-1x fa-circle fa-stack-custom-large\' ng-class=\'radioButtonColor("false")\'></span>                                                    \n            <span class="fa fa-stack-1x fa-circle-thin fa-stack-custom-large"></span>\n            <span class="fa-stack-custom-small" ng-class="radioButtonImage(\'false\')"></span>\n        </span>\n        <span class="custom-radio-text">\n            {{\'No\' | translate }}\n        </span>        \n    </span>\n    <div ng-if="status === \'error\'" class="custom-radio-error input-error"><span>{{\'save failed\' | translate}}</span></div>\n    \n    \n    <div ng-show="false">\n        <label class="radio-inline">                                                    \n            <input class="radio-display-none" ng-required="required" style=\'margin-top: 1px\' type="radio" ng-model="value" ng-disabled="disabled" name="{{name}}" ng-attr-value="true">                                                    \n        </label>                                                \n        <label class="radio-inline">\n            <input class="radio-display-none" ng-required="required" style=\'margin-top: 1px\' type="radio" ng-model="value" ng-disabled="disabled" name="{{name}}" ng-attr-value="false">\n        </label>\n    </div>\n</div>\n<div ng-if="disabled" class="custom-radio-container">\n    <span class="fa-icon-width" ng-class="getDisabledIcon(value)"></span>\n    <span>{{getDisabledValue(value) | translate}}</span>         \n</div>');
 	$templateCache.put('./templates/radio-input.html','<span ng-repeat="option in d2Options" \n      class="col-sm-12 form-control cursor-pointer" \n      ng-disabled="d2Disabled"\n      ng-class="{\'input-success\': d2ValueSaved && model.radio === option.displayName}"\n      ng-click="saveValue(option.displayName)">\n    <span class="fa fa-circle-thin fa-stack-custom-large" ng-if="option.displayName !== model.radio"></span> \n    <span class="fa fa-dot-circle-o fa-stack-custom-large" ng-if="option.displayName === model.radio"></span> \n    {{option.displayName}}\n</span>\n\n\n<span ng-show="false">\n    <label ng-repeat="option in d2Options" class="radio-display-none">\n    <input type="radio" \n           name="{{name}}"\n           ng-required="d2Required"\n           ng-disabled="d2Disabled"\n           ng-model="model.radio"\n           ng-attr-value="{{option.displayName}}"> {{option.displayName}}\n    </label>    \n</span>');
+	$templateCache.put('./templates/serverside-pagination-performant.html','<div class="paging-container">\n    <table style="background-color: #ebf0f6;" width=\'100%\'>\n        <tr>\n            <td>\n            </td>\n            <td>\n                <span>{{\'rows_per_page\'| translate}}:</span> <input type="text" min="1" style="width:50px;" ng-model="pager.pageSizeEdit" d2-enter="resetPageSize()" ng-blur="resetPageSize()"> \n            </td>\n            <td>\n                <span>{{\'jump_to_page\'| translate}}:</span> <input type="text" min="1" style="width:50px;" ng-model="pager.pageEdit" d2-enter="jumpToPage()" ng-blur="jumpToPage()"> \n            </td>\n        </tr>\n        <tr>\n            <td colspan="3"><hr/></td>\n        </tr>\n        <tr>\n            <td colspan="3">\n                <div class="paging paging-navigation">\n                    <span ng-show="pager.page > 1">\n                        <a href ng-click="getPage(1)" ng-attr-title="{{\'first\'| translate}}"> \n                            &laquo;&laquo;\n                        </a>\n                        <a href ng-click="getPage(pager.page - 1)" ng-attr-title="{{\'previous\'| translate}}"> \n                            &laquo;\n                        </a>                    \n                    </span>\n                    <span ng-hide="pager.page > 1">\n                        <span ng-attr-title="{{\'first\'| translate}}">&laquo;&laquo;</span>\n                        <span ng-attr-title="{{\'previous\'| translate}}">&laquo;</span>\n                    </span>\n                    {{getDisplayPage()}}\n                    <span ng-show="hasNextPage()">\n                        <a href ng-click="getPage(pager.page + 1)" ng-attr-title="{{\'next\'| translate}}" > \n                            &raquo;\n                        </a>\n                    </span>\n                    <span ng-hide="hasNextPage()">\n                            <span class="next" ng-attr-title="{{\'next\'| translate}}">&raquo; </span>\n                        </span>\n                </div>\n            </td>\n        </tr>\n    </table>   \n</div>');
 	$templateCache.put('./templates/serverside-pagination.html','<div class="paging-container">\n    <table style="background-color: #ebf0f6;" width=\'100%\'>\n        <tr>\n            <td>\n                {{\'total_number_of_pages\'| translate}}: {{pager.pageCount}}\n            </td>\n            <td>\n                <span>{{\'rows_per_page\'| translate}}:</span> <input type="text" min="1" style="width:50px;" ng-model="pager.pageSize" d2-enter="resetPageSize()" ng-blur="resetPageSize()"> \n            </td>\n            <td>\n                <span>{{\'jump_to_page\'| translate}}:</span> <input type="text" min="1" style="width:50px;" ng-model="pager.page" d2-enter="jumpToPage()" ng-blur="jumpToPage()"> \n            </td>\n        </tr>\n        <tr>\n            <td colspan="3"><hr/></td>\n        </tr>\n        <tr>\n            <td colspan="3">\n                <div class="paging">\n                    <span ng-show="pager.page > 1">\n                        <a href ng-click="getPage(1)" ng-attr-title="{{\'first\'| translate}}"> \n                            &laquo;&laquo;\n                        </a>\n                        <a href ng-click="getPage(pager.page - 1)" ng-attr-title="{{\'previous\'| translate}}"> \n                            &laquo;\n                        </a>                    \n                    </span>\n                    <span ng-hide="pager.page > 1">\n                        <span ng-attr-title="{{\'first\'| translate}}">&laquo;&laquo;</span>\n                        <span ng-attr-title="{{\'previous\'| translate}}">&laquo;</span>\n                    </span>\n                    <a href ng-click="getPage(i+1)" ng-attr-title="{{\'page\'| translate}} {{i + 1}}" ng-repeat="i in []| forLoop:paginator.lowerLimit():pager.pageCount | limitTo : pager.toolBarDisplay" ng-class="pager.page == i + 1 && \'active\'">\n                        {{i + 1}}\n                    </a>\n\n                    <span ng-show="pager.page < pager.pageCount">\n                        <a href ng-click="getPage(pager.page + 1)" ng-attr-title="{{\'next\'| translate}}" > \n                            &raquo;\n                        </a>\n                        <a href ng-click="getPage(pager.pageCount)" ng-attr-title="{{\'last\'| translate}}"> \n                            &raquo;&raquo;\n                        </a>\n                    </span>\n                    <span ng-hide="pager.page < pager.pageCount">\n                        <span class="next" ng-attr-title="{{\'next\'| translate}}">&raquo; </span>\n                        <span class="last" ng-attr-title="{{\'last\'| translate}}">&raquo;&raquo;</span>\n                    </span>\n                </div>\n            </td>\n        </tr>\n    </table>   \n</div>');
 	$templateCache.put('./templates/time-input.html','<div class="hideInPrint" ng-if="use24">\n    <input type="text"\n        ng-model="timeModel[timeModelId]"\n        ng-attr-placeholder="{{\'hours_and_minutes\' | translate}}"\n        class="form-control"\n        ng-class="timeUseNotification ? getInputNotifcationClass(timeModelId, timeModel) : \'\'"\n        d2-time-validator\n        d2-time-parser\n        ng-required="timeRequired"\n        ng-disabled="timeDisabled"\n        ng-blur="saveTime()"\n        name="foo"/>\n</div>\n<div class="hideInPrint" ng-if="!use24">\n    <div class="input-group" style="padding-bottom: 5px;">\n        <input type="text"\n            ng-model="base.temp12hTime"\n            ng-attr-placeholder="{{\'hours_and_minutes\' | translate}}"\n            class="form-control"\n            ng-class="timeUseNotification ? getInputNotifcationClass(timeModelId, timeModel) : \'\'"\n            d2-time-am-pm-validator\n            d2-time-parser\n            ng-required="timeRequired"\n            ng-disabled="timeDisabled"\n            ng-blur="save12hTime()"\n            name="foo"/>\n        <div class="input-group-btn" style="padding-top: 5px;">\n            <button type="button" class="btn btn-default dropdown-toggle" ng-disabled="timeDisabled" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="border-color: #aaaaaa;">{{timeFormat}} <span class="caret"></span></button>\n            <ul class="dropdown-menu">\n                <li><a ng-click="setFormat(\'AM\'); save12hTime()">AM</a></li>\n                <li><a ng-click="setFormat(\'PM\'); save12hTime()">PM</a></li>\n            </ul>\n        </div>\n    </div>\n</div>\n<div class="not-for-screen">\n    <input type="text" class="form-control" ng-attr-value={{timeModel[timeModelId]}}>\n</div>');
 	$templateCache.put('./templates/tracker-associate-input.html','<div class="panel panel-default" style="margin-top: 5px; margin-bottom: 5px;">\n    <div class="panel-heading">\n        <span class="input-group">                            \n            <input type="text"\n                name="foo" \n                class="form-control"\n                ng-model="d2SelectedTei[d2Attribute.id]" \n                ng-model-options="{ updateOn: \'default blur\', allowInvalid: true }"\n                attribute-data={{d2Attribute}}\n                selected-program-id={{d2SelectedProgram.id}}  \n                selected-tei-id={{d2SelectedTei.trackedEntityInstance}}\n                ng-disabled="true" \n                ng-blur="d2BlurMethode(d2SelectedTei, d2Attribute.id)"\n                ng-required="d2Attribute.mandatory"/>\n            <span class="input-group-btn">\n                <button class="btn btn-success hideInPrint trim"\n                        ng-if="!d2SelectedTei[d2Attribute.id] " \n                        ng-class="{true: \'disable-clicks\'} [editingDisabled]"\n                        ng-disabled="d2SelectedOrgunit.closedStatus"\n                        type="button" \n                        ng-attr-title="{{\'add\'| translate}} {{d2Attribute.displayName}}"\n                        ng-click="getTa()">\n                        <i class="fa fa-external-link"></i>                             \n                </button>\n                <button class="btn btn-danger hideInPrint trim"\n                        ng-if="d2SelectedTei[d2Attribute.id]" \n                        ng-class="{true: \'disable-clicks\'} [editingDisabled]"\n                        ng-disabled="d2SelectedOrgunit.closedStatus"\n                        type="button" \n                        ng-attr-title="{{\'remove\'| translate}} {{d2Attribute.displayName}}"\n                        ng-click="delete()">\n                        <i class="fa fa-trash-o"></i>                             \n                </button>\n            </span>\n        </span>\n    </div>\n    <div class="panel-body" style="max-height: 75px; overflow-y: scroll; padding: 0px;" ng-if="userDetailsName.length > 0">\n        <table class="table table-striped" style="margin-bottom: 0px;">\n            <tbody>\n                <tr ng-repeat="name in userDetailsName">\n                    <th scope="row">{{name}}</th>\n                    <td style="border-bottom: 1px solid #ddd;">{{userDetailsData[$index]}}</td>\n                </tr>\n            </tbody>\n        </table>\n    </div>\n</div>');
@@ -7677,11 +7700,12 @@
 	            url = url + '&' + attributeUrl;
 	        }
 	        if (paging) {
-	            var pgSize = pager ? pager.pageSize : 50;
-	            var pg = pager ? pager.page : 1;
+	            var pgSize = pager && pager.pageSize || 50;
+	            var pg = pager && pager.page || 1;
+	            var includeTotalPages = pager ? !pager.skipTotalPages : true;
 	            pgSize = pgSize > 1 ? pgSize : 1;
 	            pg = pg > 1 ? pg : 1;
-	            url = url + '&pageSize=' + pgSize + '&page=' + pg + '&totalPages=true';
+	            url = url + '&pageSize=' + pgSize + '&page=' + pg + '&totalPages=' + includeTotalPages;
 	        } else {
 	            url = url + '&paging=false';
 	        }
@@ -9464,9 +9488,10 @@
 	        return searchConfig;
 	    };
 	
-	    var getSearchParams = function getSearchParams(searchGroup, program, trackedEntityType, orgUnit, pager, searchScope) {
+	    var getSearchParams = function getSearchParams(searchGroup, program, trackedEntityType, orgUnit, pager, searchScope, onGetFieldArgs) {
 	        var uniqueSearch = false;
 	        var numberOfSetAttributes = 0;
+	        var filteredAttributes = {};
 	        var query = { url: null, hasValue: false };
 	        if (searchGroup) {
 	            angular.forEach(searchGroup.attributes, function (attr) {
@@ -9488,7 +9513,6 @@
 	                            } else {
 	                                q += 'EQ:' + exactValue + ':';
 	                            }
-	                            numberOfSetAttributes++;
 	                        }
 	                    }
 	                    if (attr.operator === OperatorFactory.defaultOperators[1]) {
@@ -9512,14 +9536,16 @@
 	                    if (query.url) {
 	                        if (q) {
 	                            numberOfSetAttributes++;
+	                            filteredAttributes[attr.id] = true;
 	                            q = q.substr(0, q.length - 1);
-	                            query.url = query.url + '&filter=' + attr.id + ':' + q;
+	                            query.url = query.url + '&attribute=' + attr.id + ':' + q;
 	                        }
 	                    } else {
 	                        if (q) {
 	                            numberOfSetAttributes++;
+	                            filteredAttributes[attr.id] = true;
 	                            q = q.substr(0, q.length - 1);
-	                            query.url = 'filter=' + attr.id + ':' + q;
+	                            query.url = 'attribute=' + attr.id + ':' + q;
 	                        }
 	                    }
 	                } else {
@@ -9539,28 +9565,32 @@
 	                            if (query.url) {
 	                                if (q) {
 	                                    numberOfSetAttributes++;
-	                                    query.url = query.url + '&filter=' + attr.id + ':IN:' + q;
+	                                    filteredAttributes[attr.id] = true;
+	                                    query.url = query.url + '&attribute=' + attr.id + ':IN:' + q;
 	                                }
 	                            } else {
 	                                if (q) {
 	                                    numberOfSetAttributes++;
-	                                    query.url = 'filter=' + attr.id + ':IN:' + q;
+	                                    filteredAttributes[attr.id] = true;
+	                                    query.url = 'attribute=' + attr.id + ':IN:' + q;
 	                                }
 	                            }
 	                        } else {
 	                            if (query.url) {
 	                                numberOfSetAttributes++;
+	                                filteredAttributes[attr.id] = true;
 	                                if (attr.operator === "Eq") {
 	                                    query.url = query.url + '&filter=' + attr.id + ':EQ:' + value;
 	                                } else {
-	                                    query.url = query.url + '&filter=' + attr.id + ':LIKE:' + value;
+	                                    query.url = query.url + '&attribute=' + attr.id + ':LIKE:' + value;
 	                                }
 	                            } else {
 	                                numberOfSetAttributes++;
+	                                filteredAttributes[attr.id] = true;
 	                                if (attr.operator === "Eq") {
 	                                    query.url = 'filter=' + attr.id + ':EQ:' + value;
 	                                } else {
-	                                    query.url = 'filter=' + attr.id + ':LIKE:' + value;
+	                                    query.url = 'attribute=' + attr.id + ':LIKE:' + value;
 	                                }
 	                            }
 	                        }
@@ -9569,6 +9599,10 @@
 	            });
 	        }
 	        if (query.hasValue && (uniqueSearch || numberOfSetAttributes >= searchGroup.minAttributesRequiredToSearch)) {
+	            if (onGetFieldArgs) {
+	                var fieldsArgs = onGetFieldArgs(filteredAttributes);
+	                query.url += fieldsArgs;
+	            }
 	            var programOrTETUrl = searchScope === searchScopes.PROGRAM ? "program=" + program.id : "trackedEntityType=" + trackedEntityType.id;
 	
 	            var searchOrgUnit = searchGroup.orgUnit ? searchGroup.orgUnit : orgUnit;
@@ -9639,6 +9673,26 @@
 	            return def.promise;
 	        }
 	    };
+	
+	    this.findTetSearchGroup = function (programSearchGroup, tetSearchConfig) {
+	        var uniqueGroup = programSearchGroup.uniqueGroup;
+	        if (uniqueGroup) {
+	            var attributeId = programSearchGroup.attributes && programSearchGroup.attributes.length > 0 && programSearchGroup.attributes[0].id;
+	
+	            if (!attributeId) {
+	                return null;
+	            }
+	
+	            return tetSearchConfig.searchGroups.find(function (group) {
+	                return group.uniqueGroup && group.attributes && group.attributes.length > 0 && group.attributes[0].id === attributeId;
+	            });
+	        }
+	
+	        return tetSearchConfig.searchGroups.find(function (group) {
+	            return !group.uniqueGroup;
+	        });
+	    };
+	
 	    this.findValidTetSearchGroup = function (programSeachGroup, tetSearchConfig, attributesById) {
 	        for (var sg = 0; sg < tetSearchConfig.searchGroups.length; sg++) {
 	            var searchGroup = tetSearchConfig.searchGroups[sg];
@@ -9669,48 +9723,77 @@
 	        return true;
 	    };
 	
-	    this.programScopeSearch = function (programSearchGroup, tetSearchGroup, program, trackedEntityType, orgUnit, pager) {
-	        var params = getSearchParams(programSearchGroup, program, trackedEntityType, orgUnit, pager, searchScopes.PROGRAM);
-	        if (params) {}
-	        return TEIService.search(params.orgUnit.id, params.ouMode, null, params.programOrTETUrl, params.queryUrl, params.pager, true).then(function (response) {
-	            if (response && response.rows && response.rows.length > 0) {
-	                var result = { data: response, callingScope: searchScopes.PROGRAM, resultScope: searchScopes.PROGRAM };
-	                var def = $q.defer();
-	                if (params.uniqueSearch) {
-	                    result.status = "UNIQUE";
-	                } else {
-	                    result.status = "MATCHES";
-	                }
-	                def.resolve(result);
-	                return def.promise;
-	            } else {
-	                if (tetSearchGroup) {
-	                    return tetScopeSearch(tetSearchGroup, trackedEntityType, orgUnit, pager).then(function (result) {
-	                        result.callingScope = searchScopes.PROGRAM;
-	                        return result;
-	                    }, function () {
-	                        return { status: "NOMATCH" };
-	                    });
-	                } else {
-	                    var def = $q.defer();
-	                    def.resolve({ status: "NOMATCH" });
-	                    return def.promise;
-	                }
-	            }
-	        }, function (error) {
-	            var d = $q.defer();
-	            if (error && error.data && error.data.message === "maxteicountreached") {
-	                d.resolve({ status: "TOOMANYMATCHES", data: null });
-	            } else {
-	                d.reject(error);
-	            }
-	            return d.promise;
+	    this.programScopeSearch = function (programSearchGroup, tetSearchGroup, program, trackedEntityType, orgUnit, pager, sortColumn) {
+	        var params = getSearchParams(programSearchGroup, program, trackedEntityType, orgUnit, pager, searchScopes.PROGRAM, function (filteredAttributes) {
+	            var programAttributes = program.programTrackedEntityAttributes;
+	            return programAttributes.map(function (programAttribute) {
+	                return programAttribute.displayInList && programAttribute.trackedEntityAttribute && programAttribute.trackedEntityAttribute.id;
+	            }).filter(function (attributeId) {
+	                return attributeId && !filteredAttributes[attributeId];
+	            }).reduce(function (acc, attributeId) {
+	                acc += "&attribute=" + attributeId;
+	                return acc;
+	            }, '');
 	        });
-	    };
-	    var tetScopeSearch = this.tetScopeSearch = function (tetSearchGroup, trackedEntityType, orgUnit, pager) {
-	        var params = getSearchParams(tetSearchGroup, null, trackedEntityType, orgUnit, pager, searchScopes.TET);
+	
 	        if (params) {
-	            return TEIService.search(params.orgUnit.id, params.ouMode, null, params.programOrTETUrl, params.queryUrl, params.pager, true).then(function (response) {
+	            var order = sortColumn && "order=" + sortColumn.id + ":" + sortColumn.direction;
+	            return TEIService.search(params.orgUnit.id, params.ouMode, order, params.programOrTETUrl, params.queryUrl, params.pager, params.paging).then(function (response) {
+	                if (response && response.rows && response.rows.length > 0) {
+	                    var result = { data: response, callingScope: searchScopes.PROGRAM, resultScope: searchScopes.PROGRAM };
+	                    var def = $q.defer();
+	                    if (params.uniqueSearch) {
+	                        result.status = "UNIQUE";
+	                    } else {
+	                        result.status = "MATCHES";
+	                    }
+	                    def.resolve(result);
+	                    return def.promise;
+	                } else {
+	                    if (tetSearchGroup) {
+	                        return tetScopeSearch(tetSearchGroup, trackedEntityType, orgUnit, pager).then(function (result) {
+	                            result.callingScope = searchScopes.PROGRAM;
+	                            return result;
+	                        }, function () {
+	                            return { status: "NOMATCH" };
+	                        });
+	                    } else {
+	                        var def = $q.defer();
+	                        def.resolve({ status: "NOMATCH" });
+	                        return def.promise;
+	                    }
+	                }
+	            }, function (error) {
+	                var d = $q.defer();
+	                if (error && error.data && error.data.message === "maxteicountreached") {
+	                    d.resolve({ status: "TOOMANYMATCHES", data: null });
+	                } else {
+	                    d.reject(error);
+	                }
+	                return d.promise;
+	            });
+	        } else {
+	            var def = $q.defer();
+	            def.resolve({ status: "NOMATCH" });
+	            return def.promise;
+	        }
+	    };
+	    var tetScopeSearch = this.tetScopeSearch = function (tetSearchGroup, trackedEntityType, orgUnit, pager, sortColumn) {
+	        var params = getSearchParams(tetSearchGroup, null, trackedEntityType, orgUnit, pager, searchScopes.TET, function (filteredAttributes) {
+	            var tetAttributes = trackedEntityType.trackedEntityTypeAttributes;
+	            return tetAttributes.map(function (tetAttribute) {
+	                return tetAttribute.displayInList && tetAttribute.trackedEntityAttribute && tetAttribute.trackedEntityAttribute.id;
+	            }).filter(function (attributeId) {
+	                return attributeId && !filteredAttributes[attributeId];
+	            }).reduce(function (acc, attributeId) {
+	                acc += "&attribute=" + attributeId;
+	                return acc;
+	            }, '');
+	        });
+	
+	        if (params) {
+	            var order = sortColumn && "order=" + sortColumn.id + ":" + sortColumn.direction;
+	            return TEIService.search(params.orgUnit.id, params.ouMode, order, params.programOrTETUrl, params.queryUrl, params.pager, params.paging).then(function (response) {
 	                var result = { data: response, callingScope: searchScopes.TET, resultScope: searchScopes.TET };
 	                if (response && response.rows && response.rows.length > 0) {
 	                    if (params.uniqueSearch) {
@@ -10479,6 +10562,7 @@
 	                    $scope.sortColumn.id = gridHeader.id;
 	                    $scope.sortColumn.direction = 'asc';
 	                }
+	                $scope.pager = undefined;
 	                $scope.refetchData({ pager: $scope.pager, sortColumn: $scope.sortColumn });
 	            };
 	
@@ -10501,6 +10585,111 @@
 	                if ($scope.pager && $scope.pager.page && $scope.pager.pageCount && $scope.pager.page > $scope.pager.pageCount) {
 	                    $scope.pager.page = $scope.pager.pageCount;
 	                }
+	                $scope.refetchData({ pager: $scope.pager, sortColumn: $scope.sortColumn });
+	            };
+	        }]
+	    };
+	}).directive('trackerTeiListPerformant', function () {
+	    return {
+	        restrict: 'E',
+	        templateUrl: 'views/tei-list-performant.html',
+	        scope: {
+	            data: "=teiData",
+	            pager: "=?teiPager",
+	            sortColumn: "=?teiSortColumn",
+	            gridColumns: "=?teiGridColumns",
+	            refetchData: "&teiRefetchData",
+	            onTeiClicked: "&onTeiClicked"
+	        },
+	
+	        controller: ["$scope", "Paginator", "TEIGridService", "CurrentSelection", function controller($scope, Paginator, TEIGridService, CurrentSelection) {
+	            var attributesById = CurrentSelection.getAttributesById();
+	            $scope.$watch("pager", function () {
+	                if ($scope.pager) {
+	                    Paginator.setPage($scope.pager.page);
+	                    Paginator.setPageCount($scope.pager.pageCount);
+	                    Paginator.setPageSize($scope.pager.pageSize);
+	                    Paginator.setItemCount($scope.pager.total);
+	                }
+	            });
+	
+	            $scope.$watch("data", function () {
+	                setGridColumns();
+	            });
+	
+	            var setGridColumns = function setGridColumns() {
+	                if ($scope.data && !$scope.gridColumns) {
+	                    var columnAttributes = [];
+	                    angular.forEach($scope.data.headers, function (header) {
+	                        if (attributesById[header.id]) {
+	                            var attr = angular.copy(attributesById[header.id]);
+	                            attr.displayInListNoProgram = true;
+	                            columnAttributes.push(attr);
+	                        }
+	                    });
+	                    var gridColumnConfig = { showAll: true };
+	                    $scope.gridColumns = TEIGridService.makeGridColumns(columnAttributes, gridColumnConfig);
+	                }
+	            };
+	
+	            setGridColumns();
+	
+	            $scope.sortGrid = function (gridHeader) {
+	                if ($scope.sortColumn && $scope.sortColumn.id === gridHeader.id) {
+	                    $scope.sortColumn.direction = $scope.sortColumn.direction === 'asc' ? 'desc' : 'asc';
+	                } else if (!$scope.sortColumn) {
+	                    $scope.sortColumn = { id: gridHeader.id, direction: 'asc' };
+	                } else {
+	                    $scope.sortColumn.id = gridHeader.id;
+	                    $scope.sortColumn.direction = 'asc';
+	                }
+	                $scope.refetchData({ pager: $scope.pager, sortColumn: $scope.sortColumn });
+	            };
+	
+	            $scope.onTeiClickedInternal = function (tei) {
+	                $scope.onTeiClicked({ tei: tei });
+	            };
+	
+	            $scope.getPage = function (page) {
+	                $scope.pager.page = page;
+	                $scope.pager.pageEdit = page;
+	
+	                $scope.refetchData({ pager: $scope.pager, sortColumn: $scope.sortColumn });
+	            };
+	
+	            $scope.resetPageSize = function () {
+	                $scope.pager.page = 1;
+	
+	                var pageSizeEdit = $scope.pager.pageSizeEdit;
+	                if (isNaN(pageSizeEdit)) {
+	                    $scope.pager.pageSizeEdit = $scope.pager.pageSize;
+	                    return;
+	                }
+	
+	                var pageSizeEditNumber = Number(pageSizeEdit);
+	                if (!Number.isSafeInteger(pageSizeEditNumber)) {
+	                    $scope.page.pageSizeEdit = $scope.pager.pageSize;
+	                    return;
+	                }
+	
+	                $scope.pager.pageSize = pageSizeEditNumber;
+	                $scope.refetchData({ pager: $scope.pager, sortColumn: $scope.sortColumn });
+	            };
+	
+	            $scope.jumpToPage = function () {
+	                var pageEdit = $scope.pager.pageEdit;
+	                if (isNaN(pageEdit)) {
+	                    $scope.pager.pageEdit = $scope.pager.page;
+	                    return;
+	                }
+	
+	                var pageEditNumber = Number(pageEdit);
+	                if (!Number.isSafeInteger(pageEditNumber)) {
+	                    $scope.page.pageEdit = $scope.pager.page;
+	                    return;
+	                }
+	
+	                $scope.pager.page = pageEditNumber;
 	                $scope.refetchData({ pager: $scope.pager, sortColumn: $scope.sortColumn });
 	            };
 	        }]
@@ -11818,13 +12007,14 @@
 
 /***/ },
 /* 20 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	/* global trackerCapture, angular */
+	var _processRegistration = __webpack_require__(21);
 	
-	var trackerCapture = angular.module('trackerCapture');
+	var trackerCapture = angular.module('trackerCapture'); /* global trackerCapture, angular */
+	
 	trackerCapture.controller('RegistrationController', ["$rootScope", "$q", "$scope", "$location", "$timeout", "$modal", "$translate", "$window", "$parse", "orderByFilter", "AttributesFactory", "DHIS2EventFactory", "TEService", "CustomFormService", "EnrollmentService", "NotificationService", "CurrentSelection", "MetaDataFactory", "EventUtils", "RegistrationService", "DateUtils", "TEIGridService", "TEIService", "TrackerRulesFactory", "TrackerRulesExecutionService", "TCStorageService", "ModalService", "SearchGroupService", "AccessUtils", "AuthorityService", "SessionStorageService", "AttributeUtils", "TCOrgUnitService", function ($rootScope, $q, $scope, $location, $timeout, $modal, $translate, $window, $parse, orderByFilter, AttributesFactory, DHIS2EventFactory, TEService, CustomFormService, EnrollmentService, NotificationService, CurrentSelection, MetaDataFactory, EventUtils, RegistrationService, DateUtils, TEIGridService, TEIService, TrackerRulesFactory, TrackerRulesExecutionService, TCStorageService, ModalService, SearchGroupService, AccessUtils, AuthorityService, SessionStorageService, AttributeUtils, TCOrgUnitService) {
 	    var prefilledTet = null;
 	    $scope.today = DateUtils.getToday();
@@ -11836,6 +12026,7 @@
 	    $scope.hiddenFields = [];
 	    $scope.assignedFields = [];
 	    $scope.errorMessages = {};
+	    $scope.attributeUniquenessError = {};
 	    $scope.hiddenSections = [];
 	    $scope.currentEvent = null;
 	    $scope.prStDes = null;
@@ -12312,22 +12503,79 @@
 	        $rootScope.$broadcast('teienrolled', {});
 	    }
 	
-	    $scope.registerEntity = function (destination) {
+	    /* 
+	    We decided to temporarily(?) remove the ongoing checks for duplicates and run them only when the form is submitted.
+	    This was due to the performance problems in Bangladesh. This is the event handler for the submit click.
+	    */
+	    $scope.processRegistration = function (destination) {
+	        $scope.validatingRegistration = true;
 	        //check for form validity
 	        $scope.outerForm.submitted = true;
 	        if ($scope.outerForm.$invalid) {
+	            $scope.validatingRegistration = false;
 	            return false;
 	        }
 	
 	        if ($scope.model.autoGeneratedAttFailed) {
 	            NotificationService.showNotifcationDialog($translate.instant("registration_error"), $translate.instant("auto_generate_failed"));
+	            $scope.validatingRegistration = false;
 	            return false;
 	        }
 	
 	        if ($scope.registrationAndDataEntry) {
 	            $scope.outerDataEntryForm.submitted = true;
 	            if ($scope.outerDataEntryForm.$invalid) {
+	                $scope.validatingRegistration = false;
 	                return false;
+	            }
+	        }
+	
+	        (0, _processRegistration.processRegistration)(destination, {
+	            SearchGroupService: SearchGroupService,
+	            tei: $scope.selectedTei,
+	            searchGroups: $scope.searchConfig.searchGroups,
+	            useProgramSearchScope: $scope.programSearchScope,
+	            tetSearchConfig: $scope.tetSearchConfig,
+	            attributesById: $scope.attributesById,
+	            program: $scope.selectedProgram,
+	            trackedEntityType: $scope.trackedEntityTypes.selected,
+	            orgUnit: $scope.selectedOrgUnit,
+	            showMatchesModal: $scope.showMatchesModal,
+	            showDuplicateModal: showDuplicateModal,
+	            registerEntity: $scope.registerEntity,
+	            $q: $q,
+	            onOpenModal: function onOpenModal() {
+	                $scope.validatingRegistration = false;
+	            }
+	        }).then(function (result) {
+	            if (result && result.duplicateUniqueAttributeId) {
+	                $scope.attributeUniquenessError[result.duplicateUniqueAttributeId] = true;
+	            }
+	            $scope.validatingRegistration = false;
+	        }).catch(function (error) {
+	            console.log(error);
+	            $scope.validatingRegistration = false;
+	        });
+	    };
+	
+	    $scope.registerEntity = function (destination, isFormPrechecked) {
+	        if (!isFormPrechecked) {
+	            //check for form validity
+	            $scope.outerForm.submitted = true;
+	            if ($scope.outerForm.$invalid) {
+	                return false;
+	            }
+	
+	            if ($scope.model.autoGeneratedAttFailed) {
+	                NotificationService.showNotifcationDialog($translate.instant("registration_error"), $translate.instant("auto_generate_failed"));
+	                return false;
+	            }
+	
+	            if ($scope.registrationAndDataEntry) {
+	                $scope.outerDataEntryForm.submitted = true;
+	                if ($scope.outerDataEntryForm.$invalid) {
+	                    return false;
+	                }
 	            }
 	        }
 	
@@ -12399,14 +12647,12 @@
 	    };
 	
 	    $scope.teiValueUpdated = function (tei, field) {
-	        getMatchingTeisCount(tei, field).then(function () {
-	            $scope.teiPreviousValues[field] = tei[field];
-	            return $scope.executeRules();
-	        }, function () {
-	            $scope.teiPreviousValues[field] = tei[field];
-	            return $scope.executeRules();
-	            return;
-	        });
+	        if ($scope.teiPreviousValues[field] !== tei[field] && $scope.attributeUniquenessError[field]) {
+	            $scope.attributeUniquenessError[field] = false;
+	        }
+	
+	        $scope.teiPreviousValues[field] = tei[field];
+	        return $scope.executeRules();
 	    };
 	
 	    var getMatchingTeisCount = function getMatchingTeisCount(tei, field) {
@@ -12642,69 +12888,70 @@
 	        });
 	    };
 	
-	    $scope.showMatchesModal = function (allowRegistration) {
+	    $scope.showMatchesModal = function (allowRegistration, matches, onRefetch) {
 	        var _modalData = {
 	            allowRegistration: allowRegistration,
 	            translateWithTETName: $scope.translateWithTETName,
 	            optionSets: $scope.optionSets
 	        };
-	        var refetch;
-	        if ($scope.programSearchScope) {
-	            var tetSearchGroup = SearchGroupService.findValidTetSearchGroup($scope.matchingTeisSearchGroup, $scope.tetSearchConfig, $scope.attributesById);
-	            refetch = function refetch() {
-	                SearchGroupService.programScopeSearch($scope.matchingTeisSearchGroup, tetSearchGroup, $scope.selectedProgram, $scope.trackedEntityTypes.selected, $scope.selectedOrgUnit, pager);
-	            };
-	        } else {
-	            refetch = function refetch() {
-	                SearchGroupService.tetScopeSearch($scope.matchingTeisSearchGroup, $scope.trackedEntityTypes.selected, $scope.selectedOrgUnit, pager);
-	            };
-	        }
-	        getMatches($scope.matchingTeisSearchGroup).then(function (matches) {
-	            return $modal.open({
-	                templateUrl: 'components/registration/matches-modal.html',
-	                controller: ["$scope", "$modalInstance", "TEIGridService", "orgUnit", "data", "modalData", "refetchDataFn", function controller($scope, $modalInstance, TEIGridService, orgUnit, data, modalData, refetchDataFn) {
-	                    $scope.allowRegistration = modalData.allowRegistration;
-	                    $scope.translateWithTETName = modalData.translateWithTETName;
-	                    $scope.gridData = TEIGridService.format(orgUnit.id, data, false, modalData.optionSets, null);
-	                    $scope.pager = data && data.metaData ? data.metaData.pager : null;
-	                    $scope.openTei = function (tei) {
-	                        $modalInstance.close({ action: "OPENTEI", tei: tei });
-	                    };
-	                    $scope.register = function (destination) {
-	                        $modalInstance.close({ action: "REGISTERTEI", destination: destination });
-	                    };
-	                    $scope.cancel = function () {
-	                        $modalInstance.close({ action: "CANCEL" });
-	                    };
 	
-	                    $scope.refetchData = function (pager, sortColumn) {
-	                        refetchDataFn(pager, sortColumn).then(function (res) {
-	                            $scope.pager = res.data && res.data.metaData ? res.data.metaData.pager : null;
-	                            $scope.gridData = TEIGridService.format(orgUnit.id, res.data, false, modalData.optionSets, null);
-	                        });
-	                    };
-	                }],
-	                resolve: {
-	                    orgUnit: function orgUnit() {
-	                        return $scope.selectedOrgUnit;
-	                    },
-	                    data: function data() {
-	                        return matches;
-	                    },
-	                    refetchDataFn: function refetchDataFn() {
-	                        return refetch;
-	                    },
-	                    modalData: function modalData() {
-	                        return _modalData;
-	                    }
+	        var refetch;
+	        if (!onRefetch) {
+	            if ($scope.programSearchScope) {
+	                var tetSearchGroup = SearchGroupService.findValidSearchGroup($scope.matchingTeisSearchGroup, $scope.tetSearchConfig, $scope.attributesById);
+	                refetch = function refetch(pager) {
+	                    return SearchGroupService.programScopeSearch($scope.matchingTeisSearchGroup, tetSearchGroup, $scope.selectedProgram, $scope.trackedEntityTypes.selected, $scope.selectedOrgUnit, pager);
+	                };
+	            } else {
+	                refetch = function refetch(pager) {
+	                    return SearchGroupService.tetScopeSearch($scope.matchingTeisSearchGroup, $scope.trackedEntityTypes.selected, $scope.selectedOrgUnit, pager);
+	                };
+	            }
+	        }
+	
+	        return $modal.open({
+	            templateUrl: 'components/registration/matches-modal.html',
+	            controller: ["$scope", "$modalInstance", "TEIGridService", "orgUnit", "data", "modalData", "refetchDataFn", function controller($scope, $modalInstance, TEIGridService, orgUnit, data, modalData, refetchDataFn) {
+	                $scope.allowRegistration = modalData.allowRegistration;
+	                $scope.translateWithTETName = modalData.translateWithTETName;
+	                $scope.gridData = TEIGridService.format(orgUnit.id, data, false, modalData.optionSets, null);
+	                $scope.pager = data && data.metaData ? data.metaData.pager : null;
+	                $scope.openTei = function (tei) {
+	                    $modalInstance.close({ action: "OPENTEI", tei: tei });
+	                };
+	                $scope.register = function (destination) {
+	                    $modalInstance.close({ action: "REGISTERTEI", destination: destination });
+	                };
+	                $scope.cancel = function () {
+	                    $modalInstance.close({ action: "CANCEL" });
+	                };
+	                $scope.refetchData = function (pager, sortColumn) {
+	                    refetchDataFn(pager, sortColumn).then(function (res) {
+	                        $scope.pager = res.data && res.data.metaData ? res.data.metaData.pager : null;
+	                        $scope.gridData = TEIGridService.format(orgUnit.id, res.data, false, modalData.optionSets, null);
+	                    });
+	                };
+	            }],
+	            resolve: {
+	                orgUnit: function orgUnit() {
+	                    return $scope.selectedOrgUnit;
+	                },
+	                data: function data() {
+	                    return matches;
+	                },
+	                refetchDataFn: function refetchDataFn() {
+	                    return onRefetch || refetch;
+	                },
+	                modalData: function modalData() {
+	                    return _modalData;
 	                }
-	            }).result.then(function (res) {
-	                if (res.action === "OPENTEI") {
-	                    openTei(res.tei);
-	                } else if (res.action === "REGISTERTEI") {
-	                    $scope.registerEntity(res.destination);
-	                }
-	            });
+	            }
+	        }).result.then(function (res) {
+	            if (res.action === "OPENTEI") {
+	                openTei(res.tei);
+	            } else if (res.action === "REGISTERTEI") {
+	                $scope.registerEntity(res.destination, true);
+	            }
 	        });
 	    };
 	
@@ -13008,6 +13255,220 @@
 
 /***/ },
 /* 21 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.processRegistration = processRegistration;
+	function verifyUniqueSearchGroup(searchGroup, _ref) {
+	    var useProgramSearchScope = _ref.useProgramSearchScope,
+	        SearchGroupService = _ref.SearchGroupService,
+	        tetSearchConfig = _ref.tetSearchConfig,
+	        attributesById = _ref.attributesById,
+	        program = _ref.program,
+	        trackedEntityType = _ref.trackedEntityType,
+	        orgUnit = _ref.orgUnit;
+	
+	    var promise;
+	    if (useProgramSearchScope) {
+	        var tetSearchGroup = SearchGroupService.findTetSearchGroup(searchGroup, tetSearchConfig);
+	        promise = SearchGroupService.programScopeSearch(searchGroup, tetSearchGroup, program, trackedEntityType, orgUnit);
+	    } else {
+	        promise = SearchGroupService.tetScopeSearch(searchGroup, trackedEntityType, orgUnit);
+	    }
+	
+	    return promise.then(function (res) {
+	        if (res.status === "UNIQUE") {
+	            return {
+	                isUnique: false,
+	                duplicateInfo: {
+	                    data: res.data,
+	                    id: searchGroup.attributes[0].id
+	                }
+	            };
+	        }
+	        return {
+	            isUnique: true
+	        };
+	    });
+	}
+	
+	function processUniqueSearchGroupVerification(searchGroups, index, verificationDependencies) {
+	    var searchGroup = searchGroups[index];
+	    return verifyUniqueSearchGroup(searchGroup, verificationDependencies).then(function (result) {
+	        if (!result.isUnique) {
+	            return result;
+	        }
+	
+	        if (searchGroups.length > index + 1) {
+	            return processUniqueSearchGroupVerification(searchGroups, index + 1, verificationDependencies);
+	        }
+	
+	        return result;
+	    });
+	}
+	
+	function doUniqueSearchGroupsVerification(searchGroups, verificationDependencies) {
+	    if (!searchGroups || searchGroups.length === 0) {
+	        var def = verificationDependencies.$q.defer();
+	        def.resolve({ isUnique: true });
+	        return def.promise;
+	    }
+	    return processUniqueSearchGroupVerification(searchGroups, 0, verificationDependencies);
+	}
+	
+	function verifyUniqueSearchGroups(searchGroups, verificationDependencies) {
+	    var uniqueSearchGroups = searchGroups.filter(function (group) {
+	        return group.uniqueGroup;
+	    });
+	
+	    return doUniqueSearchGroupsVerification(uniqueSearchGroups, verificationDependencies).then(function (result) {
+	        return result;
+	    });
+	}
+	
+	function verifyDefaultSearchGroup(searchGroups, _ref2) {
+	    var useProgramSearchScope = _ref2.useProgramSearchScope,
+	        SearchGroupService = _ref2.SearchGroupService,
+	        tetSearchConfig = _ref2.tetSearchConfig,
+	        attributesById = _ref2.attributesById,
+	        program = _ref2.program,
+	        trackedEntityType = _ref2.trackedEntityType,
+	        orgUnit = _ref2.orgUnit,
+	        $q = _ref2.$q;
+	
+	    var defaultSearchGroup = searchGroups.find(function (group) {
+	        return !group.uniqueGroup;
+	    });
+	
+	    if (!defaultSearchGroup) {
+	        return $q.when({});
+	    }
+	
+	    var tetSearchGroup;
+	    if (useProgramSearchScope) {
+	        tetSearchGroup = SearchGroupService.findTetSearchGroup(defaultSearchGroup, tetSearchConfig, attributesById);
+	    }
+	
+	    function fetch(pager, sortColumn) {
+	        var promise;
+	        if (useProgramSearchScope) {
+	            promise = SearchGroupService.programScopeSearch(defaultSearchGroup, tetSearchGroup, program, trackedEntityType, orgUnit, pager, sortColumn);
+	        } else {
+	            promise = SearchGroupService.tetScopeSearch(defaultSearchGroup, trackedEntityType, orgUnit, pager, sortColumn);
+	        }
+	        return promise;
+	    }
+	
+	    return fetch().then(function (res) {
+	        if (res.status === "MATCHES") {
+	            return {
+	                potentialDuplicates: res.data,
+	                onRefetch: fetch
+	            };
+	        }
+	        return {};
+	    });
+	}
+	
+	function addValuesToSearchGroup(searchGroup, _ref3) {
+	    var tei = _ref3.tei;
+	
+	    var valueContainers = searchGroup.attributes && searchGroup.attributes.map(function (attr) {
+	        return {
+	            id: attr.id,
+	            value: tei[attr.id]
+	        };
+	    });
+	    valueContainers && valueContainers.forEach(function (vc) {
+	        searchGroup[vc.id] = vc.value;
+	    });
+	}
+	
+	function addValuesToSearchGroups(programSearchGroups, tetSearchGroups, addValuesDependencies) {
+	    // set values into searchGroups!?! (this is used in the searchGroup service, which is also used for the actual searching so won't change this)
+	    programSearchGroups && programSearchGroups.forEach(function (group) {
+	        addValuesToSearchGroup(group, addValuesDependencies);
+	    });
+	
+	    tetSearchGroups && tetSearchGroups.forEach(function (group) {
+	        addValuesToSearchGroup(group, addValuesDependencies);
+	    });
+	}
+	
+	function processRegistration(destination, _ref4) {
+	    var SearchGroupService = _ref4.SearchGroupService,
+	        tei = _ref4.tei,
+	        searchGroups = _ref4.searchGroups,
+	        useProgramSearchScope = _ref4.useProgramSearchScope,
+	        tetSearchConfig = _ref4.tetSearchConfig,
+	        attributesById = _ref4.attributesById,
+	        program = _ref4.program,
+	        trackedEntityType = _ref4.trackedEntityType,
+	        orgUnit = _ref4.orgUnit,
+	        showMatchesModal = _ref4.showMatchesModal,
+	        showDuplicateModal = _ref4.showDuplicateModal,
+	        registerEntity = _ref4.registerEntity,
+	        $q = _ref4.$q,
+	        onOpenModal = _ref4.onOpenModal;
+	
+	    // 1. do not verify unique search groups with generated value
+	    var verificationSearchGroups = searchGroups && searchGroups.filter(function (group) {
+	        return !group.uniqueGroup || group.attributes && group.attributes.length > 0 && !group.attributes[0].generated;
+	    });
+	
+	    // 2. set values into searchGroups!!? (this is used in the searchGroup service, which is also used for the actual searching so won't change this)
+	    addValuesToSearchGroups(verificationSearchGroups, tetSearchConfig && tetSearchConfig.searchGroups, {
+	        tei: tei
+	    });
+	    // 3. actually verify the search groups
+	    return verifyUniqueSearchGroups(verificationSearchGroups, {
+	        useProgramSearchScope: useProgramSearchScope,
+	        SearchGroupService: SearchGroupService,
+	        tetSearchConfig: tetSearchConfig,
+	        attributesById: attributesById,
+	        program: program,
+	        trackedEntityType: trackedEntityType,
+	        orgUnit: orgUnit,
+	        $q: $q
+	    }).then(function (result) {
+	        if (!result.isUnique) {
+	            onOpenModal();
+	            showDuplicateModal(result.duplicateInfo.data, result.duplicateInfo.id);
+	            return {
+	                duplicateUniqueAttributeId: result.duplicateInfo.id
+	            };
+	        }
+	
+	        return verifyDefaultSearchGroup(verificationSearchGroups, {
+	            useProgramSearchScope: useProgramSearchScope,
+	            SearchGroupService: SearchGroupService,
+	            tetSearchConfig: tetSearchConfig,
+	            attributesById: attributesById,
+	            program: program,
+	            trackedEntityType: trackedEntityType,
+	            orgUnit: orgUnit,
+	            $q: $q
+	        }).then(function (_ref5) {
+	            var potentialDuplicates = _ref5.potentialDuplicates,
+	                onRefetch = _ref5.onRefetch;
+	
+	            if (potentialDuplicates) {
+	                // show modal
+	                onOpenModal();
+	                return showMatchesModal(true, potentialDuplicates, onRefetch);
+	            }
+	            // perform registration
+	            return registerEntity(destination, true);
+	        });
+	    });
+	}
+
+/***/ },
+/* 22 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -13444,7 +13905,7 @@
 	}]);
 
 /***/ },
-/* 22 */
+/* 23 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -16635,7 +17096,7 @@
 	}]);
 
 /***/ },
-/* 23 */
+/* 24 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -16696,7 +17157,7 @@
 	}]);
 
 /***/ },
-/* 24 */
+/* 25 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -16777,7 +17238,7 @@
 	}]);
 
 /***/ },
-/* 25 */
+/* 26 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -17121,7 +17582,7 @@
 	}]);
 
 /***/ },
-/* 26 */
+/* 27 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -17165,7 +17626,7 @@
 	}]);
 
 /***/ },
-/* 27 */
+/* 28 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -17376,7 +17837,7 @@
 	}]);
 
 /***/ },
-/* 28 */
+/* 29 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -17523,7 +17984,7 @@
 	}]);
 
 /***/ },
-/* 29 */
+/* 30 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -17660,7 +18121,7 @@
 	}]);
 
 /***/ },
-/* 30 */
+/* 31 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -17931,7 +18392,7 @@
 	}]);
 
 /***/ },
-/* 31 */
+/* 32 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -18229,7 +18690,7 @@
 	}]);
 
 /***/ },
-/* 32 */
+/* 33 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -18256,7 +18717,7 @@
 	}]);
 
 /***/ },
-/* 33 */
+/* 34 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -18461,7 +18922,7 @@
 	}]);
 
 /***/ },
-/* 34 */
+/* 35 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -19235,7 +19696,7 @@
 	}]);
 
 /***/ },
-/* 35 */
+/* 36 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -19337,7 +19798,7 @@
 	}]);
 
 /***/ },
-/* 36 */
+/* 37 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -19406,7 +19867,7 @@
 	}]);
 
 /***/ },
-/* 37 */
+/* 38 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -19459,7 +19920,7 @@
 	}]);
 
 /***/ },
-/* 38 */
+/* 39 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -19557,7 +20018,7 @@
 	}]);
 
 /***/ },
-/* 39 */
+/* 40 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -19812,7 +20273,7 @@
 	}]);
 
 /***/ },
-/* 40 */
+/* 41 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -19832,9 +20293,20 @@
 	    $scope.defaultOperators = OperatorFactory.defaultOperators;
 	    $scope.boolOperators = OperatorFactory.boolOperators;
 	
-	    var setPager = function setPager(pager) {
-	        $scope.pager = pager;
-	        $scope.pager.toolBarDisplay = 5;
+	    var initPager = function initPager() {
+	        var pageSize = 25;
+	        $scope.pager = {
+	            pageSize: pageSize,
+	            page: 1,
+	            skipTotalPages: true,
+	            recordsCount: 0,
+	            pageSizeEdit: pageSize,
+	            pageEdit: 1
+	        };
+	    };
+	
+	    var setPagerRecordsCount = function setPagerRecordsCount(recordsCount) {
+	        $scope.pager.recordsCount = recordsCount;
 	    };
 	
 	    $scope.$watch('base.selectedProgram', function () {
@@ -19846,6 +20318,7 @@
 	            reset();
 	            loadAttributesByProgram().then(loadGridColumns).then(loadWorkingLists).then(loadCachedData).then(setDefault);
 	        }
+	        initPager();
 	    };
 	
 	    var reset = function reset() {
@@ -19955,6 +20428,7 @@
 	    var fetchWorkingList = function fetchWorkingList() {
 	        if ($scope.currentTrackedEntityList.type === $scope.trackedEntityListTypes.WORKINGLIST) {
 	            $scope.currentTrackedEntityList.loading = true;
+	            setPagerRecordsCount(0);
 	            ProgramWorkingListService.getWorkingListData($scope.selectedOrgUnit, $scope.currentTrackedEntityList.config, $scope.pager, $scope.currentTrackedEntityList.sortColumn).then(setCurrentTrackedEntityListData);
 	        }
 	    };
@@ -19975,7 +20449,8 @@
 	    };
 	
 	    var setCurrentTrackedEntityListData = function setCurrentTrackedEntityListData(serverResponse) {
-	        if (serverResponse && serverResponse.metaData && serverResponse.metaData.pager) setPager(serverResponse.metaData.pager);
+	        var recordsCount = serverResponse.rows && serverResponse.rows.length || 0;
+	        setPagerRecordsCount(recordsCount);
 	        $scope.currentTrackedEntityList.data = TEIGridService.format($scope.selectedOrgUnit.id, serverResponse, false, $scope.base.optionSets, null);
 	        $scope.currentTrackedEntityList.loading = false;
 	        //updateCurrentSelection();
@@ -20129,8 +20604,6 @@
 	                promise = TEIService.search($scope.selectedOrgUnit.id, ouModes[0].name, config.url, null, attrIdList, false, false, format, attrNamesList, attrNamesIdMap, $scope.base.optionSets);
 	            }
 	            promise.then(function (data) {
-	                if (data && data.metaData && data.metaData.pager) setPager(data.metaData.pager);
-	
 	                var fileName = "trackedEntityList." + format; // any file name with any extension
 	                var a = document.createElement('a');
 	                var blob, url;
@@ -20190,7 +20663,7 @@
 	}]);
 
 /***/ },
-/* 41 */
+/* 42 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -20273,7 +20746,7 @@
 	        deferred.resolve();
 	        return deferred.promise;
 	    };
-	    var searching = false;
+	    $scope.searching = false;
 	
 	    var programScopeSearch = function programScopeSearch(programSearchGroup) {
 	        return SearchGroupService.search(programSearchGroup, $scope.base.selectedProgram, $scope.trackedEntityTypes.selected, $scope.selectedOrgUnit, searchScopes.PROGRAM).then(function (res) {
@@ -20299,38 +20772,42 @@
 	    };
 	
 	    $scope.search = function (searchGroup) {
-	        if (!searching) {
-	            searching = true;
+	        if (!$scope.searching) {
+	            $scope.searching = true;
 	            if (!SearchGroupService.isValidSearchGroup(searchGroup, $scope.base.attributesById)) {
 	                searchGroup.error = true;
-	                searching = false;
+	                $scope.searching = false;
 	                return;
 	            }
-	        }
-	        var promise;
-	        if (currentSearchScope === searchScopes.PROGRAM) {
-	            var tetSearchGroup = SearchGroupService.findValidTetSearchGroup(searchGroup, $scope.tetSearchConfig, $scope.base.attributesById);
-	            promise = SearchGroupService.programScopeSearch(searchGroup, tetSearchGroup, $scope.base.selectedProgram, $scope.trackedEntityTypes.selected, $scope.selectedOrgUnit);
-	        } else {
-	            promise = SearchGroupService.tetScopeSearch(searchGroup, $scope.trackedEntityTypes.selected, $scope.selectedOrgUnit);
-	        }
 	
-	        return promise.then(function (res) {
-	            //If only one tei found and in selectedOrgUnit, go straight to dashboard
-	            if (res && res.data && res.data.rows && res.data.rows.length === 1) {
-	                var gridData = TEIGridService.format($scope.selectedOrgUnit.id, res.data, false, $scope.base.optionSets, null);
-	
-	                //Open TEI if unique and in same search scope and in selected org unit
-	                if (gridData.rows.own.length === 1 && res.callingScope === res.resultScope && searchGroup.uniqueGroup) {
-	                    searching = false;
-	                    openTei(gridData.rows.own[0]);
-	                    return;
-	                }
+	            var promise;
+	            if (currentSearchScope === searchScopes.PROGRAM) {
+	                var tetSearchGroup = SearchGroupService.findValidTetSearchGroup(searchGroup, $scope.tetSearchConfig, $scope.base.attributesById);
+	                promise = SearchGroupService.programScopeSearch(searchGroup, tetSearchGroup, $scope.base.selectedProgram, $scope.trackedEntityTypes.selected, $scope.selectedOrgUnit);
+	            } else {
+	                promise = SearchGroupService.tetScopeSearch(searchGroup, $scope.trackedEntityTypes.selected, $scope.selectedOrgUnit);
 	            }
-	            return showResultModal(res, searchGroup).then(function () {
-	                searching = false;
+	
+	            return promise.then(function (res) {
+	                //If only one tei found and in selectedOrgUnit, go straight to dashboard
+	                var rowsCnt = res && res.data && res.data.rows && res.data.rows.length || 0;
+	                if (rowsCnt === 1) {
+	                    var gridData = TEIGridService.format($scope.selectedOrgUnit.id, res.data, false, $scope.base.optionSets, null);
+	
+	                    //Open TEI if unique and in same search scope and in selected org unit
+	                    if (gridData.rows.own.length === 1 && res.callingScope === res.resultScope && searchGroup.uniqueGroup) {
+	                        $scope.searching = false;
+	                        openTei(gridData.rows.own[0]);
+	                        return;
+	                    }
+	                }
+	                $scope.searching = false;
+	                return showResultModal(res, searchGroup);
+	            }).catch(function (error) {
+	                console.log("could not execute search");
+	                $scope.searching = false;
 	            });
-	        });
+	        }
 	    };
 	
 	    var openTei = function openTei(tei) {
@@ -20544,7 +21021,7 @@
 	}]);
 
 /***/ },
-/* 42 */
+/* 43 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -20756,7 +21233,7 @@
 	}]);
 
 /***/ },
-/* 43 */
+/* 44 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* @preserve
@@ -34564,7 +35041,7 @@
 
 
 /***/ },
-/* 44 */
+/* 45 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*
@@ -34579,7 +35056,7 @@
 		var L;
 		if (true) {
 			// AMD
-			!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(43)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+			!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(44)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 		} else if (typeof module !== 'undefined') {
 			// Node/CommonJS
 			L = require('leaflet');
@@ -35135,7 +35612,7 @@
 
 
 /***/ },
-/* 45 */
+/* 46 */
 /***/ function(module, exports) {
 
 	/*
@@ -35341,16 +35818,16 @@
 	};
 
 /***/ },
-/* 46 */
+/* 47 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(47);
+	var content = __webpack_require__(48);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(51)(content, {});
+	var update = __webpack_require__(52)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -35367,21 +35844,21 @@
 	}
 
 /***/ },
-/* 47 */
+/* 48 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(48)();
+	exports = module.exports = __webpack_require__(49)();
 	// imports
 	
 	
 	// module
-	exports.push([module.id, ".leaflet-control-geocoder {\n\tborder-radius: 4px;\n\tbackground: white;\n\tmin-width: 26px;\n\tmin-height: 26px;\n}\n\n.leaflet-touch .leaflet-control-geocoder {\n\tmin-width: 30px;\n\tmin-height: 30px;\n}\n\n.leaflet-control-geocoder a, .leaflet-control-geocoder .leaflet-control-geocoder-icon {\n\tborder-bottom: none;\n\tdisplay: inline-block;\n}\n\n.leaflet-control-geocoder .leaflet-control-geocoder-alternatives a {\n\twidth: inherit;\n\theight: inherit;\n\tline-height: inherit;\n}\n\n.leaflet-control-geocoder a:hover, .leaflet-control-geocoder .leaflet-control-geocoder-icon:hover {\n\tborder-bottom: none;\n\tdisplay: inline-block;\n}\n\n.leaflet-control-geocoder-form {\n\tdisplay: none;\n\tvertical-align: middle;\n}\n.leaflet-control-geocoder-expanded .leaflet-control-geocoder-form {\n\tdisplay: inline-block;\n}\n.leaflet-control-geocoder-form input {\n\tfont-size: 120%;\n\tborder: 0;\n\tbackground-color: transparent;\n\twidth: 246px;\n}\n\n.leaflet-control-geocoder-icon {\n\tborder-radius: 4px;\n\twidth: 26px;\n\theight: 26px;\n\tborder: none;\n\tbackground-color: white;\n\tbackground-image: url(" + __webpack_require__(49) + ");\n\tbackground-repeat: no-repeat;\n\tbackground-position: center;\n\tcursor: pointer;\n}\n\n.leaflet-touch .leaflet-control-geocoder-icon {\n\twidth: 30px;\n\theight: 30px;\n}\n\n.leaflet-control-geocoder-throbber .leaflet-control-geocoder-icon {\n\tbackground-image: url(" + __webpack_require__(50) + ");\n}\n\n.leaflet-control-geocoder-form-no-error {\n\tdisplay: none;\n}\n\n.leaflet-control-geocoder-form input:focus {\n\toutline: none;\n}\n\n.leaflet-control-geocoder-form button {\n\tdisplay: none;\n}\n.leaflet-control-geocoder-error {\n\tmargin-top: 8px;\n\tmargin-left: 8px;\n\tdisplay: block;\n\tcolor: #444;\n}\n.leaflet-control-geocoder-alternatives {\n\tdisplay: block;\n\twidth: 272px;\n\tlist-style: none;\n\tpadding: 0;\n\tmargin: 0;\n}\n\n.leaflet-control-geocoder-alternatives-minimized {\n\tdisplay: none;\n\theight: 0;\n}\n.leaflet-control-geocoder-alternatives li {\n\twhite-space: nowrap;\n\tdisplay: block;\n\toverflow: hidden;\n\tpadding: 5px 8px;\n\ttext-overflow: ellipsis;\n\tborder-bottom: 1px solid #ccc;\n\tcursor: pointer;\n}\n\n.leaflet-control-geocoder-alternatives li a, .leaflet-control-geocoder-alternatives li a:hover {\n\twidth: inherit;\n\theight: inherit;\n\tline-height: inherit;\n\tbackground: inherit;\n\tborder-radius: inherit;\n\ttext-align: left;\n}\n\n.leaflet-control-geocoder-alternatives li:last-child {\n\tborder-bottom: none;\n}\n.leaflet-control-geocoder-alternatives li:hover, .leaflet-control-geocoder-selected {\n\tbackground-color: #f5f5f5;\n}\n.leaflet-control-geocoder-address-detail {\n\t\n}\n.leaflet-control-geocoder-address-context {\n\tcolor: #666;\n}", ""]);
+	exports.push([module.id, ".leaflet-control-geocoder {\n\tborder-radius: 4px;\n\tbackground: white;\n\tmin-width: 26px;\n\tmin-height: 26px;\n}\n\n.leaflet-touch .leaflet-control-geocoder {\n\tmin-width: 30px;\n\tmin-height: 30px;\n}\n\n.leaflet-control-geocoder a, .leaflet-control-geocoder .leaflet-control-geocoder-icon {\n\tborder-bottom: none;\n\tdisplay: inline-block;\n}\n\n.leaflet-control-geocoder .leaflet-control-geocoder-alternatives a {\n\twidth: inherit;\n\theight: inherit;\n\tline-height: inherit;\n}\n\n.leaflet-control-geocoder a:hover, .leaflet-control-geocoder .leaflet-control-geocoder-icon:hover {\n\tborder-bottom: none;\n\tdisplay: inline-block;\n}\n\n.leaflet-control-geocoder-form {\n\tdisplay: none;\n\tvertical-align: middle;\n}\n.leaflet-control-geocoder-expanded .leaflet-control-geocoder-form {\n\tdisplay: inline-block;\n}\n.leaflet-control-geocoder-form input {\n\tfont-size: 120%;\n\tborder: 0;\n\tbackground-color: transparent;\n\twidth: 246px;\n}\n\n.leaflet-control-geocoder-icon {\n\tborder-radius: 4px;\n\twidth: 26px;\n\theight: 26px;\n\tborder: none;\n\tbackground-color: white;\n\tbackground-image: url(" + __webpack_require__(50) + ");\n\tbackground-repeat: no-repeat;\n\tbackground-position: center;\n\tcursor: pointer;\n}\n\n.leaflet-touch .leaflet-control-geocoder-icon {\n\twidth: 30px;\n\theight: 30px;\n}\n\n.leaflet-control-geocoder-throbber .leaflet-control-geocoder-icon {\n\tbackground-image: url(" + __webpack_require__(51) + ");\n}\n\n.leaflet-control-geocoder-form-no-error {\n\tdisplay: none;\n}\n\n.leaflet-control-geocoder-form input:focus {\n\toutline: none;\n}\n\n.leaflet-control-geocoder-form button {\n\tdisplay: none;\n}\n.leaflet-control-geocoder-error {\n\tmargin-top: 8px;\n\tmargin-left: 8px;\n\tdisplay: block;\n\tcolor: #444;\n}\n.leaflet-control-geocoder-alternatives {\n\tdisplay: block;\n\twidth: 272px;\n\tlist-style: none;\n\tpadding: 0;\n\tmargin: 0;\n}\n\n.leaflet-control-geocoder-alternatives-minimized {\n\tdisplay: none;\n\theight: 0;\n}\n.leaflet-control-geocoder-alternatives li {\n\twhite-space: nowrap;\n\tdisplay: block;\n\toverflow: hidden;\n\tpadding: 5px 8px;\n\ttext-overflow: ellipsis;\n\tborder-bottom: 1px solid #ccc;\n\tcursor: pointer;\n}\n\n.leaflet-control-geocoder-alternatives li a, .leaflet-control-geocoder-alternatives li a:hover {\n\twidth: inherit;\n\theight: inherit;\n\tline-height: inherit;\n\tbackground: inherit;\n\tborder-radius: inherit;\n\ttext-align: left;\n}\n\n.leaflet-control-geocoder-alternatives li:last-child {\n\tborder-bottom: none;\n}\n.leaflet-control-geocoder-alternatives li:hover, .leaflet-control-geocoder-selected {\n\tbackground-color: #f5f5f5;\n}\n.leaflet-control-geocoder-address-detail {\n\t\n}\n.leaflet-control-geocoder-address-context {\n\tcolor: #666;\n}", ""]);
 	
 	// exports
 
 
 /***/ },
-/* 48 */
+/* 49 */
 /***/ function(module, exports) {
 
 	/*
@@ -35437,19 +35914,19 @@
 
 
 /***/ },
-/* 49 */
+/* 50 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "a987f06fc5d9aaa4e9dfa3df0b37ee22.png";
 
 /***/ },
-/* 50 */
+/* 51 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "7bec7f6885833b0b60a0426f027d8f16.gif";
 
 /***/ },
-/* 51 */
+/* 52 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -35701,7 +36178,7 @@
 
 
 /***/ },
-/* 52 */
+/* 53 */
 /***/ function(module, exports) {
 
 	(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.leafletControlGeocoder = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
@@ -37002,16 +37479,16 @@
 	});
 
 /***/ },
-/* 53 */
+/* 54 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(54);
+	var content = __webpack_require__(55);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(51)(content, {});
+	var update = __webpack_require__(52)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -37028,48 +37505,48 @@
 	}
 
 /***/ },
-/* 54 */
+/* 55 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(48)();
+	exports = module.exports = __webpack_require__(49)();
 	// imports
 	
 	
 	// module
-	exports.push([module.id, "/* required styles */\r\n\r\n.leaflet-pane,\r\n.leaflet-tile,\r\n.leaflet-marker-icon,\r\n.leaflet-marker-shadow,\r\n.leaflet-tile-container,\r\n.leaflet-pane > svg,\r\n.leaflet-pane > canvas,\r\n.leaflet-zoom-box,\r\n.leaflet-image-layer,\r\n.leaflet-layer {\r\n\tposition: absolute;\r\n\tleft: 0;\r\n\ttop: 0;\r\n\t}\r\n.leaflet-container {\r\n\toverflow: hidden;\r\n\t}\r\n.leaflet-tile,\r\n.leaflet-marker-icon,\r\n.leaflet-marker-shadow {\r\n\t-webkit-user-select: none;\r\n\t   -moz-user-select: none;\r\n\t        user-select: none;\r\n\t  -webkit-user-drag: none;\r\n\t}\r\n/* Safari renders non-retina tile on retina better with this, but Chrome is worse */\r\n.leaflet-safari .leaflet-tile {\r\n\timage-rendering: -webkit-optimize-contrast;\r\n\t}\r\n/* hack that prevents hw layers \"stretching\" when loading new tiles */\r\n.leaflet-safari .leaflet-tile-container {\r\n\twidth: 1600px;\r\n\theight: 1600px;\r\n\t-webkit-transform-origin: 0 0;\r\n\t}\r\n.leaflet-marker-icon,\r\n.leaflet-marker-shadow {\r\n\tdisplay: block;\r\n\t}\r\n/* .leaflet-container svg: reset svg max-width decleration shipped in Joomla! (joomla.org) 3.x */\r\n/* .leaflet-container img: map is broken in FF if you have max-width: 100% on tiles */\r\n.leaflet-container .leaflet-overlay-pane svg,\r\n.leaflet-container .leaflet-marker-pane img,\r\n.leaflet-container .leaflet-shadow-pane img,\r\n.leaflet-container .leaflet-tile-pane img,\r\n.leaflet-container img.leaflet-image-layer {\r\n\tmax-width: none !important;\r\n\tmax-height: none !important;\r\n\t}\r\n\r\n.leaflet-container.leaflet-touch-zoom {\r\n\t-ms-touch-action: pan-x pan-y;\r\n\ttouch-action: pan-x pan-y;\r\n\t}\r\n.leaflet-container.leaflet-touch-drag {\r\n\t-ms-touch-action: pinch-zoom;\r\n\t/* Fallback for FF which doesn't support pinch-zoom */\r\n\ttouch-action: none;\r\n\ttouch-action: pinch-zoom;\r\n}\r\n.leaflet-container.leaflet-touch-drag.leaflet-touch-zoom {\r\n\t-ms-touch-action: none;\r\n\ttouch-action: none;\r\n}\r\n.leaflet-container {\r\n\t-webkit-tap-highlight-color: transparent;\r\n}\r\n.leaflet-container a {\r\n\t-webkit-tap-highlight-color: rgba(51, 181, 229, 0.4);\r\n}\r\n.leaflet-tile {\r\n\tfilter: inherit;\r\n\tvisibility: hidden;\r\n\t}\r\n.leaflet-tile-loaded {\r\n\tvisibility: inherit;\r\n\t}\r\n.leaflet-zoom-box {\r\n\twidth: 0;\r\n\theight: 0;\r\n\t-moz-box-sizing: border-box;\r\n\t     box-sizing: border-box;\r\n\tz-index: 800;\r\n\t}\r\n/* workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=888319 */\r\n.leaflet-overlay-pane svg {\r\n\t-moz-user-select: none;\r\n\t}\r\n\r\n.leaflet-pane         { z-index: 400; }\r\n\r\n.leaflet-tile-pane    { z-index: 200; }\r\n.leaflet-overlay-pane { z-index: 400; }\r\n.leaflet-shadow-pane  { z-index: 500; }\r\n.leaflet-marker-pane  { z-index: 600; }\r\n.leaflet-tooltip-pane   { z-index: 650; }\r\n.leaflet-popup-pane   { z-index: 700; }\r\n\r\n.leaflet-map-pane canvas { z-index: 100; }\r\n.leaflet-map-pane svg    { z-index: 200; }\r\n\r\n.leaflet-vml-shape {\r\n\twidth: 1px;\r\n\theight: 1px;\r\n\t}\r\n.lvml {\r\n\tbehavior: url(#default#VML);\r\n\tdisplay: inline-block;\r\n\tposition: absolute;\r\n\t}\r\n\r\n\r\n/* control positioning */\r\n\r\n.leaflet-control {\r\n\tposition: relative;\r\n\tz-index: 800;\r\n\tpointer-events: visiblePainted; /* IE 9-10 doesn't have auto */\r\n\tpointer-events: auto;\r\n\t}\r\n.leaflet-top,\r\n.leaflet-bottom {\r\n\tposition: absolute;\r\n\tz-index: 1000;\r\n\tpointer-events: none;\r\n\t}\r\n.leaflet-top {\r\n\ttop: 0;\r\n\t}\r\n.leaflet-right {\r\n\tright: 0;\r\n\t}\r\n.leaflet-bottom {\r\n\tbottom: 0;\r\n\t}\r\n.leaflet-left {\r\n\tleft: 0;\r\n\t}\r\n.leaflet-control {\r\n\tfloat: left;\r\n\tclear: both;\r\n\t}\r\n.leaflet-right .leaflet-control {\r\n\tfloat: right;\r\n\t}\r\n.leaflet-top .leaflet-control {\r\n\tmargin-top: 10px;\r\n\t}\r\n.leaflet-bottom .leaflet-control {\r\n\tmargin-bottom: 10px;\r\n\t}\r\n.leaflet-left .leaflet-control {\r\n\tmargin-left: 10px;\r\n\t}\r\n.leaflet-right .leaflet-control {\r\n\tmargin-right: 10px;\r\n\t}\r\n\r\n\r\n/* zoom and fade animations */\r\n\r\n.leaflet-fade-anim .leaflet-tile {\r\n\twill-change: opacity;\r\n\t}\r\n.leaflet-fade-anim .leaflet-popup {\r\n\topacity: 0;\r\n\t-webkit-transition: opacity 0.2s linear;\r\n\t   -moz-transition: opacity 0.2s linear;\r\n\t     -o-transition: opacity 0.2s linear;\r\n\t        transition: opacity 0.2s linear;\r\n\t}\r\n.leaflet-fade-anim .leaflet-map-pane .leaflet-popup {\r\n\topacity: 1;\r\n\t}\r\n.leaflet-zoom-animated {\r\n\t-webkit-transform-origin: 0 0;\r\n\t    -ms-transform-origin: 0 0;\r\n\t        transform-origin: 0 0;\r\n\t}\r\n.leaflet-zoom-anim .leaflet-zoom-animated {\r\n\twill-change: transform;\r\n\t}\r\n.leaflet-zoom-anim .leaflet-zoom-animated {\r\n\t-webkit-transition: -webkit-transform 0.25s cubic-bezier(0,0,0.25,1);\r\n\t   -moz-transition:    -moz-transform 0.25s cubic-bezier(0,0,0.25,1);\r\n\t     -o-transition:      -o-transform 0.25s cubic-bezier(0,0,0.25,1);\r\n\t        transition:         transform 0.25s cubic-bezier(0,0,0.25,1);\r\n\t}\r\n.leaflet-zoom-anim .leaflet-tile,\r\n.leaflet-pan-anim .leaflet-tile {\r\n\t-webkit-transition: none;\r\n\t   -moz-transition: none;\r\n\t     -o-transition: none;\r\n\t        transition: none;\r\n\t}\r\n\r\n.leaflet-zoom-anim .leaflet-zoom-hide {\r\n\tvisibility: hidden;\r\n\t}\r\n\r\n\r\n/* cursors */\r\n\r\n.leaflet-interactive {\r\n\tcursor: pointer;\r\n\t}\r\n.leaflet-grab {\r\n\tcursor: -webkit-grab;\r\n\tcursor:    -moz-grab;\r\n\t}\r\n.leaflet-crosshair,\r\n.leaflet-crosshair .leaflet-interactive {\r\n\tcursor: crosshair;\r\n\t}\r\n.leaflet-popup-pane,\r\n.leaflet-control {\r\n\tcursor: auto;\r\n\t}\r\n.leaflet-dragging .leaflet-grab,\r\n.leaflet-dragging .leaflet-grab .leaflet-interactive,\r\n.leaflet-dragging .leaflet-marker-draggable {\r\n\tcursor: move;\r\n\tcursor: -webkit-grabbing;\r\n\tcursor:    -moz-grabbing;\r\n\t}\r\n\r\n/* marker & overlays interactivity */\r\n.leaflet-marker-icon,\r\n.leaflet-marker-shadow,\r\n.leaflet-image-layer,\r\n.leaflet-pane > svg path,\r\n.leaflet-tile-container {\r\n\tpointer-events: none;\r\n\t}\r\n\r\n.leaflet-marker-icon.leaflet-interactive,\r\n.leaflet-image-layer.leaflet-interactive,\r\n.leaflet-pane > svg path.leaflet-interactive {\r\n\tpointer-events: visiblePainted; /* IE 9-10 doesn't have auto */\r\n\tpointer-events: auto;\r\n\t}\r\n\r\n/* visual tweaks */\r\n\r\n.leaflet-container {\r\n\tbackground: #ddd;\r\n\toutline: 0;\r\n\t}\r\n.leaflet-container a {\r\n\tcolor: #0078A8;\r\n\t}\r\n.leaflet-container a.leaflet-active {\r\n\toutline: 2px solid orange;\r\n\t}\r\n.leaflet-zoom-box {\r\n\tborder: 2px dotted #38f;\r\n\tbackground: rgba(255,255,255,0.5);\r\n\t}\r\n\r\n\r\n/* general typography */\r\n.leaflet-container {\r\n\tfont: 12px/1.5 \"Helvetica Neue\", Arial, Helvetica, sans-serif;\r\n\t}\r\n\r\n\r\n/* general toolbar styles */\r\n\r\n.leaflet-bar {\r\n\tbox-shadow: 0 1px 5px rgba(0,0,0,0.65);\r\n\tborder-radius: 4px;\r\n\t}\r\n.leaflet-bar a,\r\n.leaflet-bar a:hover {\r\n\tbackground-color: #fff;\r\n\tborder-bottom: 1px solid #ccc;\r\n\twidth: 26px;\r\n\theight: 26px;\r\n\tline-height: 26px;\r\n\tdisplay: block;\r\n\ttext-align: center;\r\n\ttext-decoration: none;\r\n\tcolor: black;\r\n\t}\r\n.leaflet-bar a,\r\n.leaflet-control-layers-toggle {\r\n\tbackground-position: 50% 50%;\r\n\tbackground-repeat: no-repeat;\r\n\tdisplay: block;\r\n\t}\r\n.leaflet-bar a:hover {\r\n\tbackground-color: #f4f4f4;\r\n\t}\r\n.leaflet-bar a:first-child {\r\n\tborder-top-left-radius: 4px;\r\n\tborder-top-right-radius: 4px;\r\n\t}\r\n.leaflet-bar a:last-child {\r\n\tborder-bottom-left-radius: 4px;\r\n\tborder-bottom-right-radius: 4px;\r\n\tborder-bottom: none;\r\n\t}\r\n.leaflet-bar a.leaflet-disabled {\r\n\tcursor: default;\r\n\tbackground-color: #f4f4f4;\r\n\tcolor: #bbb;\r\n\t}\r\n\r\n.leaflet-touch .leaflet-bar a {\r\n\twidth: 30px;\r\n\theight: 30px;\r\n\tline-height: 30px;\r\n\t}\r\n.leaflet-touch .leaflet-bar a:first-child {\r\n\tborder-top-left-radius: 2px;\r\n\tborder-top-right-radius: 2px;\r\n\t}\r\n.leaflet-touch .leaflet-bar a:last-child {\r\n\tborder-bottom-left-radius: 2px;\r\n\tborder-bottom-right-radius: 2px;\r\n\t}\r\n\r\n/* zoom control */\r\n\r\n.leaflet-control-zoom-in,\r\n.leaflet-control-zoom-out {\r\n\tfont: bold 18px 'Lucida Console', Monaco, monospace;\r\n\ttext-indent: 1px;\r\n\t}\r\n\r\n.leaflet-touch .leaflet-control-zoom-in, .leaflet-touch .leaflet-control-zoom-out  {\r\n\tfont-size: 22px;\r\n\t}\r\n\r\n\r\n/* layers control */\r\n\r\n.leaflet-control-layers {\r\n\tbox-shadow: 0 1px 5px rgba(0,0,0,0.4);\r\n\tbackground: #fff;\r\n\tborder-radius: 5px;\r\n\t}\r\n.leaflet-control-layers-toggle {\r\n\tbackground-image: url(" + __webpack_require__(55) + ");\r\n\twidth: 36px;\r\n\theight: 36px;\r\n\t}\r\n.leaflet-retina .leaflet-control-layers-toggle {\r\n\tbackground-image: url(" + __webpack_require__(56) + ");\r\n\tbackground-size: 26px 26px;\r\n\t}\r\n.leaflet-touch .leaflet-control-layers-toggle {\r\n\twidth: 44px;\r\n\theight: 44px;\r\n\t}\r\n.leaflet-control-layers .leaflet-control-layers-list,\r\n.leaflet-control-layers-expanded .leaflet-control-layers-toggle {\r\n\tdisplay: none;\r\n\t}\r\n.leaflet-control-layers-expanded .leaflet-control-layers-list {\r\n\tdisplay: block;\r\n\tposition: relative;\r\n\t}\r\n.leaflet-control-layers-expanded {\r\n\tpadding: 6px 10px 6px 6px;\r\n\tcolor: #333;\r\n\tbackground: #fff;\r\n\t}\r\n.leaflet-control-layers-scrollbar {\r\n\toverflow-y: scroll;\r\n\toverflow-x: hidden;\r\n\tpadding-right: 5px;\r\n\t}\r\n.leaflet-control-layers-selector {\r\n\tmargin-top: 2px;\r\n\tposition: relative;\r\n\ttop: 1px;\r\n\t}\r\n.leaflet-control-layers label {\r\n\tdisplay: block;\r\n\t}\r\n.leaflet-control-layers-separator {\r\n\theight: 0;\r\n\tborder-top: 1px solid #ddd;\r\n\tmargin: 5px -10px 5px -6px;\r\n\t}\r\n\r\n/* Default icon URLs */\r\n.leaflet-default-icon-path {\r\n\tbackground-image: url(" + __webpack_require__(57) + ");\r\n\t}\r\n\r\n\r\n/* attribution and scale controls */\r\n\r\n.leaflet-container .leaflet-control-attribution {\r\n\tbackground: #fff;\r\n\tbackground: rgba(255, 255, 255, 0.7);\r\n\tmargin: 0;\r\n\t}\r\n.leaflet-control-attribution,\r\n.leaflet-control-scale-line {\r\n\tpadding: 0 5px;\r\n\tcolor: #333;\r\n\t}\r\n.leaflet-control-attribution a {\r\n\ttext-decoration: none;\r\n\t}\r\n.leaflet-control-attribution a:hover {\r\n\ttext-decoration: underline;\r\n\t}\r\n.leaflet-container .leaflet-control-attribution,\r\n.leaflet-container .leaflet-control-scale {\r\n\tfont-size: 11px;\r\n\t}\r\n.leaflet-left .leaflet-control-scale {\r\n\tmargin-left: 5px;\r\n\t}\r\n.leaflet-bottom .leaflet-control-scale {\r\n\tmargin-bottom: 5px;\r\n\t}\r\n.leaflet-control-scale-line {\r\n\tborder: 2px solid #777;\r\n\tborder-top: none;\r\n\tline-height: 1.1;\r\n\tpadding: 2px 5px 1px;\r\n\tfont-size: 11px;\r\n\twhite-space: nowrap;\r\n\toverflow: hidden;\r\n\t-moz-box-sizing: border-box;\r\n\t     box-sizing: border-box;\r\n\r\n\tbackground: #fff;\r\n\tbackground: rgba(255, 255, 255, 0.5);\r\n\t}\r\n.leaflet-control-scale-line:not(:first-child) {\r\n\tborder-top: 2px solid #777;\r\n\tborder-bottom: none;\r\n\tmargin-top: -2px;\r\n\t}\r\n.leaflet-control-scale-line:not(:first-child):not(:last-child) {\r\n\tborder-bottom: 2px solid #777;\r\n\t}\r\n\r\n.leaflet-touch .leaflet-control-attribution,\r\n.leaflet-touch .leaflet-control-layers,\r\n.leaflet-touch .leaflet-bar {\r\n\tbox-shadow: none;\r\n\t}\r\n.leaflet-touch .leaflet-control-layers,\r\n.leaflet-touch .leaflet-bar {\r\n\tborder: 2px solid rgba(0,0,0,0.2);\r\n\tbackground-clip: padding-box;\r\n\t}\r\n\r\n\r\n/* popup */\r\n\r\n.leaflet-popup {\r\n\tposition: absolute;\r\n\ttext-align: center;\r\n\tmargin-bottom: 20px;\r\n\t}\r\n.leaflet-popup-content-wrapper {\r\n\tpadding: 1px;\r\n\ttext-align: left;\r\n\tborder-radius: 12px;\r\n\t}\r\n.leaflet-popup-content {\r\n\tmargin: 13px 19px;\r\n\tline-height: 1.4;\r\n\t}\r\n.leaflet-popup-content p {\r\n\tmargin: 18px 0;\r\n\t}\r\n.leaflet-popup-tip-container {\r\n\twidth: 40px;\r\n\theight: 20px;\r\n\tposition: absolute;\r\n\tleft: 50%;\r\n\tmargin-left: -20px;\r\n\toverflow: hidden;\r\n\tpointer-events: none;\r\n\t}\r\n.leaflet-popup-tip {\r\n\twidth: 17px;\r\n\theight: 17px;\r\n\tpadding: 1px;\r\n\r\n\tmargin: -10px auto 0;\r\n\r\n\t-webkit-transform: rotate(45deg);\r\n\t   -moz-transform: rotate(45deg);\r\n\t    -ms-transform: rotate(45deg);\r\n\t     -o-transform: rotate(45deg);\r\n\t        transform: rotate(45deg);\r\n\t}\r\n.leaflet-popup-content-wrapper,\r\n.leaflet-popup-tip {\r\n\tbackground: white;\r\n\tcolor: #333;\r\n\tbox-shadow: 0 3px 14px rgba(0,0,0,0.4);\r\n\t}\r\n.leaflet-container a.leaflet-popup-close-button {\r\n\tposition: absolute;\r\n\ttop: 0;\r\n\tright: 0;\r\n\tpadding: 4px 4px 0 0;\r\n\tborder: none;\r\n\ttext-align: center;\r\n\twidth: 18px;\r\n\theight: 14px;\r\n\tfont: 16px/14px Tahoma, Verdana, sans-serif;\r\n\tcolor: #c3c3c3;\r\n\ttext-decoration: none;\r\n\tfont-weight: bold;\r\n\tbackground: transparent;\r\n\t}\r\n.leaflet-container a.leaflet-popup-close-button:hover {\r\n\tcolor: #999;\r\n\t}\r\n.leaflet-popup-scrolled {\r\n\toverflow: auto;\r\n\tborder-bottom: 1px solid #ddd;\r\n\tborder-top: 1px solid #ddd;\r\n\t}\r\n\r\n.leaflet-oldie .leaflet-popup-content-wrapper {\r\n\tzoom: 1;\r\n\t}\r\n.leaflet-oldie .leaflet-popup-tip {\r\n\twidth: 24px;\r\n\tmargin: 0 auto;\r\n\r\n\t-ms-filter: \"progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=0.70710678, M21=-0.70710678, M22=0.70710678)\";\r\n\tfilter: progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=0.70710678, M21=-0.70710678, M22=0.70710678);\r\n\t}\r\n.leaflet-oldie .leaflet-popup-tip-container {\r\n\tmargin-top: -1px;\r\n\t}\r\n\r\n.leaflet-oldie .leaflet-control-zoom,\r\n.leaflet-oldie .leaflet-control-layers,\r\n.leaflet-oldie .leaflet-popup-content-wrapper,\r\n.leaflet-oldie .leaflet-popup-tip {\r\n\tborder: 1px solid #999;\r\n\t}\r\n\r\n\r\n/* div icon */\r\n\r\n.leaflet-div-icon {\r\n\tbackground: #fff;\r\n\tborder: 1px solid #666;\r\n\t}\r\n\r\n\r\n/* Tooltip */\r\n/* Base styles for the element that has a tooltip */\r\n.leaflet-tooltip {\r\n\tposition: absolute;\r\n\tpadding: 6px;\r\n\tbackground-color: #fff;\r\n\tborder: 1px solid #fff;\r\n\tborder-radius: 3px;\r\n\tcolor: #222;\r\n\twhite-space: nowrap;\r\n\t-webkit-user-select: none;\r\n\t-moz-user-select: none;\r\n\t-ms-user-select: none;\r\n\tuser-select: none;\r\n\tpointer-events: none;\r\n\tbox-shadow: 0 1px 3px rgba(0,0,0,0.4);\r\n\t}\r\n.leaflet-tooltip.leaflet-clickable {\r\n\tcursor: pointer;\r\n\tpointer-events: auto;\r\n\t}\r\n.leaflet-tooltip-top:before,\r\n.leaflet-tooltip-bottom:before,\r\n.leaflet-tooltip-left:before,\r\n.leaflet-tooltip-right:before {\r\n\tposition: absolute;\r\n\tpointer-events: none;\r\n\tborder: 6px solid transparent;\r\n\tbackground: transparent;\r\n\tcontent: \"\";\r\n\t}\r\n\r\n/* Directions */\r\n\r\n.leaflet-tooltip-bottom {\r\n\tmargin-top: 6px;\r\n}\r\n.leaflet-tooltip-top {\r\n\tmargin-top: -6px;\r\n}\r\n.leaflet-tooltip-bottom:before,\r\n.leaflet-tooltip-top:before {\r\n\tleft: 50%;\r\n\tmargin-left: -6px;\r\n\t}\r\n.leaflet-tooltip-top:before {\r\n\tbottom: 0;\r\n\tmargin-bottom: -12px;\r\n\tborder-top-color: #fff;\r\n\t}\r\n.leaflet-tooltip-bottom:before {\r\n\ttop: 0;\r\n\tmargin-top: -12px;\r\n\tmargin-left: -6px;\r\n\tborder-bottom-color: #fff;\r\n\t}\r\n.leaflet-tooltip-left {\r\n\tmargin-left: -6px;\r\n}\r\n.leaflet-tooltip-right {\r\n\tmargin-left: 6px;\r\n}\r\n.leaflet-tooltip-left:before,\r\n.leaflet-tooltip-right:before {\r\n\ttop: 50%;\r\n\tmargin-top: -6px;\r\n\t}\r\n.leaflet-tooltip-left:before {\r\n\tright: 0;\r\n\tmargin-right: -12px;\r\n\tborder-left-color: #fff;\r\n\t}\r\n.leaflet-tooltip-right:before {\r\n\tleft: 0;\r\n\tmargin-left: -12px;\r\n\tborder-right-color: #fff;\r\n\t}\r\n", ""]);
+	exports.push([module.id, "/* required styles */\r\n\r\n.leaflet-pane,\r\n.leaflet-tile,\r\n.leaflet-marker-icon,\r\n.leaflet-marker-shadow,\r\n.leaflet-tile-container,\r\n.leaflet-pane > svg,\r\n.leaflet-pane > canvas,\r\n.leaflet-zoom-box,\r\n.leaflet-image-layer,\r\n.leaflet-layer {\r\n\tposition: absolute;\r\n\tleft: 0;\r\n\ttop: 0;\r\n\t}\r\n.leaflet-container {\r\n\toverflow: hidden;\r\n\t}\r\n.leaflet-tile,\r\n.leaflet-marker-icon,\r\n.leaflet-marker-shadow {\r\n\t-webkit-user-select: none;\r\n\t   -moz-user-select: none;\r\n\t        user-select: none;\r\n\t  -webkit-user-drag: none;\r\n\t}\r\n/* Safari renders non-retina tile on retina better with this, but Chrome is worse */\r\n.leaflet-safari .leaflet-tile {\r\n\timage-rendering: -webkit-optimize-contrast;\r\n\t}\r\n/* hack that prevents hw layers \"stretching\" when loading new tiles */\r\n.leaflet-safari .leaflet-tile-container {\r\n\twidth: 1600px;\r\n\theight: 1600px;\r\n\t-webkit-transform-origin: 0 0;\r\n\t}\r\n.leaflet-marker-icon,\r\n.leaflet-marker-shadow {\r\n\tdisplay: block;\r\n\t}\r\n/* .leaflet-container svg: reset svg max-width decleration shipped in Joomla! (joomla.org) 3.x */\r\n/* .leaflet-container img: map is broken in FF if you have max-width: 100% on tiles */\r\n.leaflet-container .leaflet-overlay-pane svg,\r\n.leaflet-container .leaflet-marker-pane img,\r\n.leaflet-container .leaflet-shadow-pane img,\r\n.leaflet-container .leaflet-tile-pane img,\r\n.leaflet-container img.leaflet-image-layer {\r\n\tmax-width: none !important;\r\n\tmax-height: none !important;\r\n\t}\r\n\r\n.leaflet-container.leaflet-touch-zoom {\r\n\t-ms-touch-action: pan-x pan-y;\r\n\ttouch-action: pan-x pan-y;\r\n\t}\r\n.leaflet-container.leaflet-touch-drag {\r\n\t-ms-touch-action: pinch-zoom;\r\n\t/* Fallback for FF which doesn't support pinch-zoom */\r\n\ttouch-action: none;\r\n\ttouch-action: pinch-zoom;\r\n}\r\n.leaflet-container.leaflet-touch-drag.leaflet-touch-zoom {\r\n\t-ms-touch-action: none;\r\n\ttouch-action: none;\r\n}\r\n.leaflet-container {\r\n\t-webkit-tap-highlight-color: transparent;\r\n}\r\n.leaflet-container a {\r\n\t-webkit-tap-highlight-color: rgba(51, 181, 229, 0.4);\r\n}\r\n.leaflet-tile {\r\n\tfilter: inherit;\r\n\tvisibility: hidden;\r\n\t}\r\n.leaflet-tile-loaded {\r\n\tvisibility: inherit;\r\n\t}\r\n.leaflet-zoom-box {\r\n\twidth: 0;\r\n\theight: 0;\r\n\t-moz-box-sizing: border-box;\r\n\t     box-sizing: border-box;\r\n\tz-index: 800;\r\n\t}\r\n/* workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=888319 */\r\n.leaflet-overlay-pane svg {\r\n\t-moz-user-select: none;\r\n\t}\r\n\r\n.leaflet-pane         { z-index: 400; }\r\n\r\n.leaflet-tile-pane    { z-index: 200; }\r\n.leaflet-overlay-pane { z-index: 400; }\r\n.leaflet-shadow-pane  { z-index: 500; }\r\n.leaflet-marker-pane  { z-index: 600; }\r\n.leaflet-tooltip-pane   { z-index: 650; }\r\n.leaflet-popup-pane   { z-index: 700; }\r\n\r\n.leaflet-map-pane canvas { z-index: 100; }\r\n.leaflet-map-pane svg    { z-index: 200; }\r\n\r\n.leaflet-vml-shape {\r\n\twidth: 1px;\r\n\theight: 1px;\r\n\t}\r\n.lvml {\r\n\tbehavior: url(#default#VML);\r\n\tdisplay: inline-block;\r\n\tposition: absolute;\r\n\t}\r\n\r\n\r\n/* control positioning */\r\n\r\n.leaflet-control {\r\n\tposition: relative;\r\n\tz-index: 800;\r\n\tpointer-events: visiblePainted; /* IE 9-10 doesn't have auto */\r\n\tpointer-events: auto;\r\n\t}\r\n.leaflet-top,\r\n.leaflet-bottom {\r\n\tposition: absolute;\r\n\tz-index: 1000;\r\n\tpointer-events: none;\r\n\t}\r\n.leaflet-top {\r\n\ttop: 0;\r\n\t}\r\n.leaflet-right {\r\n\tright: 0;\r\n\t}\r\n.leaflet-bottom {\r\n\tbottom: 0;\r\n\t}\r\n.leaflet-left {\r\n\tleft: 0;\r\n\t}\r\n.leaflet-control {\r\n\tfloat: left;\r\n\tclear: both;\r\n\t}\r\n.leaflet-right .leaflet-control {\r\n\tfloat: right;\r\n\t}\r\n.leaflet-top .leaflet-control {\r\n\tmargin-top: 10px;\r\n\t}\r\n.leaflet-bottom .leaflet-control {\r\n\tmargin-bottom: 10px;\r\n\t}\r\n.leaflet-left .leaflet-control {\r\n\tmargin-left: 10px;\r\n\t}\r\n.leaflet-right .leaflet-control {\r\n\tmargin-right: 10px;\r\n\t}\r\n\r\n\r\n/* zoom and fade animations */\r\n\r\n.leaflet-fade-anim .leaflet-tile {\r\n\twill-change: opacity;\r\n\t}\r\n.leaflet-fade-anim .leaflet-popup {\r\n\topacity: 0;\r\n\t-webkit-transition: opacity 0.2s linear;\r\n\t   -moz-transition: opacity 0.2s linear;\r\n\t     -o-transition: opacity 0.2s linear;\r\n\t        transition: opacity 0.2s linear;\r\n\t}\r\n.leaflet-fade-anim .leaflet-map-pane .leaflet-popup {\r\n\topacity: 1;\r\n\t}\r\n.leaflet-zoom-animated {\r\n\t-webkit-transform-origin: 0 0;\r\n\t    -ms-transform-origin: 0 0;\r\n\t        transform-origin: 0 0;\r\n\t}\r\n.leaflet-zoom-anim .leaflet-zoom-animated {\r\n\twill-change: transform;\r\n\t}\r\n.leaflet-zoom-anim .leaflet-zoom-animated {\r\n\t-webkit-transition: -webkit-transform 0.25s cubic-bezier(0,0,0.25,1);\r\n\t   -moz-transition:    -moz-transform 0.25s cubic-bezier(0,0,0.25,1);\r\n\t     -o-transition:      -o-transform 0.25s cubic-bezier(0,0,0.25,1);\r\n\t        transition:         transform 0.25s cubic-bezier(0,0,0.25,1);\r\n\t}\r\n.leaflet-zoom-anim .leaflet-tile,\r\n.leaflet-pan-anim .leaflet-tile {\r\n\t-webkit-transition: none;\r\n\t   -moz-transition: none;\r\n\t     -o-transition: none;\r\n\t        transition: none;\r\n\t}\r\n\r\n.leaflet-zoom-anim .leaflet-zoom-hide {\r\n\tvisibility: hidden;\r\n\t}\r\n\r\n\r\n/* cursors */\r\n\r\n.leaflet-interactive {\r\n\tcursor: pointer;\r\n\t}\r\n.leaflet-grab {\r\n\tcursor: -webkit-grab;\r\n\tcursor:    -moz-grab;\r\n\t}\r\n.leaflet-crosshair,\r\n.leaflet-crosshair .leaflet-interactive {\r\n\tcursor: crosshair;\r\n\t}\r\n.leaflet-popup-pane,\r\n.leaflet-control {\r\n\tcursor: auto;\r\n\t}\r\n.leaflet-dragging .leaflet-grab,\r\n.leaflet-dragging .leaflet-grab .leaflet-interactive,\r\n.leaflet-dragging .leaflet-marker-draggable {\r\n\tcursor: move;\r\n\tcursor: -webkit-grabbing;\r\n\tcursor:    -moz-grabbing;\r\n\t}\r\n\r\n/* marker & overlays interactivity */\r\n.leaflet-marker-icon,\r\n.leaflet-marker-shadow,\r\n.leaflet-image-layer,\r\n.leaflet-pane > svg path,\r\n.leaflet-tile-container {\r\n\tpointer-events: none;\r\n\t}\r\n\r\n.leaflet-marker-icon.leaflet-interactive,\r\n.leaflet-image-layer.leaflet-interactive,\r\n.leaflet-pane > svg path.leaflet-interactive {\r\n\tpointer-events: visiblePainted; /* IE 9-10 doesn't have auto */\r\n\tpointer-events: auto;\r\n\t}\r\n\r\n/* visual tweaks */\r\n\r\n.leaflet-container {\r\n\tbackground: #ddd;\r\n\toutline: 0;\r\n\t}\r\n.leaflet-container a {\r\n\tcolor: #0078A8;\r\n\t}\r\n.leaflet-container a.leaflet-active {\r\n\toutline: 2px solid orange;\r\n\t}\r\n.leaflet-zoom-box {\r\n\tborder: 2px dotted #38f;\r\n\tbackground: rgba(255,255,255,0.5);\r\n\t}\r\n\r\n\r\n/* general typography */\r\n.leaflet-container {\r\n\tfont: 12px/1.5 \"Helvetica Neue\", Arial, Helvetica, sans-serif;\r\n\t}\r\n\r\n\r\n/* general toolbar styles */\r\n\r\n.leaflet-bar {\r\n\tbox-shadow: 0 1px 5px rgba(0,0,0,0.65);\r\n\tborder-radius: 4px;\r\n\t}\r\n.leaflet-bar a,\r\n.leaflet-bar a:hover {\r\n\tbackground-color: #fff;\r\n\tborder-bottom: 1px solid #ccc;\r\n\twidth: 26px;\r\n\theight: 26px;\r\n\tline-height: 26px;\r\n\tdisplay: block;\r\n\ttext-align: center;\r\n\ttext-decoration: none;\r\n\tcolor: black;\r\n\t}\r\n.leaflet-bar a,\r\n.leaflet-control-layers-toggle {\r\n\tbackground-position: 50% 50%;\r\n\tbackground-repeat: no-repeat;\r\n\tdisplay: block;\r\n\t}\r\n.leaflet-bar a:hover {\r\n\tbackground-color: #f4f4f4;\r\n\t}\r\n.leaflet-bar a:first-child {\r\n\tborder-top-left-radius: 4px;\r\n\tborder-top-right-radius: 4px;\r\n\t}\r\n.leaflet-bar a:last-child {\r\n\tborder-bottom-left-radius: 4px;\r\n\tborder-bottom-right-radius: 4px;\r\n\tborder-bottom: none;\r\n\t}\r\n.leaflet-bar a.leaflet-disabled {\r\n\tcursor: default;\r\n\tbackground-color: #f4f4f4;\r\n\tcolor: #bbb;\r\n\t}\r\n\r\n.leaflet-touch .leaflet-bar a {\r\n\twidth: 30px;\r\n\theight: 30px;\r\n\tline-height: 30px;\r\n\t}\r\n.leaflet-touch .leaflet-bar a:first-child {\r\n\tborder-top-left-radius: 2px;\r\n\tborder-top-right-radius: 2px;\r\n\t}\r\n.leaflet-touch .leaflet-bar a:last-child {\r\n\tborder-bottom-left-radius: 2px;\r\n\tborder-bottom-right-radius: 2px;\r\n\t}\r\n\r\n/* zoom control */\r\n\r\n.leaflet-control-zoom-in,\r\n.leaflet-control-zoom-out {\r\n\tfont: bold 18px 'Lucida Console', Monaco, monospace;\r\n\ttext-indent: 1px;\r\n\t}\r\n\r\n.leaflet-touch .leaflet-control-zoom-in, .leaflet-touch .leaflet-control-zoom-out  {\r\n\tfont-size: 22px;\r\n\t}\r\n\r\n\r\n/* layers control */\r\n\r\n.leaflet-control-layers {\r\n\tbox-shadow: 0 1px 5px rgba(0,0,0,0.4);\r\n\tbackground: #fff;\r\n\tborder-radius: 5px;\r\n\t}\r\n.leaflet-control-layers-toggle {\r\n\tbackground-image: url(" + __webpack_require__(56) + ");\r\n\twidth: 36px;\r\n\theight: 36px;\r\n\t}\r\n.leaflet-retina .leaflet-control-layers-toggle {\r\n\tbackground-image: url(" + __webpack_require__(57) + ");\r\n\tbackground-size: 26px 26px;\r\n\t}\r\n.leaflet-touch .leaflet-control-layers-toggle {\r\n\twidth: 44px;\r\n\theight: 44px;\r\n\t}\r\n.leaflet-control-layers .leaflet-control-layers-list,\r\n.leaflet-control-layers-expanded .leaflet-control-layers-toggle {\r\n\tdisplay: none;\r\n\t}\r\n.leaflet-control-layers-expanded .leaflet-control-layers-list {\r\n\tdisplay: block;\r\n\tposition: relative;\r\n\t}\r\n.leaflet-control-layers-expanded {\r\n\tpadding: 6px 10px 6px 6px;\r\n\tcolor: #333;\r\n\tbackground: #fff;\r\n\t}\r\n.leaflet-control-layers-scrollbar {\r\n\toverflow-y: scroll;\r\n\toverflow-x: hidden;\r\n\tpadding-right: 5px;\r\n\t}\r\n.leaflet-control-layers-selector {\r\n\tmargin-top: 2px;\r\n\tposition: relative;\r\n\ttop: 1px;\r\n\t}\r\n.leaflet-control-layers label {\r\n\tdisplay: block;\r\n\t}\r\n.leaflet-control-layers-separator {\r\n\theight: 0;\r\n\tborder-top: 1px solid #ddd;\r\n\tmargin: 5px -10px 5px -6px;\r\n\t}\r\n\r\n/* Default icon URLs */\r\n.leaflet-default-icon-path {\r\n\tbackground-image: url(" + __webpack_require__(58) + ");\r\n\t}\r\n\r\n\r\n/* attribution and scale controls */\r\n\r\n.leaflet-container .leaflet-control-attribution {\r\n\tbackground: #fff;\r\n\tbackground: rgba(255, 255, 255, 0.7);\r\n\tmargin: 0;\r\n\t}\r\n.leaflet-control-attribution,\r\n.leaflet-control-scale-line {\r\n\tpadding: 0 5px;\r\n\tcolor: #333;\r\n\t}\r\n.leaflet-control-attribution a {\r\n\ttext-decoration: none;\r\n\t}\r\n.leaflet-control-attribution a:hover {\r\n\ttext-decoration: underline;\r\n\t}\r\n.leaflet-container .leaflet-control-attribution,\r\n.leaflet-container .leaflet-control-scale {\r\n\tfont-size: 11px;\r\n\t}\r\n.leaflet-left .leaflet-control-scale {\r\n\tmargin-left: 5px;\r\n\t}\r\n.leaflet-bottom .leaflet-control-scale {\r\n\tmargin-bottom: 5px;\r\n\t}\r\n.leaflet-control-scale-line {\r\n\tborder: 2px solid #777;\r\n\tborder-top: none;\r\n\tline-height: 1.1;\r\n\tpadding: 2px 5px 1px;\r\n\tfont-size: 11px;\r\n\twhite-space: nowrap;\r\n\toverflow: hidden;\r\n\t-moz-box-sizing: border-box;\r\n\t     box-sizing: border-box;\r\n\r\n\tbackground: #fff;\r\n\tbackground: rgba(255, 255, 255, 0.5);\r\n\t}\r\n.leaflet-control-scale-line:not(:first-child) {\r\n\tborder-top: 2px solid #777;\r\n\tborder-bottom: none;\r\n\tmargin-top: -2px;\r\n\t}\r\n.leaflet-control-scale-line:not(:first-child):not(:last-child) {\r\n\tborder-bottom: 2px solid #777;\r\n\t}\r\n\r\n.leaflet-touch .leaflet-control-attribution,\r\n.leaflet-touch .leaflet-control-layers,\r\n.leaflet-touch .leaflet-bar {\r\n\tbox-shadow: none;\r\n\t}\r\n.leaflet-touch .leaflet-control-layers,\r\n.leaflet-touch .leaflet-bar {\r\n\tborder: 2px solid rgba(0,0,0,0.2);\r\n\tbackground-clip: padding-box;\r\n\t}\r\n\r\n\r\n/* popup */\r\n\r\n.leaflet-popup {\r\n\tposition: absolute;\r\n\ttext-align: center;\r\n\tmargin-bottom: 20px;\r\n\t}\r\n.leaflet-popup-content-wrapper {\r\n\tpadding: 1px;\r\n\ttext-align: left;\r\n\tborder-radius: 12px;\r\n\t}\r\n.leaflet-popup-content {\r\n\tmargin: 13px 19px;\r\n\tline-height: 1.4;\r\n\t}\r\n.leaflet-popup-content p {\r\n\tmargin: 18px 0;\r\n\t}\r\n.leaflet-popup-tip-container {\r\n\twidth: 40px;\r\n\theight: 20px;\r\n\tposition: absolute;\r\n\tleft: 50%;\r\n\tmargin-left: -20px;\r\n\toverflow: hidden;\r\n\tpointer-events: none;\r\n\t}\r\n.leaflet-popup-tip {\r\n\twidth: 17px;\r\n\theight: 17px;\r\n\tpadding: 1px;\r\n\r\n\tmargin: -10px auto 0;\r\n\r\n\t-webkit-transform: rotate(45deg);\r\n\t   -moz-transform: rotate(45deg);\r\n\t    -ms-transform: rotate(45deg);\r\n\t     -o-transform: rotate(45deg);\r\n\t        transform: rotate(45deg);\r\n\t}\r\n.leaflet-popup-content-wrapper,\r\n.leaflet-popup-tip {\r\n\tbackground: white;\r\n\tcolor: #333;\r\n\tbox-shadow: 0 3px 14px rgba(0,0,0,0.4);\r\n\t}\r\n.leaflet-container a.leaflet-popup-close-button {\r\n\tposition: absolute;\r\n\ttop: 0;\r\n\tright: 0;\r\n\tpadding: 4px 4px 0 0;\r\n\tborder: none;\r\n\ttext-align: center;\r\n\twidth: 18px;\r\n\theight: 14px;\r\n\tfont: 16px/14px Tahoma, Verdana, sans-serif;\r\n\tcolor: #c3c3c3;\r\n\ttext-decoration: none;\r\n\tfont-weight: bold;\r\n\tbackground: transparent;\r\n\t}\r\n.leaflet-container a.leaflet-popup-close-button:hover {\r\n\tcolor: #999;\r\n\t}\r\n.leaflet-popup-scrolled {\r\n\toverflow: auto;\r\n\tborder-bottom: 1px solid #ddd;\r\n\tborder-top: 1px solid #ddd;\r\n\t}\r\n\r\n.leaflet-oldie .leaflet-popup-content-wrapper {\r\n\tzoom: 1;\r\n\t}\r\n.leaflet-oldie .leaflet-popup-tip {\r\n\twidth: 24px;\r\n\tmargin: 0 auto;\r\n\r\n\t-ms-filter: \"progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=0.70710678, M21=-0.70710678, M22=0.70710678)\";\r\n\tfilter: progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=0.70710678, M21=-0.70710678, M22=0.70710678);\r\n\t}\r\n.leaflet-oldie .leaflet-popup-tip-container {\r\n\tmargin-top: -1px;\r\n\t}\r\n\r\n.leaflet-oldie .leaflet-control-zoom,\r\n.leaflet-oldie .leaflet-control-layers,\r\n.leaflet-oldie .leaflet-popup-content-wrapper,\r\n.leaflet-oldie .leaflet-popup-tip {\r\n\tborder: 1px solid #999;\r\n\t}\r\n\r\n\r\n/* div icon */\r\n\r\n.leaflet-div-icon {\r\n\tbackground: #fff;\r\n\tborder: 1px solid #666;\r\n\t}\r\n\r\n\r\n/* Tooltip */\r\n/* Base styles for the element that has a tooltip */\r\n.leaflet-tooltip {\r\n\tposition: absolute;\r\n\tpadding: 6px;\r\n\tbackground-color: #fff;\r\n\tborder: 1px solid #fff;\r\n\tborder-radius: 3px;\r\n\tcolor: #222;\r\n\twhite-space: nowrap;\r\n\t-webkit-user-select: none;\r\n\t-moz-user-select: none;\r\n\t-ms-user-select: none;\r\n\tuser-select: none;\r\n\tpointer-events: none;\r\n\tbox-shadow: 0 1px 3px rgba(0,0,0,0.4);\r\n\t}\r\n.leaflet-tooltip.leaflet-clickable {\r\n\tcursor: pointer;\r\n\tpointer-events: auto;\r\n\t}\r\n.leaflet-tooltip-top:before,\r\n.leaflet-tooltip-bottom:before,\r\n.leaflet-tooltip-left:before,\r\n.leaflet-tooltip-right:before {\r\n\tposition: absolute;\r\n\tpointer-events: none;\r\n\tborder: 6px solid transparent;\r\n\tbackground: transparent;\r\n\tcontent: \"\";\r\n\t}\r\n\r\n/* Directions */\r\n\r\n.leaflet-tooltip-bottom {\r\n\tmargin-top: 6px;\r\n}\r\n.leaflet-tooltip-top {\r\n\tmargin-top: -6px;\r\n}\r\n.leaflet-tooltip-bottom:before,\r\n.leaflet-tooltip-top:before {\r\n\tleft: 50%;\r\n\tmargin-left: -6px;\r\n\t}\r\n.leaflet-tooltip-top:before {\r\n\tbottom: 0;\r\n\tmargin-bottom: -12px;\r\n\tborder-top-color: #fff;\r\n\t}\r\n.leaflet-tooltip-bottom:before {\r\n\ttop: 0;\r\n\tmargin-top: -12px;\r\n\tmargin-left: -6px;\r\n\tborder-bottom-color: #fff;\r\n\t}\r\n.leaflet-tooltip-left {\r\n\tmargin-left: -6px;\r\n}\r\n.leaflet-tooltip-right {\r\n\tmargin-left: 6px;\r\n}\r\n.leaflet-tooltip-left:before,\r\n.leaflet-tooltip-right:before {\r\n\ttop: 50%;\r\n\tmargin-top: -6px;\r\n\t}\r\n.leaflet-tooltip-left:before {\r\n\tright: 0;\r\n\tmargin-right: -12px;\r\n\tborder-left-color: #fff;\r\n\t}\r\n.leaflet-tooltip-right:before {\r\n\tleft: 0;\r\n\tmargin-left: -12px;\r\n\tborder-right-color: #fff;\r\n\t}\r\n", ""]);
 	
 	// exports
 
 
 /***/ },
-/* 55 */
+/* 56 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "a6137456ed160d7606981aa57c559898.png";
 
 /***/ },
-/* 56 */
+/* 57 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "4f0283c6ce28e888000e978e537a6a56.png";
 
 /***/ },
-/* 57 */
+/* 58 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "2273e3d8ad9264b7daa5bdbf8e6b47f8.png";
 
 /***/ },
-/* 58 */
+/* 59 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(59);
+	var content = __webpack_require__(60);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(51)(content, {});
+	var update = __webpack_require__(52)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -37086,10 +37563,10 @@
 	}
 
 /***/ },
-/* 59 */
+/* 60 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(48)();
+	exports = module.exports = __webpack_require__(49)();
 	// imports
 	
 	
@@ -37100,17 +37577,17 @@
 
 
 /***/ },
-/* 60 */
+/* 61 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "401d815dc206b8dc1b17cd0e37695975.png";
 
 /***/ },
-/* 61 */
+/* 62 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "44a526eed258222515aa21eaffd14a96.png";
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-52c4cbc80405aad2f9c8.js.map
+//# sourceMappingURL=app-3bbd1736d6640070919f.js.map
