@@ -11704,10 +11704,14 @@
 	        });
 	
 	        if (params) {
-	            var order = sortColumn && "order=" + sortColumn.id + ":" + sortColumn.direction;
-	            return TEIService.search(params.orgUnit.id, params.ouMode, order, params.programOrTETUrl, params.queryUrl, params.pager, params.paging).then(function (response) {
+	            var programScopeFetchAsyncFn = function programScopeFetchAsyncFn(pager, sortColumn) {
+	                var order = sortColumn && "order=" + sortColumn.id + ":" + sortColumn.direction;
+	                return TEIService.search(params.orgUnit.id, params.ouMode, order, params.programOrTETUrl, params.queryUrl, pager, params.paging);
+	            };
+	
+	            return programScopeFetchAsyncFn(params.pager, sortColumn).then(function (response) {
 	                if (response && response.rows && response.rows.length > 0) {
-	                    var result = { data: response, callingScope: searchScopes.PROGRAM, resultScope: searchScopes.PROGRAM };
+	                    var result = { data: response, callingScope: searchScopes.PROGRAM, resultScope: searchScopes.PROGRAM, onRefetch: programScopeFetchAsyncFn };
 	                    var def = $q.defer();
 	                    if (params.uniqueSearch) {
 	                        result.status = "UNIQUE";
@@ -11758,9 +11762,13 @@
 	            }, '');
 	        });
 	        if (params) {
-	            var order = sortColumn && "order=" + sortColumn.id + ":" + sortColumn.direction;
-	            return TEIService.search(params.orgUnit.id, params.ouMode, order, params.programOrTETUrl, params.queryUrl, params.pager, params.paging).then(function (response) {
-	                var result = { data: response, callingScope: searchScopes.TET, resultScope: searchScopes.TET };
+	            var tetScopeFetchAsyncFn = function tetScopeFetchAsyncFn(pager, sortColumn) {
+	                var order = sortColumn && "order=" + sortColumn.id + ":" + sortColumn.direction;
+	                return TEIService.search(params.orgUnit.id, params.ouMode, order, params.programOrTETUrl, params.queryUrl, pager, params.paging);
+	            };
+	
+	            return tetScopeFetchAsyncFn(params.pager, sortColumn).then(function (response) {
+	                var result = { data: response, callingScope: searchScopes.TET, resultScope: searchScopes.TET, onRefetch: tetScopeFetchAsyncFn };
 	                if (response && response.rows && response.rows.length > 0) {
 	                    if (params.uniqueSearch) {
 	                        result.status = "UNIQUE";
@@ -14028,10 +14036,12 @@
 
 	'use strict';
 	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; /* global trackerCapture, angular */
+	
+	
 	var _processRegistration = __webpack_require__(25);
 	
-	var trackerCapture = angular.module('trackerCapture'); /* global trackerCapture, angular */
-	
+	var trackerCapture = angular.module('trackerCapture');
 	trackerCapture.controller('RegistrationController', ["$rootScope", "$q", "$scope", "$location", "$timeout", "$modal", "$translate", "$window", "$parse", "orderByFilter", "AttributesFactory", "DHIS2EventFactory", "TEService", "CustomFormService", "EnrollmentService", "NotificationService", "CurrentSelection", "MetaDataFactory", "EventUtils", "RegistrationService", "DateUtils", "TEIGridService", "TEIService", "TrackerRulesFactory", "TrackerRulesExecutionService", "TCStorageService", "ModalService", "SearchGroupService", "AccessUtils", "AuthorityService", "SessionStorageService", "AttributeUtils", "TCOrgUnitService", "ProgramFactory", function ($rootScope, $q, $scope, $location, $timeout, $modal, $translate, $window, $parse, orderByFilter, AttributesFactory, DHIS2EventFactory, TEService, CustomFormService, EnrollmentService, NotificationService, CurrentSelection, MetaDataFactory, EventUtils, RegistrationService, DateUtils, TEIGridService, TEIService, TrackerRulesFactory, TrackerRulesExecutionService, TCStorageService, ModalService, SearchGroupService, AccessUtils, AuthorityService, SessionStorageService, AttributeUtils, TCOrgUnitService, ProgramFactory) {
 	    var prefilledTet = null;
 	    $scope.today = DateUtils.getToday();
@@ -14964,27 +14974,15 @@
 	            optionSets: $scope.optionSets
 	        };
 	
-	        var refetch;
-	        if (!onRefetch) {
-	            if ($scope.programSearchScope) {
-	                var tetSearchGroup = SearchGroupService.findValidSearchGroup($scope.matchingTeisSearchGroup, $scope.tetSearchConfig, $scope.attributesById);
-	                refetch = function refetch(pager) {
-	                    return SearchGroupService.programScopeSearch($scope.matchingTeisSearchGroup, tetSearchGroup, $scope.selectedProgram, $scope.trackedEntityTypes.selected, $scope.selectedOrgUnit, pager);
-	                };
-	            } else {
-	                refetch = function refetch(pager) {
-	                    return SearchGroupService.tetScopeSearch($scope.matchingTeisSearchGroup, $scope.trackedEntityTypes.selected, $scope.selectedOrgUnit, pager);
-	                };
-	            }
-	        }
-	
 	        return $modal.open({
 	            templateUrl: 'components/registration/matches-modal.html',
 	            controller: ["$scope", "$modalInstance", "TEIGridService", "orgUnit", "data", "modalData", "refetchDataFn", function controller($scope, $modalInstance, TEIGridService, orgUnit, data, modalData, refetchDataFn) {
 	                $scope.allowRegistration = modalData.allowRegistration;
 	                $scope.translateWithTETName = modalData.translateWithTETName;
 	                $scope.gridData = TEIGridService.format(orgUnit.id, data, false, modalData.optionSets, null);
-	                $scope.pager = data && data.metaData ? data.metaData.pager : null;
+	                $scope.pager = _extends({}, data && data.metaData && data.metaData.pager, {
+	                    skipTotalPages: true
+	                });
 	                $scope.openTei = function (tei) {
 	                    $modalInstance.close({ action: "OPENTEI", tei: tei });
 	                };
@@ -14995,9 +14993,22 @@
 	                    $modalInstance.close({ action: "CANCEL" });
 	                };
 	                $scope.refetchData = function (pager, sortColumn) {
-	                    refetchDataFn(pager, sortColumn).then(function (res) {
-	                        $scope.pager = res.data && res.data.metaData ? res.data.metaData.pager : null;
-	                        $scope.gridData = TEIGridService.format(orgUnit.id, res.data, false, modalData.optionSets, null);
+	                    $scope.error = false;
+	                    $scope.tooManySearchResults = false;
+	                    refetchDataFn(pager, sortColumn).then(function (response) {
+	                        if (response && response.rows && response.rows.length > 0) {
+	                            $scope.gridData = TEIGridService.format(orgUnit.id, response, false, modalData.optionSets, null);
+	                        } else {
+	                            $scope.gridData = [];
+	                        }
+	                    }).catch(function (error) {
+	                        $scope.gridData = null;
+	                        if (error && error.data && error.data.message === "maxteicountreached") {
+	                            $scope.tooManySearchResults = true;
+	                        } else {
+	                            $scope.error = true;
+	                            console.log(error);
+	                        }
 	                    });
 	                };
 	            }],
@@ -15009,7 +15020,7 @@
 	                    return matches;
 	                },
 	                refetchDataFn: function refetchDataFn() {
-	                    return onRefetch || refetch;
+	                    return onRefetch;
 	                },
 	                modalData: function modalData() {
 	                    return _modalData;
@@ -15439,21 +15450,18 @@
 	        tetSearchGroup = SearchGroupService.findTetSearchGroup(defaultSearchGroup, tetSearchConfig, attributesById);
 	    }
 	
-	    function fetch(pager, sortColumn) {
-	        var promise;
-	        if (useProgramSearchScope) {
-	            promise = SearchGroupService.programScopeSearch(defaultSearchGroup, tetSearchGroup, program, trackedEntityType, orgUnit, pager, sortColumn);
-	        } else {
-	            promise = SearchGroupService.tetScopeSearch(defaultSearchGroup, trackedEntityType, orgUnit, pager, sortColumn);
-	        }
-	        return promise;
+	    var promise;
+	    if (useProgramSearchScope) {
+	        promise = SearchGroupService.programScopeSearch(defaultSearchGroup, tetSearchGroup, program, trackedEntityType, orgUnit, { skipTotalPages: true });
+	    } else {
+	        promise = SearchGroupService.tetScopeSearch(defaultSearchGroup, trackedEntityType, orgUnit, { skipTotalPages: true });
 	    }
 	
-	    return fetch().then(function (res) {
+	    return promise.then(function (res) {
 	        if (res.status === "MATCHES") {
 	            return {
 	                potentialDuplicates: res.data,
-	                onRefetch: fetch
+	                onRefetch: res.onRefetch
 	            };
 	        }
 	        return {};
@@ -23194,6 +23202,8 @@
 
 	'use strict';
 	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
 	var trackerCapture = angular.module('trackerCapture');
 	
 	trackerCapture.controller('SearchController', ["$rootScope", "$scope", "$modal", "$location", "$filter", "$translate", "$timeout", "$q", "Paginator", "MetaDataFactory", "DateUtils", "OrgUnitFactory", "ProgramFactory", "AttributesFactory", "EntityQueryFactory", "CurrentSelection", "TEService", "SearchGroupService", "OperatorFactory", "TEIGridService", "TEIService", "AccessUtils", "TCOrgUnitService", function ($rootScope, $scope, $modal, $location, $filter, $translate, $timeout, $q, Paginator, MetaDataFactory, DateUtils, OrgUnitFactory, ProgramFactory, AttributesFactory, EntityQueryFactory, CurrentSelection, TEService, SearchGroupService, OperatorFactory, TEIGridService, TEIService, AccessUtils, TCOrgUnitService) {
@@ -23309,9 +23319,9 @@
 	            var promise;
 	            if (currentSearchScope === searchScopes.PROGRAM) {
 	                var tetSearchGroup = SearchGroupService.findValidTetSearchGroup(searchGroup, $scope.tetSearchConfig, $scope.base.attributesById);
-	                promise = SearchGroupService.programScopeSearch(searchGroup, tetSearchGroup, $scope.base.selectedProgram, $scope.trackedEntityTypes.selected, $scope.selectedOrgUnit);
+	                promise = SearchGroupService.programScopeSearch(searchGroup, tetSearchGroup, $scope.base.selectedProgram, $scope.trackedEntityTypes.selected, $scope.selectedOrgUnit, { skipTotalPages: true });
 	            } else {
-	                promise = SearchGroupService.tetScopeSearch(searchGroup, $scope.trackedEntityTypes.selected, $scope.selectedOrgUnit);
+	                promise = SearchGroupService.tetScopeSearch(searchGroup, $scope.trackedEntityTypes.selected, $scope.selectedOrgUnit, { skipTotalPages: true });
 	            }
 	
 	            return promise.then(function (res) {
@@ -23329,9 +23339,6 @@
 	                } else if (rowsCnt > 0) {
 	                    var teiList = [];
 	
-	                    angular.forEach(res.data.rows.own, function (ownTei) {
-	                        teiList.push(ownTei.id);
-	                    });
 	                    angular.forEach(res.data.rows.own, function (ownTei) {
 	                        teiList.push(ownTei.id);
 	                    });
@@ -23427,18 +23434,6 @@
 	
 	        _res.existingDuplicates = existingDuplicates;
 	
-	        var refetch;
-	        if (currentSearchScope === searchScopes.PROGRAM) {
-	            var tetSearchGroup = SearchGroupService.findValidTetSearchGroup(searchGroup, $scope.tetSearchConfig, $scope.base.attributesById);
-	            refetch = function refetch(pager) {
-	                return SearchGroupService.programScopeSearch(searchGroup, tetSearchGroup, $scope.base.selectedProgram, $scope.trackedEntityTypes.selected, $scope.selectedOrgUnit, pager);
-	            };
-	        } else {
-	            refetch = function refetch(pager) {
-	                return SearchGroupService.tetScopeSearch(searchGroup, $scope.trackedEntityTypes.selected, $scope.selectedOrgUnit, pager);
-	            };
-	        }
-	
 	        return $modal.open({
 	            templateUrl: 'components/home/search/result-modal.html',
 	            controller: ["$scope", "$modalInstance", "TEIGridService", "OrgUnitFactory", "orgUnit", "res", "refetchDataFn", "internalService", "canOpenRegistration", "TEIService", "NotificationService", function controller($scope, $modalInstance, TEIGridService, OrgUnitFactory, orgUnit, res, refetchDataFn, internalService, canOpenRegistration, TEIService, NotificationService) {
@@ -23453,7 +23448,9 @@
 	                        $scope.gridData = TEIGridService.format(orgUnit.id, res.data, false, internalService.base.optionSets, null);
 	                    }
 	                    $scope.notInSameScope = res.callingScope != res.resultScope;
-	                    $scope.pager = res.data && res.data.metaData ? res.data.metaData.pager : null;
+	                    $scope.pager = _extends({}, res.data && res.data.metaData && res.data.metaData.pager, {
+	                        skipTotalPages: true
+	                    });
 	
 	                    if (res.status === "UNIQUE") {
 	                        $scope.isUnique = true;
@@ -23528,17 +23525,27 @@
 	                };
 	
 	                $scope.refetchData = function (pager, sortColumn) {
-	                    refetchDataFn(pager, sortColumn).then(function (newRes) {
-	                        res = newRes;
-	                        loadData();
+	                    refetchDataFn(pager, sortColumn).then(function (response) {
+	                        if (response && response.rows && response.rows.length > 0) {
+	                            $scope.gridData = TEIGridService.format(orgUnit.id, response, false, internalService.base.optionSets, null);
+	                        } else {
+	                            $scope.gridData = [];
+	                        }
+	                    }).catch(function (error) {
+	                        $scope.gridData = null;
+	                        if (error && error.data && error.data.message === "maxteicountreached") {
+	                            $scope.tooManySearchResults = true;
+	                        } else {
+	                            $scope.error = true;
+	                            console.log(error);
+	                        }
 	                    });
 	                };
 	            }],
 	            resolve: {
 	                refetchDataFn: function refetchDataFn() {
-	                    return refetch;
+	                    return _res.onRefetch;
 	                },
-	
 	                orgUnit: function orgUnit() {
 	                    return $scope.selectedOrgUnit;
 	                },
@@ -39998,4 +40005,4 @@
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=app-ae84c4b4f45c4e15176a.js.map
+//# sourceMappingURL=app-7b3a52c07a3aaf3b10d9.js.map
