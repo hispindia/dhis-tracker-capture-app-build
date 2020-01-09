@@ -12678,7 +12678,7 @@
 	                $scope.pager.pageSize = 50;
 	            }
 	
-	            $scope.pager.recordsCount = $scope.data && $scope.data.rows && $scope.data.rows.own && $scope.data.rows.own.length || 0;
+	            $scope.pager.recordsCount = $scope.data && $scope.data.length || 0;
 	
 	            $scope.$watch("pager", function () {
 	                if ($scope.pager) {
@@ -12690,7 +12690,7 @@
 	            });
 	
 	            $scope.$watch("data", function () {
-	                $scope.pager.recordsCount = $scope.data && $scope.data.rows && $scope.data.rows.own && $scope.data.rows.own.length || 0;
+	                $scope.pager.recordsCount = $scope.data && $scope.data.length || 0;
 	                setGridColumns();
 	            });
 	
@@ -40070,4 +40070,4 @@
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=app-2cf6f9178929c43df487.js.map
+//# sourceMappingURL=app-3c21c25ce08e2f5d24ff.js.map
