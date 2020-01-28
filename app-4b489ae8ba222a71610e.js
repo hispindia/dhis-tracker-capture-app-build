@@ -17310,6 +17310,12 @@
 	
 	    $scope.convertISOEventDateToNepaliDate = function () {
 	        var tempEventDate = $scope.currentEvent.eventDate;
+	
+	        if (tempEventDate === undefined) {
+	            tempEventDate = $scope.currentEvent.dueDate;
+	        }
+	        //var tempDueDate = $scope.currentEvent.dueDate;
+	
 	        var nepaliConverter = new DateConverter();
 	        //nepaliConverter.setEnglishDate(tempYear, tempMonth, tempDay);
 	
@@ -42072,4 +42078,4 @@
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=app-4ed57707770a3e6d20c0.js.map
+//# sourceMappingURL=app-4b489ae8ba222a71610e.js.map
