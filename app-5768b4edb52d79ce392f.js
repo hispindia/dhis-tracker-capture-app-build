@@ -15280,11 +15280,12 @@
 	            }
 	            if ($scope.optionSets[_key].code == 'ImplementingPartner') {
 	                for (var j = 0; j < $scope.optionSets[_key].options.length; j++) {
-	                    if ($scope.optionSets[_key].options[j].id === $scope.ImplementingPartner && $scope.optionSets[_key].options[j].id !== 'NCASC') {
+	                    if ($scope.optionSets[_key].options[j].id === $scope.ImplementingPartner) {
 	                        $scope.ImplementingPartnerAttrValue = $scope.optionSets[_key].options[j].code;
-	                    } else {
-	                        $scope.ImplementingPartnerAttrValue = '';
 	                    }
+	                    //else {
+	                    //    $scope.ImplementingPartnerAttrValue = '';
+	                    //}
 	                }
 	            }
 	        }
@@ -42148,4 +42149,4 @@
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=app-dab0ac259e6f7fbe86b5.js.map
+//# sourceMappingURL=app-5768b4edb52d79ce392f.js.map
