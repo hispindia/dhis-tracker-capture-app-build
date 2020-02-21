@@ -15066,6 +15066,24 @@
 	    $rootScope.ruleeffects = {};
 	    $scope.userAuthority = AuthorityService.getUserAuthorities(SessionStorageService.get('USER_PROFILE'));
 	
+	    $scope.ImplementingAgency = '';
+	    $scope.ImplementingPartner = '';
+	    $scope.ImplementingAgencyAttrValue = '';
+	    $scope.ImplementingPartnerAttrValue = '';
+	
+	    $scope.userDetails = SessionStorageService.get('USER_PROFILE');
+	
+	    if ($scope.userDetails.attributeValues.length != 0) {
+	        for (var i = 0; i < $scope.userDetails.attributeValues.length; i++) {
+	            if ($scope.userDetails.attributeValues[i].attribute.code === 'ImplementingAgency') {
+	                $scope.ImplementingAgency = $scope.userDetails.attributeValues[i].value;
+	            }
+	            if ($scope.userDetails.attributeValues[i].attribute.code === 'ImplementingPartner') {
+	                $scope.ImplementingPartner = $scope.userDetails.attributeValues[i].value;
+	            }
+	        }
+	    }
+	
 	    $scope.attributesById = CurrentSelection.getAttributesById();
 	    $scope.optionGroupsById = CurrentSelection.getOptionGroupsById();
 	    $scope.fileNames = CurrentSelection.getFileNames();
@@ -15247,6 +15265,48 @@
 	            });
 	            CurrentSelection.setOptionSets($scope.optionSets);
 	        });
+	    }
+	
+	    $scope.optionSetDetails = CurrentSelection.getOptionSets();
+	
+	    if ($scope.optionSets.length != 0) {
+	        for (var _key in $scope.optionSets) {
+	            if ($scope.optionSets[_key].code == 'ImplementingAgency') {
+	                for (var j = 0; j < $scope.optionSets[_key].options.length; j++) {
+	                    if ($scope.optionSets[_key].options[j].id === $scope.ImplementingAgency) {
+	                        $scope.ImplementingAgencyAttrValue = $scope.optionSets[_key].options[j].code;
+	                    }
+	                }
+	            }
+	            if ($scope.optionSets[_key].code == 'ImplementingPartner') {
+	                for (var j = 0; j < $scope.optionSets[_key].options.length; j++) {
+	                    if ($scope.optionSets[_key].options[j].id === $scope.ImplementingPartner && $scope.optionSets[_key].options[j].id !== 'NCASC') {
+	                        $scope.ImplementingPartnerAttrValue = $scope.optionSets[_key].options[j].code;
+	                    } else {
+	                        $scope.ImplementingPartnerAttrValue = '';
+	                    }
+	                }
+	            }
+	        }
+	
+	        /*
+	        for( var i=0; i<$scope.optionSets.length; i++ ){
+	            if ( $scope.optionSets[i].code == 'ImplementingAgency' ){
+	                for( var j=0; j<$scope.optionSets[i].options.length; j++ ){
+	                    if ( $scope.optionSets[i].options[j].id === $scope.ImplementingAgency ){
+	                        $scope.ImplementingAgencyAttrValue = $scope.optionSets[i].options[j].code;
+	                    }
+	                }
+	            }
+	            if ( $scope.optionSets[i].code == 'ImplementingPartner' ){
+	                for( var j=0; j<$scope.optionSets[i].options.length; j++ ){
+	                    if ( $scope.optionSets[i].options[j].id === $scope.ImplementingPartner ){
+	                        $scope.ImplementingPartnerAttrValue = $scope.optionSets[i].options[j].code;
+	                    }
+	                }
+	            }
+	        }
+	        */
 	    }
 	
 	    // custom change for SAVE-CHILD Start
@@ -15494,6 +15554,14 @@
 	                    }
 	                    if (!$scope.selectedTei["uiOMHu4LtAP"] && $scope.selectedTei["uiOMHu4LtAP"] == undefined) {
 	                        $scope.selectedTei["uiOMHu4LtAP"] = $scope.fingerprintStr; //put default value on load form
+	                    }
+	
+	                    if (!$scope.selectedTei["PWdxGAN3OCD"] && $scope.selectedTei["PWdxGAN3OCD"] == undefined) {
+	                        $scope.selectedTei["PWdxGAN3OCD"] = $scope.ImplementingAgencyAttrValue; //put default value on load form
+	                    }
+	
+	                    if (!$scope.selectedTei["LmgPhZ0JTB3"] && $scope.selectedTei["LmgPhZ0JTB3"] == undefined) {
+	                        $scope.selectedTei["LmgPhZ0JTB3"] = $scope.ImplementingPartnerAttrValue; //put default value on load form
 	                    }
 	                }, 0);
 	                //custom change for SAVE-CHILD fingerPrint read end
@@ -24189,7 +24257,8 @@
 	
 	    var initPager = function initPager() {
 	        $scope.defaultRequestProps = {
-	            skipTotalPages: true
+	            //skipTotalPages: true
+	            skipTotalPages: false
 	        };
 	
 	        $scope.pager = _extends({}, $scope.defaultRequestProps, {
@@ -24485,7 +24554,8 @@
 	
 	            var config = $scope.currentTrackedEntityList.config;
 	            var promise;
-	            var program = "program=" + $scope.currentTrackedEntityList.config.program.id;
+	            //var program = "program=" + $scope.currentTrackedEntityList.config.program.id;
+	            var program = $scope.currentTrackedEntityList.config.programUrl;
 	            if ($scope.currentTrackedEntityList.type === $scope.trackedEntityListTypes.CUSTOM) {
 	                promise = TEIService.search($scope.selectedOrgUnit.id, config.ouMode.name, config.queryAndSortUrl, config.programUrl, attrIdList, false, false, format, attrNamesList, attrNamesIdMap, $scope.base.optionSets);
 	            } else {
@@ -42078,4 +42148,4 @@
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=app-4b489ae8ba222a71610e.js.map
+//# sourceMappingURL=app-dab0ac259e6f7fbe86b5.js.map
