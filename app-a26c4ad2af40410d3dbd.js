@@ -17444,7 +17444,7 @@
 	        if ($scope.dashBoardLayout.customLayout && $scope.dashBoardLayout.customLayout[$scope.selectedProgramId] && $scope.dashBoardLayout.customLayout[$scope.selectedProgramId].programStageTimeLineLayout && $scope.dashBoardLayout.customLayout[$scope.selectedProgramId].programStageTimeLineLayout[$scope.currentStage.id] && !$scope.lockedList[$scope.selectedProgramId]) {
 	            $scope.currentStage.timelineDataEntryMode = $scope.dashBoardLayout.customLayout[$scope.selectedProgramId].programStageTimeLineLayout[$scope.currentStage.id].timelineDataEntryMode;
 	            $scope.currentStage.tableEditMode = $scope.dashBoardLayout.customLayout[$scope.selectedProgramId].programStageTimeLineLayout[$scope.currentStage.id].tableEditMode;
-	        } else if ($scope.dashBoardLayout && $scope.dashBoardLayout.defaultLayout[$scope.selectedProgramId] && $scope.dashBoardLayout.defaultLayout[$scope.selectedProgramId].programStageTimeLineLayout && $scope.dashBoardLayout.defaultLayout[$scope.selectedProgramId].programStageTimeLineLayout[$scope.currentStage.id] || $scope.lockedList[$scope.selectedProgramId]) {
+	        } else if ($scope.dashBoardLayout && $scope.dashBoardLayout.defaultLayout[$scope.selectedProgramId] && $scope.dashBoardLayout.defaultLayout[$scope.selectedProgramId].programStageTimeLineLayout && $scope.dashBoardLayout.defaultLayout[$scope.selectedProgramId].programStageTimeLineLayout[$scope.currentStage.id]) {
 	            $scope.currentStage.timelineDataEntryMode = $scope.dashBoardLayout.defaultLayout[$scope.selectedProgramId].programStageTimeLineLayout[$scope.currentStage.id].timelineDataEntryMode;
 	            $scope.currentStage.tableEditMode = $scope.dashBoardLayout.defaultLayout[$scope.selectedProgramId].programStageTimeLineLayout[$scope.currentStage.id].tableEditMode;
 	        } else {
@@ -39880,4 +39880,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-ad7cd12d8238d6aaa0c9.js.map
+//# sourceMappingURL=app-a26c4ad2af40410d3dbd.js.map
