@@ -8699,7 +8699,8 @@
 	                attributes.push({
 	                    id: grid.headers[i].name,
 	                    displayName: grid.headers[i].column,
-	                    type: grid.headers[i].type
+	                    type: grid.headers[i].type,
+	                    hideInList: grid.headers[i].hideInList
 	                });
 	            }
 	
@@ -8755,7 +8756,9 @@
 	            });
 	
 	            var len = entityList.own.length + entityList.other.length;
-	            return { headers: attributes, rows: entityList, pager: grid.metaData.pager, length: len };
+	            return { headers: attributes.filter(function (a) {
+	                    return !a.hideInList;
+	                }), rows: entityList, pager: grid.metaData.pager, length: len };
 	        },
 	        generateGridColumns: function generateGridColumns(attributes, ouMode, nonConfidential) {
 	
@@ -9723,23 +9726,16 @@
 	        return true;
 	    };
 	
-	    this.programScopeSearch = function (programSearchGroup, tetSearchGroup, program, trackedEntityType, orgUnit, pager, sortColumn) {
-	        var params = getSearchParams(programSearchGroup, program, trackedEntityType, orgUnit, pager, searchScopes.PROGRAM, function (filteredAttributes) {
-	            var programAttributes = program.programTrackedEntityAttributes;
-	            return programAttributes.map(function (programAttribute) {
-	                return programAttribute.displayInList && programAttribute.trackedEntityAttribute && programAttribute.trackedEntityAttribute.id;
-	            }).filter(function (attributeId) {
-	                return attributeId && !filteredAttributes[attributeId];
-	            }).reduce(function (acc, attributeId) {
-	                acc += "&attribute=" + attributeId;
-	                return acc;
-	            }, '');
-	        });
+	    this.programScopeSearch = function (programSearchGroup, tetSearchGroup, program, trackedEntityType, orgUnit, pager, sortColumn, onEditHeadersFromReponse) {
+	        var params = getSearchParams(programSearchGroup, program, trackedEntityType, orgUnit, pager, searchScopes.PROGRAM);
 	
 	        if (params) {
 	            var order = sortColumn && "order=" + sortColumn.id + ":" + sortColumn.direction;
 	            return TEIService.search(params.orgUnit.id, params.ouMode, order, params.programOrTETUrl, params.queryUrl, params.pager, params.paging).then(function (response) {
 	                if (response && response.rows && response.rows.length > 0) {
+	                    if (onEditHeadersFromReponse) {
+	                        response.headers = onEditHeadersFromReponse(response.headers, program.programTrackedEntityAttributes);
+	                    }
 	                    var result = { data: response, callingScope: searchScopes.PROGRAM, resultScope: searchScopes.PROGRAM };
 	                    var def = $q.defer();
 	                    if (params.uniqueSearch) {
@@ -9751,7 +9747,7 @@
 	                    return def.promise;
 	                } else {
 	                    if (tetSearchGroup) {
-	                        return tetScopeSearch(tetSearchGroup, trackedEntityType, orgUnit, pager).then(function (result) {
+	                        return tetScopeSearch(tetSearchGroup, trackedEntityType, orgUnit, pager, undefined, onEditHeadersFromReponse).then(function (result) {
 	                            result.callingScope = searchScopes.PROGRAM;
 	                            return result;
 	                        }, function () {
@@ -9778,22 +9774,15 @@
 	            return def.promise;
 	        }
 	    };
-	    var tetScopeSearch = this.tetScopeSearch = function (tetSearchGroup, trackedEntityType, orgUnit, pager, sortColumn) {
-	        var params = getSearchParams(tetSearchGroup, null, trackedEntityType, orgUnit, pager, searchScopes.TET, function (filteredAttributes) {
-	            var tetAttributes = trackedEntityType.trackedEntityTypeAttributes;
-	            return tetAttributes.map(function (tetAttribute) {
-	                return tetAttribute.displayInList && tetAttribute.trackedEntityAttribute && tetAttribute.trackedEntityAttribute.id;
-	            }).filter(function (attributeId) {
-	                return attributeId && !filteredAttributes[attributeId];
-	            }).reduce(function (acc, attributeId) {
-	                acc += "&attribute=" + attributeId;
-	                return acc;
-	            }, '');
-	        });
+	    var tetScopeSearch = this.tetScopeSearch = function (tetSearchGroup, trackedEntityType, orgUnit, pager, sortColumn, onEditHeadersFromReponse) {
+	        var params = getSearchParams(tetSearchGroup, null, trackedEntityType, orgUnit, pager, searchScopes.TET);
 	
 	        if (params) {
 	            var order = sortColumn && "order=" + sortColumn.id + ":" + sortColumn.direction;
 	            return TEIService.search(params.orgUnit.id, params.ouMode, order, params.programOrTETUrl, params.queryUrl, params.pager, params.paging).then(function (response) {
+	                if (onEditHeadersFromReponse) {
+	                    response.headers = onEditHeadersFromReponse(response.headers, trackedEntityType.trackedEntityTypeAttributes);
+	                }
 	                var result = { data: response, callingScope: searchScopes.TET, resultScope: searchScopes.TET };
 	                if (response && response.rows && response.rows.length > 0) {
 	                    if (params.uniqueSearch) {
@@ -13263,6 +13252,19 @@
 	    value: true
 	});
 	exports.processRegistration = processRegistration;
+	function showOnlyDisplayInListAttributes(headers, attributesContainer) {
+	    var attributeHeaders = headers.slice(7);
+	    attributeHeaders.forEach(function (attributeHeader) {
+	        var foundAttributeContainer = attributesContainer.find(function (attributeContainer) {
+	            return (attributeContainer.trackedEntityAttribute && attributeContainer.trackedEntityAttribute.id) === attributeHeader.name;
+	        });
+	        if (foundAttributeContainer && !foundAttributeContainer.displayInList) {
+	            attributeHeader.hideInList = true;
+	        }
+	    });
+	    return headers;
+	};
+	
 	function verifyUniqueSearchGroup(searchGroup, _ref) {
 	    var useProgramSearchScope = _ref.useProgramSearchScope,
 	        SearchGroupService = _ref.SearchGroupService,
@@ -13275,9 +13277,9 @@
 	    var promise;
 	    if (useProgramSearchScope) {
 	        var tetSearchGroup = SearchGroupService.findTetSearchGroup(searchGroup, tetSearchConfig);
-	        promise = SearchGroupService.programScopeSearch(searchGroup, tetSearchGroup, program, trackedEntityType, orgUnit);
+	        promise = SearchGroupService.programScopeSearch(searchGroup, tetSearchGroup, program, trackedEntityType, orgUnit, undefined, undefined, showOnlyDisplayInListAttributes);
 	    } else {
-	        promise = SearchGroupService.tetScopeSearch(searchGroup, trackedEntityType, orgUnit);
+	        promise = SearchGroupService.tetScopeSearch(searchGroup, trackedEntityType, orgUnit, undefined, undefined, showOnlyDisplayInListAttributes);
 	    }
 	
 	    return promise.then(function (res) {
@@ -13356,9 +13358,9 @@
 	    function fetch(pager, sortColumn) {
 	        var promise;
 	        if (useProgramSearchScope) {
-	            promise = SearchGroupService.programScopeSearch(defaultSearchGroup, tetSearchGroup, program, trackedEntityType, orgUnit, pager, sortColumn);
+	            promise = SearchGroupService.programScopeSearch(defaultSearchGroup, tetSearchGroup, program, trackedEntityType, orgUnit, pager, sortColumn, showOnlyDisplayInListAttributes);
 	        } else {
-	            promise = SearchGroupService.tetScopeSearch(defaultSearchGroup, trackedEntityType, orgUnit, pager, sortColumn);
+	            promise = SearchGroupService.tetScopeSearch(defaultSearchGroup, trackedEntityType, orgUnit, pager, sortColumn, showOnlyDisplayInListAttributes);
 	        }
 	        return promise;
 	    }
@@ -20780,12 +20782,25 @@
 	                return;
 	            }
 	
+	            var showOnlyDisplayInListAttributes = function showOnlyDisplayInListAttributes(headers, attributesContainer) {
+	                var attributeHeaders = headers.slice(7);
+	                attributeHeaders.forEach(function (attributeHeader) {
+	                    var foundAttributeContainer = attributesContainer.find(function (attributeContainer) {
+	                        return (attributeContainer.trackedEntityAttribute && attributeContainer.trackedEntityAttribute.id) === attributeHeader.name;
+	                    });
+	                    if (foundAttributeContainer && !foundAttributeContainer.displayInList) {
+	                        attributeHeader.hideInList = true;
+	                    }
+	                });
+	                return headers;
+	            };
+	
 	            var promise;
 	            if (currentSearchScope === searchScopes.PROGRAM) {
 	                var tetSearchGroup = SearchGroupService.findValidTetSearchGroup(searchGroup, $scope.tetSearchConfig, $scope.base.attributesById);
-	                promise = SearchGroupService.programScopeSearch(searchGroup, tetSearchGroup, $scope.base.selectedProgram, $scope.trackedEntityTypes.selected, $scope.selectedOrgUnit);
+	                promise = SearchGroupService.programScopeSearch(searchGroup, tetSearchGroup, $scope.base.selectedProgram, $scope.trackedEntityTypes.selected, $scope.selectedOrgUnit, undefined, undefined, showOnlyDisplayInListAttributes);
 	            } else {
-	                promise = SearchGroupService.tetScopeSearch(searchGroup, $scope.trackedEntityTypes.selected, $scope.selectedOrgUnit);
+	                promise = SearchGroupService.tetScopeSearch(searchGroup, $scope.trackedEntityTypes.selected, $scope.selectedOrgUnit, undefined, undefined, showOnlyDisplayInListAttributes);
 	            }
 	
 	            return promise.then(function (res) {
@@ -37590,4 +37605,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app-3bbd1736d6640070919f.js.map
+//# sourceMappingURL=app-f260f8cc48ca965bdc6a.js.map
