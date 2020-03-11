@@ -2403,6 +2403,7 @@
 	            variables = pushVariable(variables, 'enrollment_date', selectedEnrollment ? selectedEnrollment.enrollmentDate : '', null, 'DATE', selectedEnrollment ? selectedEnrollment.enrollmentDate ? true : false : false, 'V', '', false );
 	            variables = pushVariable(variables, 'enrollment_id', selectedEnrollment ? selectedEnrollment.enrollment : '', null, 'TEXT',  selectedEnrollment ? true : false, 'V', '', false );
 	            variables = pushVariable(variables, 'event_id', executingEvent ? executingEvent.event : '', null, 'TEXT',  executingEvent ? true : false, 'V', executingEvent ? executingEvent.eventDate : false, false);
+	            variables = pushVariable(variables, 'event_status', executingEvent ? executingEvent.status : '', null, 'TEXT',  executingEvent ? true : false, 'V', executingEvent ? executingEvent.eventDate : false, false);
 	
 	            variables = pushVariable(variables, 'incident_date', selectedEnrollment ? selectedEnrollment.incidentDate : '', null, 'DATE',  selectedEnrollment ? true : false, 'V', '', false);
 	            variables = pushVariable(variables, 'enrollment_count', selectedEnrollment ? 1 : 0, null, 'INTEGER', true, 'V', '', false);
@@ -10721,7 +10722,8 @@
 	                attributes.push({
 	                    id: grid.headers[i].name,
 	                    displayName: grid.headers[i].column,
-	                    type: grid.headers[i].type
+	                    type: grid.headers[i].type,
+	                    hideInList: grid.headers[i].hideInList
 	                });
 	            }
 	
@@ -10777,7 +10779,9 @@
 	            });
 	
 	            var len = entityList.own.length + entityList.other.length;
-	            return { headers: attributes, rows: entityList, pager: grid.metaData.pager, length: len };
+	            return { headers: attributes.filter(function (a) {
+	                    return !a.hideInList;
+	                }), rows: entityList, pager: grid.metaData.pager, length: len };
 	        },
 	        generateGridColumns: function generateGridColumns(attributes, ouMode, nonConfidential) {
 	
@@ -11742,18 +11746,8 @@
 	        return true;
 	    };
 	
-	    this.programScopeSearch = function (programSearchGroup, tetSearchGroup, program, trackedEntityType, orgUnit, pager, sortColumn) {
-	        var params = getSearchParams(programSearchGroup, program, trackedEntityType, orgUnit, pager, searchScopes.PROGRAM, function (filteredAttributes) {
-	            var programAttributes = program.programTrackedEntityAttributes;
-	            return programAttributes.map(function (programAttribute) {
-	                return programAttribute.displayInList && programAttribute.trackedEntityAttribute && programAttribute.trackedEntityAttribute.id;
-	            }).filter(function (attributeId) {
-	                return attributeId && !filteredAttributes[attributeId];
-	            }).reduce(function (acc, attributeId) {
-	                acc += "&attribute=" + attributeId;
-	                return acc;
-	            }, '');
-	        });
+	    this.programScopeSearch = function (programSearchGroup, tetSearchGroup, program, trackedEntityType, orgUnit, pager, sortColumn, onEditHeadersFromReponse) {
+	        var params = getSearchParams(programSearchGroup, program, trackedEntityType, orgUnit, pager, searchScopes.PROGRAM);
 	
 	        if (params) {
 	            var programScopeFetchAsyncFn = function programScopeFetchAsyncFn(pager, sortColumn) {
@@ -11763,7 +11757,11 @@
 	
 	            return programScopeFetchAsyncFn(params.pager, sortColumn).then(function (response) {
 	                if (response && response.rows && response.rows.length > 0) {
+	                    if (onEditHeadersFromReponse) {
+	                        response.headers = onEditHeadersFromReponse(response.headers, program.programTrackedEntityAttributes);
+	                    }
 	                    var result = { data: response, callingScope: searchScopes.PROGRAM, resultScope: searchScopes.PROGRAM, onRefetch: programScopeFetchAsyncFn };
+	
 	                    var def = $q.defer();
 	                    if (params.uniqueSearch) {
 	                        result.status = "UNIQUE";
@@ -11774,7 +11772,7 @@
 	                    return def.promise;
 	                } else {
 	                    if (tetSearchGroup) {
-	                        return tetScopeSearch(tetSearchGroup, trackedEntityType, orgUnit, pager).then(function (result) {
+	                        return tetScopeSearch(tetSearchGroup, trackedEntityType, orgUnit, pager, undefined, onEditHeadersFromReponse).then(function (result) {
 	                            result.callingScope = searchScopes.PROGRAM;
 	                            return result;
 	                        }, function () {
@@ -11801,18 +11799,8 @@
 	            return def.promise;
 	        }
 	    };
-	    var tetScopeSearch = this.tetScopeSearch = function (tetSearchGroup, trackedEntityType, orgUnit, pager, sortColumn) {
-	        var params = getSearchParams(tetSearchGroup, null, trackedEntityType, orgUnit, pager, searchScopes.TET, function (filteredAttributes) {
-	            var tetAttributes = trackedEntityType.trackedEntityTypeAttributes;
-	            return tetAttributes.map(function (tetAttribute) {
-	                return tetAttribute.displayInList && tetAttribute.trackedEntityAttribute && tetAttribute.trackedEntityAttribute.id;
-	            }).filter(function (attributeId) {
-	                return attributeId && !filteredAttributes[attributeId];
-	            }).reduce(function (acc, attributeId) {
-	                acc += "&attribute=" + attributeId;
-	                return acc;
-	            }, '');
-	        });
+	    var tetScopeSearch = this.tetScopeSearch = function (tetSearchGroup, trackedEntityType, orgUnit, pager, sortColumn, onEditHeadersFromReponse) {
+	        var params = getSearchParams(tetSearchGroup, null, trackedEntityType, orgUnit, pager, searchScopes.TET);
 	        if (params) {
 	            var tetScopeFetchAsyncFn = function tetScopeFetchAsyncFn(pager, sortColumn) {
 	                var order = sortColumn && "order=" + sortColumn.id + ":" + sortColumn.direction;
@@ -11820,6 +11808,9 @@
 	            };
 	
 	            return tetScopeFetchAsyncFn(params.pager, sortColumn).then(function (response) {
+	                if (onEditHeadersFromReponse) {
+	                    response.headers = onEditHeadersFromReponse(response.headers, trackedEntityType.trackedEntityTypeAttributes);
+	                }
 	                var result = { data: response, callingScope: searchScopes.TET, resultScope: searchScopes.TET, onRefetch: tetScopeFetchAsyncFn };
 	                if (response && response.rows && response.rows.length > 0) {
 	                    if (params.uniqueSearch) {
@@ -14541,44 +14532,44 @@
 	                                    //alert( $scope.model.savingRegistration );
 	                                    // update for PLAN for custom_id_generation
 	
-	                                    if ($scope.selectedProgram.id == "y6lXVg8TdOj" && $scope.selectedTei.KLSVjftH2xS != undefined) {
+	                                    if (($scope.selectedProgram.id == "y6lXVg8TdOj" || $scope.selectedProgram.id == "aYkLHnoPNo5") && $scope.selectedTei.KLSVjftH2xS != undefined) {
 	                                        $scope.projectDonor = $scope.selectedTei.KLSVjftH2xS;
 	                                    } else if ($scope.selectedProgram.id == "Fcyldy4VqSt" && $scope.selectedTei.o94ggG6Mhx8 != undefined) {
 	                                        $scope.projectDonor = $scope.selectedTei.o94ggG6Mhx8;
+	                                    } else if ($scope.selectedProgram.id === "VscnMM6g6Ow" && $scope.selectedTei.KLSVjftH2xS != undefined) {
+	                                        $scope.projectDonor = $scope.selectedTei.KLSVjftH2xS;
 	                                    }
-	                                    $scope.model.savingRegistration = true;
-	                                    CustomIDGenerationService.validateAndCreateCustomId($scope.tei, $scope.selectedProgram.id, $scope.attributes, destination, $scope.optionSets, $scope.attributesById, $scope.selectedEnrollment.enrollmentDate, $scope.projectDonor).then(function (customIdGeneratedResponse) {
-	                                        console.log(" 2 " + customIdGeneratedResponse);
-	                                        if (customIdGeneratedResponse.status === 'SUCCESS') {
-	                                            $timeout(function () {
-	                                                if (dhis2Events.events.length > 0) {
-	                                                    DHIS2EventFactory.create(dhis2Events).then(function () {
+	
+	                                    if ($scope.registrationMode === 'REGISTRATION') {
+	                                        $scope.model.savingRegistration = true;
+	                                        CustomIDGenerationService.validateAndCreateCustomId($scope.tei, $scope.selectedProgram.id, $scope.attributes, destination, $scope.optionSets, $scope.attributesById, $scope.selectedEnrollment.enrollmentDate, $scope.projectDonor).then(function (customIdGeneratedResponse) {
+	                                            console.log(" 2 " + customIdGeneratedResponse);
+	                                            if (customIdGeneratedResponse.status === 'SUCCESS') {
+	                                                $timeout(function () {
+	                                                    if (dhis2Events.events.length > 0) {
+	                                                        DHIS2EventFactory.create(dhis2Events).then(function () {
+	                                                            notifyRegistrtaionCompletion(destination, $scope.tei.trackedEntityInstance);
+	                                                            $scope.model.savingRegistration = false;
+	                                                        });
+	                                                    } else {
 	                                                        notifyRegistrtaionCompletion(destination, $scope.tei.trackedEntityInstance);
 	                                                        $scope.model.savingRegistration = false;
-	                                                    });
-	                                                } else {
-	                                                    notifyRegistrtaionCompletion(destination, $scope.tei.trackedEntityInstance);
-	                                                    $scope.model.savingRegistration = false;
-	                                                }
+	                                                    }
+	                                                });
+	                                            } else {
+	                                                $scope.model.savingRegistration = true;
+	                                            }
+	                                        });
+	                                    } else {
+	                                        $scope.model.savingRegistration = false;
+	                                        if (dhis2Events.events.length > 0) {
+	                                            DHIS2EventFactory.create(dhis2Events).then(function () {
+	                                                notifyRegistrtaionCompletion(destination, $scope.tei.trackedEntityInstance);
 	                                            });
 	                                        } else {
-	                                            $scope.model.savingRegistration = true;
-	                                        }
-	                                    });
-	
-	                                    // update for PLAN for custom_id_generation  id close
-	
-	                                    /*
-	                                    if (dhis2Events.events.length > 0) {
-	                                        DHIS2EventFactory.create(dhis2Events).then(function () {
-	                                            //alert( $scope.model.savingRegistration );
 	                                            notifyRegistrtaionCompletion(destination, $scope.tei.trackedEntityInstance);
-	                                        });
+	                                        }
 	                                    }
-	                                    else {
-	                                        notifyRegistrtaionCompletion(destination, $scope.tei.trackedEntityInstance);
-	                                    }
-	                                    */
 	                                } else {
 	                                    //enrollment has failed
 	                                    $scope.model.savingRegistration = false;
@@ -15438,6 +15429,19 @@
 	    value: true
 	});
 	exports.processRegistration = processRegistration;
+	function showOnlyDisplayInListAttributes(headers, attributesContainer) {
+	    var attributeHeaders = headers.slice(7);
+	    attributeHeaders.forEach(function (attributeHeader) {
+	        var foundAttributeContainer = attributesContainer.find(function (attributeContainer) {
+	            return (attributeContainer.trackedEntityAttribute && attributeContainer.trackedEntityAttribute.id) === attributeHeader.name;
+	        });
+	        if (foundAttributeContainer && !foundAttributeContainer.displayInList) {
+	            attributeHeader.hideInList = true;
+	        }
+	    });
+	    return headers;
+	};
+	
 	function verifyUniqueSearchGroup(searchGroup, _ref) {
 	    var useProgramSearchScope = _ref.useProgramSearchScope,
 	        SearchGroupService = _ref.SearchGroupService,
@@ -15450,9 +15454,9 @@
 	    var promise;
 	    if (useProgramSearchScope) {
 	        var tetSearchGroup = SearchGroupService.findTetSearchGroup(searchGroup, tetSearchConfig);
-	        promise = SearchGroupService.programScopeSearch(searchGroup, tetSearchGroup, program, trackedEntityType, orgUnit);
+	        promise = SearchGroupService.programScopeSearch(searchGroup, tetSearchGroup, program, trackedEntityType, orgUnit, undefined, undefined, showOnlyDisplayInListAttributes);
 	    } else {
-	        promise = SearchGroupService.tetScopeSearch(searchGroup, trackedEntityType, orgUnit);
+	        promise = SearchGroupService.tetScopeSearch(searchGroup, trackedEntityType, orgUnit, undefined, undefined, showOnlyDisplayInListAttributes);
 	    }
 	
 	    return promise.then(function (res) {
@@ -15530,9 +15534,9 @@
 	
 	    var promise;
 	    if (useProgramSearchScope) {
-	        promise = SearchGroupService.programScopeSearch(defaultSearchGroup, tetSearchGroup, program, trackedEntityType, orgUnit, { skipTotalPages: true });
+	        promise = SearchGroupService.programScopeSearch(defaultSearchGroup, tetSearchGroup, program, trackedEntityType, orgUnit, { skipTotalPages: true }, undefined, showOnlyDisplayInListAttributes);
 	    } else {
-	        promise = SearchGroupService.tetScopeSearch(defaultSearchGroup, trackedEntityType, orgUnit, { skipTotalPages: true });
+	        promise = SearchGroupService.tetScopeSearch(defaultSearchGroup, trackedEntityType, orgUnit, { skipTotalPages: true }, undefined, showOnlyDisplayInListAttributes);
 	    }
 	
 	    return promise.then(function (res) {
@@ -17550,7 +17554,7 @@
 	        if ($scope.dashBoardLayout.customLayout && $scope.dashBoardLayout.customLayout[$scope.selectedProgramId] && $scope.dashBoardLayout.customLayout[$scope.selectedProgramId].programStageTimeLineLayout && $scope.dashBoardLayout.customLayout[$scope.selectedProgramId].programStageTimeLineLayout[$scope.currentStage.id] && !$scope.lockedList[$scope.selectedProgramId]) {
 	            $scope.currentStage.timelineDataEntryMode = $scope.dashBoardLayout.customLayout[$scope.selectedProgramId].programStageTimeLineLayout[$scope.currentStage.id].timelineDataEntryMode;
 	            $scope.currentStage.tableEditMode = $scope.dashBoardLayout.customLayout[$scope.selectedProgramId].programStageTimeLineLayout[$scope.currentStage.id].tableEditMode;
-	        } else if ($scope.dashBoardLayout && $scope.dashBoardLayout.defaultLayout[$scope.selectedProgramId] && $scope.dashBoardLayout.defaultLayout[$scope.selectedProgramId].programStageTimeLineLayout && $scope.dashBoardLayout.defaultLayout[$scope.selectedProgramId].programStageTimeLineLayout[$scope.currentStage.id] || $scope.lockedList[$scope.selectedProgramId]) {
+	        } else if ($scope.dashBoardLayout && $scope.dashBoardLayout.defaultLayout[$scope.selectedProgramId] && $scope.dashBoardLayout.defaultLayout[$scope.selectedProgramId].programStageTimeLineLayout && $scope.dashBoardLayout.defaultLayout[$scope.selectedProgramId].programStageTimeLineLayout[$scope.currentStage.id]) {
 	            $scope.currentStage.timelineDataEntryMode = $scope.dashBoardLayout.defaultLayout[$scope.selectedProgramId].programStageTimeLineLayout[$scope.currentStage.id].timelineDataEntryMode;
 	            $scope.currentStage.tableEditMode = $scope.dashBoardLayout.defaultLayout[$scope.selectedProgramId].programStageTimeLineLayout[$scope.currentStage.id].tableEditMode;
 	        } else {
@@ -22863,7 +22867,8 @@
 	
 	    var initPager = function initPager() {
 	        $scope.defaultRequestProps = {
-	            skipTotalPages: true
+	            //skipTotalPages: true
+	            skipTotalPages: false
 	        };
 	
 	        $scope.pager = _extends({}, $scope.defaultRequestProps, {
@@ -23159,7 +23164,8 @@
 	
 	            var config = $scope.currentTrackedEntityList.config;
 	            var promise;
-	            var program = "program=" + $scope.currentTrackedEntityList.config.program.id;
+	            //var program = "program=" + $scope.currentTrackedEntityList.config.program.id;
+	            var program = $scope.currentTrackedEntityList.config.programUrl;
 	            if ($scope.currentTrackedEntityList.type === $scope.trackedEntityListTypes.CUSTOM) {
 	                promise = TEIService.search($scope.selectedOrgUnit.id, config.ouMode.name, config.queryAndSortUrl, config.programUrl, attrIdList, false, false, format, attrNamesList, attrNamesIdMap, $scope.base.optionSets);
 	            } else {
@@ -23344,12 +23350,25 @@
 	                return;
 	            }
 	
+	            var showOnlyDisplayInListAttributes = function showOnlyDisplayInListAttributes(headers, attributesContainer) {
+	                var attributeHeaders = headers.slice(7);
+	                attributeHeaders.forEach(function (attributeHeader) {
+	                    var foundAttributeContainer = attributesContainer.find(function (attributeContainer) {
+	                        return (attributeContainer.trackedEntityAttribute && attributeContainer.trackedEntityAttribute.id) === attributeHeader.name;
+	                    });
+	                    if (foundAttributeContainer && !foundAttributeContainer.displayInList) {
+	                        attributeHeader.hideInList = true;
+	                    }
+	                });
+	                return headers;
+	            };
+	
 	            var promise;
 	            if (currentSearchScope === searchScopes.PROGRAM) {
 	                var tetSearchGroup = SearchGroupService.findValidTetSearchGroup(searchGroup, $scope.tetSearchConfig, $scope.base.attributesById);
-	                promise = SearchGroupService.programScopeSearch(searchGroup, tetSearchGroup, $scope.base.selectedProgram, $scope.trackedEntityTypes.selected, $scope.selectedOrgUnit, { skipTotalPages: true });
+	                promise = SearchGroupService.programScopeSearch(searchGroup, tetSearchGroup, $scope.base.selectedProgram, $scope.trackedEntityTypes.selected, $scope.selectedOrgUnit, { skipTotalPages: true }, undefined, showOnlyDisplayInListAttributes);
 	            } else {
-	                promise = SearchGroupService.tetScopeSearch(searchGroup, $scope.trackedEntityTypes.selected, $scope.selectedOrgUnit, { skipTotalPages: true });
+	                promise = SearchGroupService.tetScopeSearch(searchGroup, $scope.trackedEntityTypes.selected, $scope.selectedOrgUnit, { skipTotalPages: true }, undefined, showOnlyDisplayInListAttributes);
 	            }
 	
 	            return promise.then(function (res) {
@@ -43864,4 +43883,4 @@
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=app-c84c5c85d6fb957bcdce.js.map
+//# sourceMappingURL=app-7da73e3eec1843c86c73.js.map
