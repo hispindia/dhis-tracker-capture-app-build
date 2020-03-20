@@ -2391,6 +2391,7 @@
 	            variables = pushVariable(variables, 'enrollment_date', selectedEnrollment ? selectedEnrollment.enrollmentDate : '', null, 'DATE', selectedEnrollment ? selectedEnrollment.enrollmentDate ? true : false : false, 'V', '', false );
 	            variables = pushVariable(variables, 'enrollment_id', selectedEnrollment ? selectedEnrollment.enrollment : '', null, 'TEXT',  selectedEnrollment ? true : false, 'V', '', false );
 	            variables = pushVariable(variables, 'event_id', executingEvent ? executingEvent.event : '', null, 'TEXT',  executingEvent ? true : false, 'V', executingEvent ? executingEvent.eventDate : false, false);
+	            variables = pushVariable(variables, 'event_status', executingEvent ? executingEvent.status : '', null, 'TEXT',  executingEvent ? true : false, 'V', executingEvent ? executingEvent.eventDate : false, false);
 	
 	            variables = pushVariable(variables, 'incident_date', selectedEnrollment ? selectedEnrollment.incidentDate : '', null, 'DATE',  selectedEnrollment ? true : false, 'V', '', false);
 	            variables = pushVariable(variables, 'enrollment_count', selectedEnrollment ? 1 : 0, null, 'INTEGER', true, 'V', '', false);
@@ -8360,7 +8361,7 @@
 	angular.module('d2Templates', []).run(['$templateCache', function($templateCache) {$templateCache.put('./templates/age-input.html','<div ng-form="ageForm">\n    <div class="input-group" style="width: 100%; padding-top: 5px;">\n        <input type="text" \n               d2-date name="dob" \n               d2-date-validator\n               ng-model="age.dob"\n               blur-or-change="saveDOB()"\n               ng-required="d2Required"\n               ng-disabled="d2Disabled"\n               ng-attr-placeholder="{{\'dob\'| translate}}" \n               ng-attr-title="{{\'dob\'| translate}}" \n               class="form-control no-right-radius"\n               ng-class="{\'input-success\': d2AgeSaved}"/>\n        <span class="input-group-btn empty-span"></span>\n        <span class="has-float-label">\n            <input type="number" \n                   name="years"\n                   ng-model="age.years" \n                   ng-model-options="{updateOn: \'blur\'}"\n                   ng-change="saveAge()"\n                   ng-disabled="d2Disabled"\n                   d2-number-validator\n                   number-type="INTEGER_ZERO_OR_POSITIVE"\n                   ng-attr-placeholder="{{\'years\'| translate}}"\n                   ng-attr-title="{{\'years\'| translate}}" \n                   class="form-control no-right-radius no-left-radius"\n                   ng-class="{\'input-success\': d2AgeSaved}"\n                   id="year"/>\n            <label for="year">{{\'years\'| translate}}</label>\n        </span>\n        <span class="input-group-btn empty-span"></span>\n        <span class="has-float-label">\n            <input type="number" \n                   name="months"\n                   ng-model="age.months" \n                   ng-model-options="{updateOn: \'blur\'}"\n                   ng-change="saveAge()"\n                   ng-disabled="d2Disabled"\n                   d2-number-validator\n                   number-type="INTEGER_ZERO_OR_POSITIVE"\n                   ng-attr-placeholder="{{\'months\'| translate}}"\n                   ng-attr-title="{{\'months\'| translate}}" \n                   class="form-control no-right-radius no-left-radius"\n                   ng-class="{\'input-success\': d2AgeSaved}"\n                   id="month"/>\n            <label for="month">{{\'months\'| translate}}</label>\n        </span>\n        <span class="input-group-btn empty-span"></span>\n        <span class="has-float-label">\n            <input type="number" \n                   name="days"\n                   ng-model="age.days" \n                   ng-model-options="{updateOn: \'blur\'}"\n                   ng-change="saveAge()"\n                   ng-disabled="d2Disabled"\n                   d2-number-validator\n                   number-type="INTEGER_ZERO_OR_POSITIVE"\n                   ng-attr-placeholder="{{\'days\'| translate}}"\n                   ng-attr-title="{{\'days\'| translate}}" \n                   class="form-control no-left-radius no-right-radius"\n                   ng-class="{\'input-success\': d2AgeSaved}"\n                   id="day"/>\n            <label for="day">{{\'days\'| translate}}</label>\n        </span>\n        <span class="input-group-btn"> \n            <button class="btn btn-danger hideInPrint trim" type="button" ng-attr-title="{{\'remove\'| translate}}" ng-click="removeAge()" ng-disabled="!age.dob || d2Disabled"> \n                <i class="fa fa-trash-o"></i> \n            </button>\n        </span>\n    </div>\n    <div ng-messages="ageForm.dob.$error" ng-if="ageInteracted(ageForm.dob, outerDataEntryForm)" class="required" ng-messages-include="./templates/error-messages.html"></div>\n    <div ng-messages="ageForm.years.$error" ng-if="ageInteracted(ageForm.years, outerDataEntryForm)" class="required" ng-messages-include="./templates/error-messages.html"></div>\n    <div ng-messages="ageForm.months.$error" ng-if="ageInteracted(ageForm.months, outerDataEntryForm)" class="required" ng-messages-include="./templates/error-messages.html"></div>\n    <div ng-messages="ageForm.days.$error" ng-if="ageInteracted(ageForm.days, outerDataEntryForm)" class="required" ng-messages-include="./templates/error-messages.html"></div>\n</div>');
 	$templateCache.put('./templates/assign-user-input.html','<div class="optionListContainerAssignUser">\n    <div ng-if="d2Disabled"><input class="form-control" ng-model="d2Model.assignedUserUsername" disabled></div>\n    <div ng-click="toggleOptionList()" ng-if="!d2Disabled" class="optionListInput" ng-class="{ \'optionListInputOpen\': optionListOpen, \'input-success\': d2Saved }">\n        <div class="optionListInputText" >\n            <span ng-if="d2Model.assignedUser">{{userDisplayName}}</span>\n            <span ng-if="!d2Model.assignedUser" class="optionListInputTextPlaceholder">{{\'select_or_search\' | translate}}</span>\n        </div>\n        <div class="optionListInputDelete" ng-click="removeSelectedOption($event)"><i class="fa fa-times" ng-if="d2Model.assignedUser"></i></div>\n        <div class="optionListInputToggle"><i class="fa fa-caret-up" ng-show="optionListOpen"></i><i class="fa fa-caret-down" ng-hide="optionListOpen"></i></div>\n    </div>\n    <div ng-if="optionListOpen" class="optionListPopup">\n        <div class="optionListSearchInputContainer">\n            <input type="text" class="form-control" ng-model="searchText" ng-change="search(searchText)" ng-model-options="{ debounce: 600 }" placeholder="Search..."/>\n        </div>\n        <div vs-repeat class="optionListVsRepeater">\n            <div ng-repeat="option in displayOptions track by option.userid" class="optionListItem" ng-click="selectOption(option)" ng-class="{ \'optionListItemSelected\': (option.userid===d2Model.assignedUser)}">\n                {{getNameForUserOject(option)}}\n            </div>\n        </div>\n    </div>\n</div>\n');
 	$templateCache.put('./templates/audit-history.html','<div class="modal-header">\n    <h2>{{\'audit_history\'| translate}}</h2>\n</div>\n<div class="modal-body page" ng-class="{\'waiting-box\':model.showStatus === \'waiting\'}">\n    <div ng-if="model.showStatus === \'data_available\'">\n        <span class="row">\n            <input class="form-control col-md-7" ng-model="model.searchText" ng-attr-placeholder="{{model.searchPlaceholder}}" type="search" />\n        </span>\n        <div class="scroll">\n            <table class="listTable dhis2-table-striped-border">\n                <thead>\n                    <tr>\n                        <th ng-repeat="col in model.auditColumns">\n                            <span ng-switch="col">\n                                <span ng-switch-when="name">\n                                    {{model.name}}\n                                </span>\n                                <span ng-switch-default>\n                                \t{{col | translate}}\n                                </span>                                    \n                            </span>\n                        </th>\n                    </tr>\n                </thead>\n                <tbody ng-repeat="row in model.uniqueRows">\n                    <tr ng-repeat="item in model.itemList | orderBy: \'created\':reverse | filter: {name: row} | filter: {name: model.searchText}" ng-init="rowIndex = $index">\n                        <td ng-repeat="col in model.auditColumns"\n                            rowspan="{{(model.itemList | filter: {name: row} | filter: model.searchText).length}}"\n                            ng-if="col === \'name\' && rowIndex === 0">\n                            {{item[col]}}\n                        </td>\n                        <td class="wrap-text" ng-repeat="col in model.auditColumns" ng-if="col !== \'name\'">\n                        \t<span ng-if="col === \'value\'">\n                        \t\t<span ng-switch="item.valueType">\n\t\t\t\t                    <span ng-switch-when="BOOLEAN">\n\t\t\t\t                        <span ng-if="item[col] === \'true\'">{{\'yes\'| translate}}</span>\n\t\t\t\t                        <span ng-if="item[col] === \'false\'">{{ \'no\' | translate}}</span>\n\t\t\t\t                    </span>\n\t\t\t\t                    <span ng-switch-when="TRUE_ONLY">\n\t\t\t\t                        <span ng-if="item[col]">\n\t\t\t\t                            <i class="fa fa-check"></i>\n\t\t\t\t                        </span>\n\t\t\t\t                    </span>\n\t\t\t\t                    <span ng-switch-default>{{item[col]}}</span>\n\t\t\t\t                </span>\n                        \t</span>\n                        \t<span ng-if="col !== \'value\'">\n                        \t\t{{item[col]}}\n                        \t</span>\n                        \t                            \n                        </td>\n                    </tr>\n                </tbody>\n            </table>\n        </div>\n    </div>\n    <div ng-if="model.showStatus === \'data_unavailable\'">\n        <div class="alert alert-warning">{{\'audit_history_unavailable\'| translate}}</div>\n    </div>\n    <div ng-if="model.showStatus === \'waiting\'">\n        <i class="fa fa-spinner fa-spin audit-spinner"></i>\n        <div class="loading-audit-data">{{\'loading-audit-data\' | translate}}</div>\n    </div>\n</div>\n<div class="modal-footer" ng-if="model.showStatus !== \'waiting\'">\n    <button type="button" class="btn btn-default" data-ng-click="close()">{{\'close\'| translate}}</button>\n</div>');
-	$templateCache.put('./templates/coordinate-input.html','<div  ng-form="coordinateForm">\n    <div class="input-group">\n        <input type="number" \n               ng-model="coordinateObject.coordinate.latitude" \n               ng-attr-placeholder="{{\'latitude\'| translate}}"\n               ng-class="{\'input-success\': d2LatSaved}"\n               name="latitude" \n               d2-coordinate-validator\n               ng-required="d2Required"\n               ng-disabled="d2Disabled"\n               ng-blur="saveD2Coordinate()"\n               class="form-control no-right-radius"/>\n        <span class="input-group-btn empty-span"></span>\n        <input type="number" \n               ng-model="coordinateObject.coordinate.longitude" \n               ng-attr-placeholder="{{\'longitude\'| translate}}"\n               ng-class="{\'input-success\': d2LngSaved}"\n               name="longitude" \n               d2-coordinate-validator\n               ng-required="d2Required"\n               ng-disabled="d2Disabled"\n               ng-blur="saveD2Coordinate()"\n               class="form-control no-left-radius no-right-radius"/>\n        <span class="input-group-btn hideInPrint">\n            <button class="btn btn-grp trim hideInPrint" \n                    type="button"\n                    ng-disabled="{{d2Disabled}}"\n                    ng-attr-title="{{\'get_from_map\'| translate}}"\n                    ng-click="showMap(coordinateObject)"> \n                <i class="fa fa-map-marker"></i>                             \n            </button>\n        </span>    \n    </div>\n    <div ng-messages="coordinateForm.latitude.$error" ng-if="coordinateInteracted(coordinateForm.latitude)" class="required" ng-messages-include="./templates/error-messages.html"></div>\n    <div ng-messages="coordinateForm.longitude.$error" ng-if="coordinateInteracted(coordinateForm.longitude)" class="required" ng-messages-include="./templates/error-messages.html"></div>\n</div>');
+	$templateCache.put('./templates/coordinate-input.html','<div  ng-form="coordinateForm">\n    <div class="input-group">\n        <input type="number" \n               ng-model="coordinateObject.coordinate.latitude" \n               ng-attr-placeholder="{{\'latitude\'| translate}}"\n               ng-class="{\'input-success\': d2LatSaved}"\n               name="latitude" \n               d2-coordinate-validator\n               ng-required="d2Required"\n               ng-disabled="d2Disabled"\n               ng-blur="saveD2Coordinate()"\n               class="form-control no-right-radius"/>\n        <span class="input-group-btn empty-span"></span>\n        <input type="number" \n               ng-model="coordinateObject.coordinate.longitude" \n               ng-attr-placeholder="{{\'longitude\'| translate}}"\n               ng-class="{\'input-success\': d2LngSaved}"\n               name="longitude" \n               d2-coordinate-validator\n               ng-required="d2Required"\n               ng-disabled="d2Disabled"\n               ng-blur="saveD2Coordinate()"\n               class="form-control no-left-radius no-right-radius"/>\n        <span class="input-group-btn hideInPrint">\n            <button class="btn btn-grp trim hideInPrint" \n                    type="button"\n                    ng-disabled="d2Disabled"\n                    ng-attr-title="{{\'get_from_map\'| translate}}"\n                    ng-click="showMap(coordinateObject)"> \n                <i class="fa fa-map-marker"></i>                             \n            </button>\n        </span>    \n    </div>\n    <div ng-messages="coordinateForm.latitude.$error" ng-if="coordinateInteracted(coordinateForm.latitude)" class="required" ng-messages-include="./templates/error-messages.html"></div>\n    <div ng-messages="coordinateForm.longitude.$error" ng-if="coordinateInteracted(coordinateForm.longitude)" class="required" ng-messages-include="./templates/error-messages.html"></div>\n</div>');
 	$templateCache.put('./templates/custom-dataentry-form.html','<d2-custom-data-entry-form custom-data-entry-form="customDataEntryForm"></d2-custom-data-entry-form>');
 	$templateCache.put('./templates/custom-registration-form.html','<d2-custom-registration-form custom-registration-form="customRegistrationForm"></d2-custom-registration-form>');
 	$templateCache.put('./templates/date-time-input.html','<div class="hideInPrint input-group" ng-init="dateTimeInit()">\n        <input type="text"\n               ng-attr-placeholder="{{datetimeDatePlaceholder}}"\n               class="form-control no-right-radius ng-valid-date-validator"\n               ng-class="datetimeUseNotification ? getInputNotifcationClass(datetimeModelId, datetimeModel) : \'\'"\n               d2-date\n               d2-date-validator\n               max-date="datetimeMaxDate"\n               ng-model="dateTime.date"\n               ng-required="datetimeRequired"\n               ng-disabled="datetimeDisabled"\n               blur-or-change="saveDateTime(true, \'foo\')"\n               name="foo">\n        <span class="input-group-btn empty-span"></span>\n        <input type="text"\n               ng-attr-placeholder="{{\'hours_and_minutes\' | translate}}"\n               class="form-control no-left-radius no-right-radius"\n               ng-class="datetimeUseNotification ? getInputNotifcationClass(datetimeModelId, datetimeModel) : \'\'"\n               d2-time-validator\n               d2-time-parser\n               ng-model="dateTime.time"\n               ng-required="datetimeRequired"\n               ng-disabled="datetimeDisabled"\n               ng-change="autoTimeFormat()"\n               ng-blur="saveDateTime(false, \'foo2\')"\n               name="foo2">\n        <span class="input-group-btn hideInPrint">\n            <button class="btn btn-danger hideInPrint trim" type="button" ng-disabled="datetimeDisabled" ng-attr-title="Clear" ng-click="clearDateTime()"> \n                <i class="fa fa-trash-o"></i>                             \n            </button>\n        </span>\n</div>\n\n<div class="not-for-screen">\n    <input type="text" class="form-control" ng-attr-value={{datetimeModel[datetimeModelId]}}>\n</div>\n\n<div ng-messages="datetimeField.foo2.$error" ng-if="interacted(datetimeField.foo2, datetimeOuterform)" class="required">\n    <span ng-message="timeValidator">{{\'time_error\' | translate}}</span>\n</div>');
@@ -11716,7 +11717,8 @@
 	                attributes.push({
 	                    id: grid.headers[i].name,
 	                    displayName: grid.headers[i].column,
-	                    type: grid.headers[i].type
+	                    type: grid.headers[i].type,
+	                    hideInList: grid.headers[i].hideInList
 	                });
 	            }
 	
@@ -11772,7 +11774,9 @@
 	            });
 	
 	            var len = entityList.own.length + entityList.other.length;
-	            return { headers: attributes, rows: entityList, pager: grid.metaData.pager, length: len };
+	            return { headers: attributes.filter(function (a) {
+	                    return !a.hideInList;
+	                }), rows: entityList, pager: grid.metaData.pager, length: len };
 	        },
 	        generateGridColumns: function generateGridColumns(attributes, ouMode, nonConfidential) {
 	
@@ -12737,18 +12741,8 @@
 	        return true;
 	    };
 	
-	    this.programScopeSearch = function (programSearchGroup, tetSearchGroup, program, trackedEntityType, orgUnit, pager, sortColumn) {
-	        var params = getSearchParams(programSearchGroup, program, trackedEntityType, orgUnit, pager, searchScopes.PROGRAM, function (filteredAttributes) {
-	            var programAttributes = program.programTrackedEntityAttributes;
-	            return programAttributes.map(function (programAttribute) {
-	                return programAttribute.displayInList && programAttribute.trackedEntityAttribute && programAttribute.trackedEntityAttribute.id;
-	            }).filter(function (attributeId) {
-	                return attributeId && !filteredAttributes[attributeId];
-	            }).reduce(function (acc, attributeId) {
-	                acc += "&attribute=" + attributeId;
-	                return acc;
-	            }, '');
-	        });
+	    this.programScopeSearch = function (programSearchGroup, tetSearchGroup, program, trackedEntityType, orgUnit, pager, sortColumn, onEditHeadersFromReponse) {
+	        var params = getSearchParams(programSearchGroup, program, trackedEntityType, orgUnit, pager, searchScopes.PROGRAM);
 	
 	        if (params) {
 	            var programScopeFetchAsyncFn = function programScopeFetchAsyncFn(pager, sortColumn) {
@@ -12758,7 +12752,11 @@
 	
 	            return programScopeFetchAsyncFn(params.pager, sortColumn).then(function (response) {
 	                if (response && response.rows && response.rows.length > 0) {
+	                    if (onEditHeadersFromReponse) {
+	                        response.headers = onEditHeadersFromReponse(response.headers, program.programTrackedEntityAttributes);
+	                    }
 	                    var result = { data: response, callingScope: searchScopes.PROGRAM, resultScope: searchScopes.PROGRAM, onRefetch: programScopeFetchAsyncFn };
+	
 	                    var def = $q.defer();
 	                    if (params.uniqueSearch) {
 	                        result.status = "UNIQUE";
@@ -12769,7 +12767,7 @@
 	                    return def.promise;
 	                } else {
 	                    if (tetSearchGroup) {
-	                        return tetScopeSearch(tetSearchGroup, trackedEntityType, orgUnit, pager).then(function (result) {
+	                        return tetScopeSearch(tetSearchGroup, trackedEntityType, orgUnit, pager, undefined, onEditHeadersFromReponse).then(function (result) {
 	                            result.callingScope = searchScopes.PROGRAM;
 	                            return result;
 	                        }, function () {
@@ -12796,18 +12794,8 @@
 	            return def.promise;
 	        }
 	    };
-	    var tetScopeSearch = this.tetScopeSearch = function (tetSearchGroup, trackedEntityType, orgUnit, pager, sortColumn) {
-	        var params = getSearchParams(tetSearchGroup, null, trackedEntityType, orgUnit, pager, searchScopes.TET, function (filteredAttributes) {
-	            var tetAttributes = trackedEntityType.trackedEntityTypeAttributes;
-	            return tetAttributes.map(function (tetAttribute) {
-	                return tetAttribute.displayInList && tetAttribute.trackedEntityAttribute && tetAttribute.trackedEntityAttribute.id;
-	            }).filter(function (attributeId) {
-	                return attributeId && !filteredAttributes[attributeId];
-	            }).reduce(function (acc, attributeId) {
-	                acc += "&attribute=" + attributeId;
-	                return acc;
-	            }, '');
-	        });
+	    var tetScopeSearch = this.tetScopeSearch = function (tetSearchGroup, trackedEntityType, orgUnit, pager, sortColumn, onEditHeadersFromReponse) {
+	        var params = getSearchParams(tetSearchGroup, null, trackedEntityType, orgUnit, pager, searchScopes.TET);
 	        if (params) {
 	            var tetScopeFetchAsyncFn = function tetScopeFetchAsyncFn(pager, sortColumn) {
 	                var order = sortColumn && "order=" + sortColumn.id + ":" + sortColumn.direction;
@@ -12815,6 +12803,9 @@
 	            };
 	
 	            return tetScopeFetchAsyncFn(params.pager, sortColumn).then(function (response) {
+	                if (onEditHeadersFromReponse) {
+	                    response.headers = onEditHeadersFromReponse(response.headers, trackedEntityType.trackedEntityTypeAttributes);
+	                }
 	                var result = { data: response, callingScope: searchScopes.TET, resultScope: searchScopes.TET, onRefetch: tetScopeFetchAsyncFn };
 	                if (response && response.rows && response.rows.length > 0) {
 	                    if (params.uniqueSearch) {
@@ -15274,14 +15265,14 @@
 	            if ($scope.optionSets[_key].code == 'ImplementingAgency') {
 	                for (var j = 0; j < $scope.optionSets[_key].options.length; j++) {
 	                    if ($scope.optionSets[_key].options[j].id === $scope.ImplementingAgency) {
-	                        $scope.ImplementingAgencyAttrValue = $scope.optionSets[_key].options[j].code;
+	                        $scope.ImplementingAgencyAttrValue = $scope.optionSets[_key].options[j].displayName;
 	                    }
 	                }
 	            }
 	            if ($scope.optionSets[_key].code == 'ImplementingPartner') {
 	                for (var j = 0; j < $scope.optionSets[_key].options.length; j++) {
 	                    if ($scope.optionSets[_key].options[j].id === $scope.ImplementingPartner) {
-	                        $scope.ImplementingPartnerAttrValue = $scope.optionSets[_key].options[j].code;
+	                        $scope.ImplementingPartnerAttrValue = $scope.optionSets[_key].options[j].displayName;
 	                    }
 	                    //else {
 	                    //    $scope.ImplementingPartnerAttrValue = '';
@@ -16640,6 +16631,19 @@
 	    value: true
 	});
 	exports.processRegistration = processRegistration;
+	function showOnlyDisplayInListAttributes(headers, attributesContainer) {
+	    var attributeHeaders = headers.slice(7);
+	    attributeHeaders.forEach(function (attributeHeader) {
+	        var foundAttributeContainer = attributesContainer.find(function (attributeContainer) {
+	            return (attributeContainer.trackedEntityAttribute && attributeContainer.trackedEntityAttribute.id) === attributeHeader.name;
+	        });
+	        if (foundAttributeContainer && !foundAttributeContainer.displayInList) {
+	            attributeHeader.hideInList = true;
+	        }
+	    });
+	    return headers;
+	};
+	
 	function verifyUniqueSearchGroup(searchGroup, _ref) {
 	    var useProgramSearchScope = _ref.useProgramSearchScope,
 	        SearchGroupService = _ref.SearchGroupService,
@@ -16652,9 +16656,9 @@
 	    var promise;
 	    if (useProgramSearchScope) {
 	        var tetSearchGroup = SearchGroupService.findTetSearchGroup(searchGroup, tetSearchConfig);
-	        promise = SearchGroupService.programScopeSearch(searchGroup, tetSearchGroup, program, trackedEntityType, orgUnit);
+	        promise = SearchGroupService.programScopeSearch(searchGroup, tetSearchGroup, program, trackedEntityType, orgUnit, undefined, undefined, showOnlyDisplayInListAttributes);
 	    } else {
-	        promise = SearchGroupService.tetScopeSearch(searchGroup, trackedEntityType, orgUnit);
+	        promise = SearchGroupService.tetScopeSearch(searchGroup, trackedEntityType, orgUnit, undefined, undefined, showOnlyDisplayInListAttributes);
 	    }
 	
 	    return promise.then(function (res) {
@@ -16732,9 +16736,9 @@
 	
 	    var promise;
 	    if (useProgramSearchScope) {
-	        promise = SearchGroupService.programScopeSearch(defaultSearchGroup, tetSearchGroup, program, trackedEntityType, orgUnit, { skipTotalPages: true });
+	        promise = SearchGroupService.programScopeSearch(defaultSearchGroup, tetSearchGroup, program, trackedEntityType, orgUnit, { skipTotalPages: true }, undefined, showOnlyDisplayInListAttributes);
 	    } else {
-	        promise = SearchGroupService.tetScopeSearch(defaultSearchGroup, trackedEntityType, orgUnit, { skipTotalPages: true });
+	        promise = SearchGroupService.tetScopeSearch(defaultSearchGroup, trackedEntityType, orgUnit, { skipTotalPages: true }, undefined, showOnlyDisplayInListAttributes);
 	    }
 	
 	    return promise.then(function (res) {
@@ -18937,7 +18941,7 @@
 	        if ($scope.dashBoardLayout.customLayout && $scope.dashBoardLayout.customLayout[$scope.selectedProgramId] && $scope.dashBoardLayout.customLayout[$scope.selectedProgramId].programStageTimeLineLayout && $scope.dashBoardLayout.customLayout[$scope.selectedProgramId].programStageTimeLineLayout[$scope.currentStage.id] && !$scope.lockedList[$scope.selectedProgramId]) {
 	            $scope.currentStage.timelineDataEntryMode = $scope.dashBoardLayout.customLayout[$scope.selectedProgramId].programStageTimeLineLayout[$scope.currentStage.id].timelineDataEntryMode;
 	            $scope.currentStage.tableEditMode = $scope.dashBoardLayout.customLayout[$scope.selectedProgramId].programStageTimeLineLayout[$scope.currentStage.id].tableEditMode;
-	        } else if ($scope.dashBoardLayout && $scope.dashBoardLayout.defaultLayout[$scope.selectedProgramId] && $scope.dashBoardLayout.defaultLayout[$scope.selectedProgramId].programStageTimeLineLayout && $scope.dashBoardLayout.defaultLayout[$scope.selectedProgramId].programStageTimeLineLayout[$scope.currentStage.id] || $scope.lockedList[$scope.selectedProgramId]) {
+	        } else if ($scope.dashBoardLayout && $scope.dashBoardLayout.defaultLayout[$scope.selectedProgramId] && $scope.dashBoardLayout.defaultLayout[$scope.selectedProgramId].programStageTimeLineLayout && $scope.dashBoardLayout.defaultLayout[$scope.selectedProgramId].programStageTimeLineLayout[$scope.currentStage.id]) {
 	            $scope.currentStage.timelineDataEntryMode = $scope.dashBoardLayout.defaultLayout[$scope.selectedProgramId].programStageTimeLineLayout[$scope.currentStage.id].timelineDataEntryMode;
 	            $scope.currentStage.tableEditMode = $scope.dashBoardLayout.defaultLayout[$scope.selectedProgramId].programStageTimeLineLayout[$scope.currentStage.id].tableEditMode;
 	        } else {
@@ -24741,12 +24745,25 @@
 	                return;
 	            }
 	
+	            var showOnlyDisplayInListAttributes = function showOnlyDisplayInListAttributes(headers, attributesContainer) {
+	                var attributeHeaders = headers.slice(7);
+	                attributeHeaders.forEach(function (attributeHeader) {
+	                    var foundAttributeContainer = attributesContainer.find(function (attributeContainer) {
+	                        return (attributeContainer.trackedEntityAttribute && attributeContainer.trackedEntityAttribute.id) === attributeHeader.name;
+	                    });
+	                    if (foundAttributeContainer && !foundAttributeContainer.displayInList) {
+	                        attributeHeader.hideInList = true;
+	                    }
+	                });
+	                return headers;
+	            };
+	
 	            var promise;
 	            if (currentSearchScope === searchScopes.PROGRAM) {
 	                var tetSearchGroup = SearchGroupService.findValidTetSearchGroup(searchGroup, $scope.tetSearchConfig, $scope.base.attributesById);
-	                promise = SearchGroupService.programScopeSearch(searchGroup, tetSearchGroup, $scope.base.selectedProgram, $scope.trackedEntityTypes.selected, $scope.selectedOrgUnit, { skipTotalPages: true });
+	                promise = SearchGroupService.programScopeSearch(searchGroup, tetSearchGroup, $scope.base.selectedProgram, $scope.trackedEntityTypes.selected, $scope.selectedOrgUnit, { skipTotalPages: true }, undefined, showOnlyDisplayInListAttributes);
 	            } else {
-	                promise = SearchGroupService.tetScopeSearch(searchGroup, $scope.trackedEntityTypes.selected, $scope.selectedOrgUnit, { skipTotalPages: true });
+	                promise = SearchGroupService.tetScopeSearch(searchGroup, $scope.trackedEntityTypes.selected, $scope.selectedOrgUnit, { skipTotalPages: true }, undefined, showOnlyDisplayInListAttributes);
 	            }
 	
 	            return promise.then(function (res) {
@@ -40201,7 +40218,7 @@
 /***/ (function(module, exports) {
 
 	/* @preserve
-	 * Leaflet Control Geocoder 1.11.0
+	 * Leaflet Control Geocoder 1.12.1
 	 * https://github.com/perliedman/leaflet-control-geocoder
 	 *
 	 * Copyright (c) 2012 sa3m (https://github.com/sa3m)
@@ -40614,6 +40631,7 @@
 	            );
 	            results[i] = {
 	              name: loc.address.label,
+	              properties: loc.address,
 	              bbox: latLngBounds,
 	              center: latLng
 	            };
@@ -41008,25 +41026,22 @@
 	      reverseQueryParams: {},
 	      htmlTemplate: function(r) {
 	        var a = r.address,
+	          className,
 	          parts = [];
 	        if (a.road || a.building) {
 	          parts.push('{building} {road} {house_number}');
 	        }
 	
 	        if (a.city || a.town || a.village || a.hamlet) {
+	          className = parts.length > 0 ? 'leaflet-control-geocoder-address-detail' : '';
 	          parts.push(
-	            '<span class="' +
-	              (parts.length > 0 ? 'leaflet-control-geocoder-address-detail' : '') +
-	              '">{postcode} {city} {town} {village} {hamlet}</span>'
+	            '<span class="' + className + '">{postcode} {city} {town} {village} {hamlet}</span>'
 	          );
 	        }
 	
 	        if (a.state || a.country) {
-	          parts.push(
-	            '<span class="' +
-	              (parts.length > 0 ? 'leaflet-control-geocoder-address-context' : '') +
-	              '">{state} {country}</span>'
-	          );
+	          className = parts.length > 0 ? 'leaflet-control-geocoder-address-context' : '';
+	          parts.push('<span class="' + className + '">{state} {country}</span>');
 	        }
 	
 	        return template(parts.join('<br/>'), a, true);
@@ -41162,47 +41177,48 @@
 	
 	  var OpenCage = L.Class.extend({
 	    options: {
-	      serviceUrl: 'https://api.opencagedata.com/geocode/v1/json'
+	      serviceUrl: 'https://api.opencagedata.com/geocode/v1/json',
+	      geocodingQueryParams: {},
+	      reverseQueryParams: {}
 	    },
 	
-	    initialize: function(apiKey) {
+	    initialize: function(apiKey, options) {
+	      L.setOptions(this, options);
 	      this._accessToken = apiKey;
 	    },
 	
 	    geocode: function(query, cb, context) {
-	      getJSON(
-	        this.options.serviceUrl,
-	        {
-	          key: this._accessToken,
-	          q: query
-	        },
-	        function(data) {
-	          var results = [],
-	            latLng,
-	            latLngBounds,
-	            loc;
-	          if (data.results && data.results.length) {
-	            for (var i = 0; i < data.results.length; i++) {
-	              loc = data.results[i];
-	              latLng = L.latLng(loc.geometry);
-	              if (loc.annotations && loc.annotations.bounds) {
-	                latLngBounds = L.latLngBounds(
-	                  L.latLng(loc.annotations.bounds.northeast),
-	                  L.latLng(loc.annotations.bounds.southwest)
-	                );
-	              } else {
-	                latLngBounds = L.latLngBounds(latLng, latLng);
-	              }
-	              results.push({
-	                name: loc.formatted,
-	                bbox: latLngBounds,
-	                center: latLng
-	              });
+	      var params = {
+	        key: this._accessToken,
+	        q: query
+	      };
+	      params = L.extend(params, this.options.geocodingQueryParams);
+	      getJSON(this.options.serviceUrl, params, function(data) {
+	        var results = [],
+	          latLng,
+	          latLngBounds,
+	          loc;
+	        if (data.results && data.results.length) {
+	          for (var i = 0; i < data.results.length; i++) {
+	            loc = data.results[i];
+	            latLng = L.latLng(loc.geometry);
+	            if (loc.annotations && loc.annotations.bounds) {
+	              latLngBounds = L.latLngBounds(
+	                L.latLng(loc.annotations.bounds.northeast),
+	                L.latLng(loc.annotations.bounds.southwest)
+	              );
+	            } else {
+	              latLngBounds = L.latLngBounds(latLng, latLng);
 	            }
+	            results.push({
+	              name: loc.formatted,
+	              bbox: latLngBounds,
+	              center: latLng
+	            });
 	          }
-	          cb.call(context, results);
 	        }
-	      );
+	        cb.call(context, results);
+	      });
 	    },
 	
 	    suggest: function(query, cb, context) {
@@ -41210,44 +41226,42 @@
 	    },
 	
 	    reverse: function(location, scale, cb, context) {
-	      getJSON(
-	        this.options.serviceUrl,
-	        {
-	          key: this._accessToken,
-	          q: [location.lat, location.lng].join(',')
-	        },
-	        function(data) {
-	          var results = [],
-	            latLng,
-	            latLngBounds,
-	            loc;
-	          if (data.results && data.results.length) {
-	            for (var i = 0; i < data.results.length; i++) {
-	              loc = data.results[i];
-	              latLng = L.latLng(loc.geometry);
-	              if (loc.annotations && loc.annotations.bounds) {
-	                latLngBounds = L.latLngBounds(
-	                  L.latLng(loc.annotations.bounds.northeast),
-	                  L.latLng(loc.annotations.bounds.southwest)
-	                );
-	              } else {
-	                latLngBounds = L.latLngBounds(latLng, latLng);
-	              }
-	              results.push({
-	                name: loc.formatted,
-	                bbox: latLngBounds,
-	                center: latLng
-	              });
+	      var params = {
+	        key: this._accessToken,
+	        q: [location.lat, location.lng].join(',')
+	      };
+	      params = L.extend(params, this.options.reverseQueryParams);
+	      getJSON(this.options.serviceUrl, params, function(data) {
+	        var results = [],
+	          latLng,
+	          latLngBounds,
+	          loc;
+	        if (data.results && data.results.length) {
+	          for (var i = 0; i < data.results.length; i++) {
+	            loc = data.results[i];
+	            latLng = L.latLng(loc.geometry);
+	            if (loc.annotations && loc.annotations.bounds) {
+	              latLngBounds = L.latLngBounds(
+	                L.latLng(loc.annotations.bounds.northeast),
+	                L.latLng(loc.annotations.bounds.southwest)
+	              );
+	            } else {
+	              latLngBounds = L.latLngBounds(latLng, latLng);
 	            }
+	            results.push({
+	              name: loc.formatted,
+	              bbox: latLngBounds,
+	              center: latLng
+	            });
 	          }
-	          cb.call(context, results);
 	        }
-	      );
+	        cb.call(context, results);
+	      });
 	    }
 	  });
 	
-	  function opencage(apiKey) {
-	    return new OpenCage(apiKey);
+	  function opencage(apiKey, options) {
+	    return new OpenCage(apiKey, options);
 	  }
 	
 	  var Pelias = L.Class.extend({
@@ -41675,10 +41689,10 @@
 	            },
 	            this
 	          );
-	        } else if (L.Browser.touch && this.options.expand === 'touch') {
+	        } else if (this.options.expand === 'touch') {
 	          L.DomEvent.addListener(
 	            container,
-	            'touchstart mousedown',
+	            L.Browser.touch ? 'touchstart mousedown' : 'mousedown',
 	            function(e) {
 	              this._toggle();
 	              e.preventDefault(); // mobile: clicking focuses the icon, so UI expands and immediately collapses
@@ -41848,7 +41862,7 @@
 	          this._geocodeResultSelected(result);
 	          L.DomEvent.on(
 	            li,
-	            'click',
+	            'click touchend',
 	            function() {
 	              if (this.options.collapsed) {
 	                this._collapse();
@@ -42149,4 +42163,4 @@
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=app-5768b4edb52d79ce392f.js.map
+//# sourceMappingURL=app-811384c8a9990dc3e725.js.map
