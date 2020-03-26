@@ -971,7 +971,7 @@
 	                    }
 	                }
 	            }
-	            if((val || val === 0) && obj.optionSetValue && obj.optionSet && obj.optionSet.id && optionSets[obj.optionSet.id] && optionSets[obj.optionSet.id].options  ){
+	            if((val || val === 0) && obj.optionSetValue && obj.optionSet && obj.optionSet.id && optionSets && optionSets[obj.optionSet.id] && optionSets[obj.optionSet.id].options  ){
 	                if(destination === 'USER'){
 	                    val = OptionSetService.getName(optionSets[obj.optionSet.id].options, String(val));
 	                }
@@ -40119,4 +40119,4 @@
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=app-e4a7b0d09fc7f4d5e916.js.map
+//# sourceMappingURL=app-7193c516a3753ceb90d8.js.map
