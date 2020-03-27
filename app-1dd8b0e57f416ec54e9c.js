@@ -971,7 +971,7 @@
 	                    }
 	                }
 	            }
-	            if((val || val === 0) && obj.optionSetValue && obj.optionSet && obj.optionSet.id && optionSets[obj.optionSet.id] && optionSets[obj.optionSet.id].options  ){
+	            if((val || val === 0) && obj.optionSetValue && obj.optionSet && obj.optionSet.id && optionSets && optionSets[obj.optionSet.id] && optionSets[obj.optionSet.id].options  ){
 	                if(destination === 'USER'){
 	                    val = OptionSetService.getName(optionSets[obj.optionSet.id].options, String(val));
 	                }
@@ -21387,6 +21387,7 @@
 	    $scope.selectedConstraints = { currentTei: null, related: null };
 	    $scope.tempSelectedConstraints = { currentTei: null, related: null };
 	    $scope.attributesById = CurrentSelection.getAttributesById();
+	    $scope.base.attributesById = $scope.attributesById;
 	    if (!$scope.attributesById) {
 	        $scope.attributesById = [];
 	        AttributesFactory.getAll().then(function (atts) {
@@ -21788,7 +21789,7 @@
 	            $scope.gridColumns = TEIGridService.generateGridColumns($scope.attributes, null, false).columns;
 	        });
 	
-	        $scope.search($scope.selectedSearchMode);
+	        //$scope.search($scope.selectedSearchMode);
 	    };
 	
 	    $scope.setAttributesForSearch($scope.base.selectedProgramForRelative);
@@ -21865,9 +21866,14 @@
 	        }
 	    };
 	
-	    $scope.assignRelationship = function (relativeTei) {
-	        $scope.teiForRelationship = relativeTei;
+	    $scope.$on('assignRelationshipTei', function (args, data) {
+	        $scope.teiForRelationship = data;
 	        $rootScope.showAddRelationshipDiv = !$rootScope.showAddRelationshipDiv;
+	    });
+	
+	    $scope.goToRegistrationWithData = function (registrationPrefill) {
+	        $scope.registrationPrefill = registrationPrefill;
+	        $scope.showRegistration();
 	    };
 	
 	    $scope.back = function () {
@@ -23285,8 +23291,30 @@
 	    $scope.defaultOperators = OperatorFactory.defaultOperators;
 	    $scope.selectedProgramTET;
 	
+	    $scope.searchingForRelatedTei = false;
+	
+	    $scope.base.selectedProgramForSearch = $scope.base.selectedProgram;
+	    if ($scope.base.selectedProgramForRelative) {
+	        $scope.base.selectedProgramForSearch = $scope.base.selectedProgramForRelative;
+	        $scope.searchingForRelatedTei = true;
+	    }
+	
 	    $scope.$watch('base.selectedProgram', function () {
-	        loadTrackedEntityTypes().then(loadForProgram);
+	        if ($scope.base.selectedProgram) {
+	            $scope.base.selectedProgramForSearch = $scope.base.selectedProgram;
+	            $scope.searchingForRelatedTei = false;
+	
+	            loadTrackedEntityTypes().then(loadForProgram);
+	        }
+	    });
+	
+	    $scope.$watch('base.selectedProgramForRelative', function () {
+	        if ($scope.base.selectedProgramForRelative) {
+	            $scope.base.selectedProgramForSearch = $scope.base.selectedProgramForRelative;
+	            $scope.searchingForRelatedTei = true;
+	
+	            loadTrackedEntityTypes().then(loadForProgram);
+	        }
 	    });
 	
 	    TCOrgUnitService.getSearchOrgUnitTree().then(function (searchOrgUnitTree) {
@@ -23294,9 +23322,9 @@
 	    });
 	
 	    var loadForProgram = function loadForProgram() {
-	        if ($scope.base.selectedProgram) {
+	        if ($scope.base.selectedProgramForSearch) {
 	            currentSearchScope = searchScopes.PROGRAM;
-	            return SearchGroupService.getSearchConfigForProgram($scope.base.selectedProgram).then(function (searchConfig) {
+	            return SearchGroupService.getSearchConfigForProgram($scope.base.selectedProgramForSearch).then(function (searchConfig) {
 	                $scope.searchConfig = searchConfig;
 	            });
 	        } else {
@@ -23316,7 +23344,7 @@
 	    var loadTrackedEntityTypeSearchConfig = function loadTrackedEntityTypeSearchConfig() {
 	        return SearchGroupService.getSearchConfigForTrackedEntityType($scope.trackedEntityTypes.selected).then(function (searchConfig) {
 	            $scope.tetSearchConfig = searchConfig;
-	            if (!$scope.base.selectedProgram) {
+	            if (!$scope.base.selectedProgramForSearch) {
 	                $scope.searchConfig = $scope.tetSearchConfig;
 	            }
 	        });
@@ -23336,9 +23364,9 @@
 	            promise = emptyPromise();
 	        }
 	        return promise.then(function () {
-	            if ($scope.base.selectedProgram) {
+	            if ($scope.base.selectedProgramForSearch) {
 	                var tet = $.grep($scope.trackedEntityTypes.all, function (tet) {
-	                    return tet.id == $scope.base.selectedProgram.trackedEntityType.id;
+	                    return tet.id == $scope.base.selectedProgramForSearch.trackedEntityType.id;
 	                });
 	                $scope.trackedEntityTypes.selected = tet[0];
 	                return loadTrackedEntityTypeSearchConfig();
@@ -23355,7 +23383,7 @@
 	    $scope.searching = null;
 	
 	    var programScopeSearch = function programScopeSearch(programSearchGroup) {
-	        return SearchGroupService.search(programSearchGroup, $scope.base.selectedProgram, $scope.trackedEntityTypes.selected, $scope.selectedOrgUnit, searchScopes.PROGRAM).then(function (res) {
+	        return SearchGroupService.search(programSearchGroup, $scope.base.selectedProgramForSearch, $scope.trackedEntityTypes.selected, $scope.selectedOrgUnit, searchScopes.PROGRAM).then(function (res) {
 	            if (res.status === "NOMATCH") {
 	                var validTetSearchGroup = findValidTetSearchGroup(programSearchGroup);
 	                if (validTetSearchGroup) {
@@ -23372,7 +23400,7 @@
 	    };
 	
 	    var tetScopeSearch = function tetScopeSearch(tetSearchGroup) {
-	        return SearchGroupService.search(programSearchGroup, $scope.base.selectedProgram, $scope.trackedEntityTypes.selected, $scope.selectedOrgUnit, searchScopes.TET).then(function (res) {
+	        return SearchGroupService.search(programSearchGroup, $scope.base.selectedProgramForSearch, $scope.trackedEntityTypes.selected, $scope.selectedOrgUnit, searchScopes.TET).then(function (res) {
 	            return { result: res, callingScope: searchScopes.TET, resultScope: searchScopes.TET };
 	        });
 	    };
@@ -23402,7 +23430,8 @@
 	            var promise;
 	            if (currentSearchScope === searchScopes.PROGRAM) {
 	                var tetSearchGroup = SearchGroupService.findValidTetSearchGroup(searchGroup, $scope.tetSearchConfig, $scope.base.attributesById);
-	                promise = SearchGroupService.programScopeSearch(searchGroup, tetSearchGroup, $scope.base.selectedProgram, $scope.trackedEntityTypes.selected, $scope.selectedOrgUnit, { skipTotalPages: true }, undefined, showOnlyDisplayInListAttributes);
+	
+	                promise = SearchGroupService.programScopeSearch(searchGroup, tetSearchGroup, $scope.base.selectedProgramForSearch, $scope.trackedEntityTypes.selected, $scope.selectedOrgUnit, { skipTotalPages: true }, undefined, showOnlyDisplayInListAttributes);
 	            } else {
 	                promise = SearchGroupService.tetScopeSearch(searchGroup, $scope.trackedEntityTypes.selected, $scope.selectedOrgUnit, { skipTotalPages: true }, undefined, showOnlyDisplayInListAttributes);
 	            }
@@ -23442,10 +23471,14 @@
 	    };
 	
 	    var openTei = function openTei(tei, fromAudit) {
-	        $location.path('/dashboard').search({ tei: tei.id,
-	            program: $scope.base.selectedProgram ? $scope.base.selectedProgram.id : null,
-	            ou: $scope.selectedOrgUnit.id,
-	            fromAudit: fromAudit });
+	        if ($scope.searchingForRelatedTei) {
+	            $rootScope.$broadcast('assignRelationshipTei', tei);
+	        } else {
+	            $location.path('/dashboard').search({ tei: tei.id,
+	                program: $scope.base.selectedProgramForSearch ? $scope.base.selectedProgramForSearch.id : null,
+	                ou: $scope.selectedOrgUnit.id,
+	                fromAudit: fromAudit });
+	        }
 	    };
 	
 	    var translateWithTETName = function translateWithTETName(text, nameToLower) {
@@ -23500,8 +23533,8 @@
 	    };
 	
 	    var _canOpenRegistration = function _canOpenRegistration() {
-	        if ($scope.base.selectedProgram) {
-	            return AccessUtils.isWritable($scope.base.selectedProgram) && AccessUtils.isWritable($scope.trackedEntityTypes.selected);
+	        if ($scope.base.selectedProgramForSearch) {
+	            return AccessUtils.isWritable($scope.base.selectedProgramForSearch) && AccessUtils.isWritable($scope.trackedEntityTypes.selected);
 	        } else if ($scope.trackedEntityTypes.selected) {
 	            return AccessUtils.isWritable($scope.trackedEntityTypes.selected);
 	        }
@@ -23589,8 +23622,8 @@
 	                };
 	
 	                $scope.openTei = function (tei) {
-	                    if (internalService.base.selectedProgram && internalService.base.selectedProgram.id) {
-	                        TEIService.getWithProgramData(tei.id, internalService.base.selectedProgram.id, internalService.base.optionSets, internalService.base.attributesById).then(function (resultTei) {
+	                    if (internalService.base.selectedProgramForSearch && internalService.base.selectedProgramForSearch.id) {
+	                        TEIService.getWithProgramData(tei.id, internalService.base.selectedProgramForSearch.id, internalService.base.optionSets, internalService.base.attributesById).then(function (resultTei) {
 	                            $modalInstance.close({ action: "OPENTEI", tei: tei, fromAudit: true });
 	                        }, function (error) {
 	                            if (error && !error.auditDismissed && error.data && error.data.message) {
@@ -40088,4 +40121,4 @@
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=app-f60c6d6e390163a91a3f.js.map
+//# sourceMappingURL=app-1dd8b0e57f416ec54e9c.js.map
