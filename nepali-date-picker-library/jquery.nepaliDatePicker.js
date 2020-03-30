@@ -68,8 +68,8 @@ var calenderFunctions = {};
         validateBsMonth: function (bsMonth) {
             if (typeof bsMonth !== "number" || bsMonth === null) {
                 throw new TypeError("Invalid parameter bsMonth value");
-            } else if (bsMonth < 0 || bsMonth > 11) {
-                throw new RangeError("Parameter bsMonth value should be in range of 0 to 11");
+            } else if (bsMonth < 0 || bsMonth > 12) {
+                throw new RangeError("Parameter bsMonth value should be in range of 0 to 12");
             }
         },
         validateBsDate: function (bsDate) {

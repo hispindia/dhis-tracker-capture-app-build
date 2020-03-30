@@ -15886,7 +15886,9 @@
 	            var lastName = "";
 	            var dobYear = "";
 	            var sex = "";
-	            var serviceRegNo = "";
+	            //var serviceRegNo = "";
+	            var automatedSerialNumber = "";
+	
 	            if ($scope.selectedTei.gVGIL7DJp4b != undefined) {
 	                var str = $scope.selectedTei.gVGIL7DJp4b;
 	                lastName = str.substr(0, 2).toUpperCase();
@@ -15904,11 +15906,15 @@
 	                    sex = "3";
 	                }
 	            }
+	            /*
 	            if ($scope.selectedTei.Fu4LhjNsJZL != undefined) {
 	                serviceRegNo = $scope.selectedTei.Fu4LhjNsJZL;
 	            }
-	
-	            $scope.generatedCustomId = lastName + dobYear + sex + serviceRegNo;
+	            */
+	            if ($scope.selectedTei.pULhHeN8TUj != undefined) {
+	                automatedSerialNumber = $scope.selectedTei.pULhHeN8TUj;
+	            }
+	            $scope.generatedCustomId = lastName + dobYear + sex + automatedSerialNumber;
 	        }
 	
 	        var result = RegistrationService.processForm($scope.tei, $scope.selectedTei, $scope.teiOriginal, $scope.attributesById, $scope.generatedCustomId);
@@ -42163,4 +42169,4 @@
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=app-811384c8a9990dc3e725.js.map
+//# sourceMappingURL=app-2875fd56a237ee9116fc.js.map
