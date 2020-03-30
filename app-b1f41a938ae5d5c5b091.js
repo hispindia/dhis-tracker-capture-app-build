@@ -15886,7 +15886,7 @@
 	            var lastName = "";
 	            var dobYear = "";
 	            var sex = "";
-	            //var serviceRegNo = "";
+	            var serviceRegNo = "";
 	            var automatedSerialNumber = "";
 	
 	            if ($scope.selectedTei.gVGIL7DJp4b != undefined) {
@@ -15906,15 +15906,19 @@
 	                    sex = "3";
 	                }
 	            }
-	            /*
+	
 	            if ($scope.selectedTei.Fu4LhjNsJZL != undefined) {
 	                serviceRegNo = $scope.selectedTei.Fu4LhjNsJZL;
 	            }
-	            */
+	
+	            /*
 	            if ($scope.selectedTei.pULhHeN8TUj != undefined) {
 	                automatedSerialNumber = $scope.selectedTei.pULhHeN8TUj;
 	            }
-	            $scope.generatedCustomId = lastName + dobYear + sex + automatedSerialNumber;
+	            */
+	
+	            //$scope.generatedCustomId = lastName + dobYear + sex + automatedSerialNumber;
+	            $scope.generatedCustomId = lastName + dobYear + sex + serviceRegNo;
 	        }
 	
 	        var result = RegistrationService.processForm($scope.tei, $scope.selectedTei, $scope.teiOriginal, $scope.attributesById, $scope.generatedCustomId);
@@ -42169,4 +42173,4 @@
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=app-2875fd56a237ee9116fc.js.map
+//# sourceMappingURL=app-b1f41a938ae5d5c5b091.js.map
