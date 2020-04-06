@@ -1,7 +1,5 @@
 html, body {
-	
-	width: 97%;
-    margin: auto;
+    margin: 0;
     padding: 0;
     background-color: white;
     font-size: 9pt;
@@ -818,6 +816,11 @@ table.table-striped tr td.optionset {
     height: 100%;
 }
 
+.modal-new-event-window .modal-dialog {
+    width: 75%;
+    height: 100%;
+}
+
 .modal-map-window .modal-content {
   width: 100%;
   height: 100%;
@@ -1407,8 +1410,7 @@ ul.tree ul li:last-child:before {
 }
 
 th, td {
-    /* padding: 0 5px; */
-    width: 125px;
+    padding: 0 5px;
 }
 
 .default-form-table > tbody > tr:hover > td, .default-form-table > tbody > tr:hover > th {
@@ -1425,7 +1427,7 @@ th, td {
 }
 
 table td.absorbing-column {
-    width: 108%;
+    width: 70%;
 }
 
 .row.null-margins {
@@ -2293,7 +2295,6 @@ button.list-group-item-danger.active:focus {
 
 .custom-workinglist-dropdown {
     width:400px;
-    height: 430px;
 }
 @media (max-width:767px){
     .custom-workinglist-dropdown {
@@ -2313,7 +2314,7 @@ button.list-group-item-danger.active:focus {
 .custom-workinglist-dropdown-list {
     margin: 5px;
     padding: 5px 9px 5px 5px;
-    max-height: 400px;
+    max-height: 570px;
     overflow-y: auto;
 }
 .search-tei-form {
@@ -2407,4 +2408,9 @@ button.list-group-item-danger.active:focus {
     float: left;
     border-radius: 2px;
     margin-right: 5px;
- }
+}
+
+ .btn-tei-search{
+    width: 40px;
+    height: 34px;
+}
